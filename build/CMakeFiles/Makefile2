@@ -84,8 +84,8 @@ clean: CMakeFiles/Quahag_autogen.dir/clean
 # Target rules for target CMakeFiles/Quahag.dir
 
 # All Build rule for target.
-CMakeFiles/Quahag.dir/all: CMakeFiles/Quahag_autogen_timestamp_deps.dir/all
 CMakeFiles/Quahag.dir/all: CMakeFiles/Quahag_autogen.dir/all
+CMakeFiles/Quahag.dir/all: CMakeFiles/Quahag_autogen_timestamp_deps.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Quahag.dir/build.make CMakeFiles/Quahag.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Quahag.dir/build.make CMakeFiles/Quahag.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target Quahag"

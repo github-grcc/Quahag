@@ -6,8 +6,10 @@
 namespace {
 // 玩家运动常量：奔跑速度、跳跃初速度和空气阻力系数。
 constexpr qreal kRunSpeed = 220.0;
-constexpr qreal kJumpImpulse = 720.0;
-constexpr qreal kDrag = 10.0;
+constexpr qreal kJumpImpulse = 520.0;
+constexpr qreal kAirDrag = 10.0;
+constexpr qreal kGroundDrag = 100.0;
+
 } // namespace
 
 Player::Player() {
@@ -27,7 +29,12 @@ void Player::simulate(qreal dt,const InputState &input,const QList<QGraphicsItem
         m_velocity.setX(kRunSpeed);
     } else {
         // Basic drag to slow down when idle.
-        const qreal decel = kDrag * dt;
+        qreal decel=0.0;
+        if(!m_onGround){
+            decel = kAirDrag * dt;
+        }else{
+            decel = kGroundDrag * dt;
+        }
         if (qAbs(m_velocity.x()) <= decel) {
             m_velocity.setX(0.0);
         } else if (m_velocity.x() > 0) {

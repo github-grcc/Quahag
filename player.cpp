@@ -4,7 +4,6 @@
 #include<QPen>
 #include<QtGlobal>
 namespace {
-// 玩家运动常量：奔跑速度、跳跃初速度和空气阻力系数。
 constexpr qreal kRunSpeed = 220.0;
 constexpr qreal kJumpImpulse = 520.0;
 constexpr qreal kAirDrag = 10.0;

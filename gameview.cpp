@@ -7,8 +7,8 @@ GameView::GameView(QWidget *parent)
     : QGraphicsView(parent),m_scene(new GameScene(this))
 {
     setScene(m_scene);
-   // setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-   // setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFrameShape(QFrame::NoFrame);
     setCacheMode(QGraphicsView::CacheBackground);
     setBackgroundBrush(QColor(25,28,35));

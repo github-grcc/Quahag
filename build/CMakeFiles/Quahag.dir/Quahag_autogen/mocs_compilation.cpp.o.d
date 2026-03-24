@@ -3,10 +3,9 @@ CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o: \
  /usr/include/stdc-predef.h \
  /home/grcc/dev/Quahag/build/Quahag_autogen/EWIEGA46WW/moc_gamescene.cpp \
  /home/grcc/dev/Quahag/build/Quahag_autogen/EWIEGA46WW/../../../gamescene.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGraphicsScene \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsscene.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsglobal.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiglobal.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qelapsedtimer.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qglobal.h \
  /usr/include/c++/15/type_traits \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
@@ -171,14 +170,6 @@ CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtresource.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qttranslation.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qversiontagging.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qtgui-config.h \
- /usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiexports.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgets-config.h \
- /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsexports.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qobjectdefs.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qnamespace.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qcompare.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qstdlibdetection.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcomparehelpers.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/q20type_traits.h \
@@ -205,7 +196,24 @@ CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o: \
  /usr/include/c++/15/bits/stl_vector.h \
  /usr/include/c++/15/bits/stl_bvector.h \
  /usr/include/c++/15/bits/vector.tcc /usr/include/c++/15/array \
- /usr/include/c++/15/compare \
+ /usr/include/c++/15/compare /usr/include/c++/15/chrono \
+ /usr/include/c++/15/bits/chrono.h /usr/include/c++/15/ratio \
+ /usr/include/c++/15/ctime /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
+ /usr/include/x86_64-linux-gnu/bits/timex.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGraphicsScene \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsscene.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsglobal.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiglobal.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtgui-config.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtguiexports.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgets-config.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsexports.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qobjectdefs.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qnamespace.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtmetamacros.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qobjectdefs_impl.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qfunctionaltools_impl.h \
@@ -237,11 +245,7 @@ CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o: \
  /usr/lib/linux/uapi/x86/asm/posix_types_64.h \
  /usr/include/asm-generic/posix_types.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
- /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
- /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/timex.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
@@ -337,8 +341,6 @@ CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o: \
  /usr/include/c++/15/bits/stl_multimap.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject_impl.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qbindingstorage.h \
- /usr/include/c++/15/chrono /usr/include/c++/15/bits/chrono.h \
- /usr/include/c++/15/ratio /usr/include/c++/15/ctime \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qpoint.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/q23utility.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/q20utility.h \

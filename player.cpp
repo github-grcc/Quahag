@@ -7,7 +7,9 @@ namespace {
 constexpr qreal kRunSpeed = 220.0;
 constexpr qreal kJumpImpulse = 520.0;
 constexpr qreal kAirDrag = 10.0;
-constexpr qreal kGroundDrag = 100.0;
+constexpr qreal kGroundDrag = 200.0;
+constexpr qreal kAirAccel = 600.0;
+constexpr qreal kGroundAccel = 1200.0;
 
 } // namespace
 
@@ -17,32 +19,21 @@ Player::Player() {
 
 }
 void Player::simulate(qreal dt,const InputState &input,const QList<QGraphicsItem*> &platforms,qreal gravity){
-    // 读取输入：同时按左右键会相互抵消。
     const bool movingLeft = input.moveLeft && !input.moveRight;
     const bool movingRight = input.moveRight && !input.moveLeft;
-
-    // 水平移动：直接设定目标速度，若无输入则进行简易阻尼减速。
+    qreal currentDrag = m_onGround?kGroundDrag:kAirDrag;
+    qreal currentAccel = m_onGround?kGroundAccel:kAirAccel;
     if (movingLeft) {
-        m_velocity.setX(-kRunSpeed);
+        m_velocity.setX(m_velocity.x()-currentAccel*dt);
     } else if (movingRight) {
-        m_velocity.setX(kRunSpeed);
-    } else {
-        // Basic drag to slow down when idle.
-        qreal decel=0.0;
-        if(!m_onGround){
-            decel = kAirDrag * dt;
-        }else{
-            decel = kGroundDrag * dt;
-        }
-        if (qAbs(m_velocity.x()) <= decel) {
-            m_velocity.setX(0.0);
-        } else if (m_velocity.x() > 0) {
-            m_velocity.setX(m_velocity.x() - decel);
-        } else {
-            m_velocity.setX(m_velocity.x() + decel);
-        }
+        m_velocity.setX(m_velocity.x()+currentAccel*dt);
     }
-
+    if(m_velocity.x()>0){
+        m_velocity.setX(qMax(0.0,m_velocity.x()-currentDrag*dt));
+    }else if(m_velocity.x()<0){
+        m_velocity.setX(qMin(0.0,m_velocity.x()+currentDrag*dt));
+    }
+    m_velocity.setX(qBound(-kRunSpeed,m_velocity.x(),kRunSpeed));
     // 跳跃：只有在接触地面时才允许产生向上的初速度。
     if (input.jump && m_onGround) {
         m_velocity.setY(-kJumpImpulse);

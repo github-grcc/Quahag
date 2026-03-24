@@ -270,6 +270,7 @@
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q17memory.h \

@@ -10,6 +10,7 @@ GameScene::GameScene(QObject *parent) : QGraphicsScene(parent) {
     setSceneRect(0.0,0.0,kSceneWidth,kSceneHeight);
     initWorld();
     connect(&m_timer,&QTimer::timeout,this,&GameScene::tick);
+    m_frameTimer.start();
     m_timer.start(static_cast<int>(kTickIntervalMs));
 }
 void GameScene::setInput(const InputState &input){
@@ -18,7 +19,7 @@ void GameScene::setInput(const InputState &input){
 void GameScene::tick(){
     if(!m_player)
         return;
-    const qreal dt=kTickIntervalMs/1000.0;
+    const qreal dt = m_frameTimer.restart() / 1000.0;
     m_player->simulate(dt,m_input,m_platforms,kGravity);
     emit playerMoved();
 }

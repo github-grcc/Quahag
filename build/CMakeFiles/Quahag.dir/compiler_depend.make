@@ -282,6 +282,7 @@ Quahag_autogen/timestamp: /home/grcc/dev/Quahag/CMakeLists.txt \
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
@@ -937,6 +938,7 @@ CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o: Quahag_autogen/mocs
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
@@ -1422,6 +1424,7 @@ CMakeFiles/Quahag.dir/gamescene.cpp.o: /home/grcc/dev/Quahag/gamescene.cpp \
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q17memory.h \
@@ -1885,6 +1888,7 @@ CMakeFiles/Quahag.dir/gameview.cpp.o: /home/grcc/dev/Quahag/gameview.cpp \
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QList \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF \
@@ -2903,6 +2907,8 @@ Quahag_autogen/EWIEGA46WW/moc_gamescene.cpp:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusConfigVersionImpl.cmake:
 
+/usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusConfig.cmake:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/qiodevice.h:
 
 /usr/include/asm-generic/errno.h:
@@ -3707,6 +3713,8 @@ Quahag_autogen/mocs_compilation.cpp:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer:
@@ -4202,5 +4210,3 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusAdditionalTargetInfo.cmake:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusConfig.cmake:

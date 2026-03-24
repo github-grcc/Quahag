@@ -1,5 +1,6 @@
 #ifndef GAMESCENE_H
 #define GAMESCENE_H
+#include<QElapsedTimer>
 #include<QGraphicsScene>
 #include<QTimer>
 #include"player.h"
@@ -21,6 +22,7 @@ private:
     QList<QGraphicsItem *> m_platforms;
     InputState m_input;
     QTimer m_timer;
+    QElapsedTimer m_frameTimer;
     
 };
 

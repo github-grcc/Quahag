@@ -282,6 +282,7 @@ Quahag_autogen/timestamp: /home/grcc/dev/Quahag/CMakeLists.txt \
   /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
@@ -763,6 +764,8 @@ Quahag_autogen/timestamp: /home/grcc/dev/Quahag/CMakeLists.txt \
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusDependencies.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusConfigVersionImpl.cmake:
+
+/usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusConfig.cmake:
 
 /usr/include/asm-generic/errno.h:
 
@@ -1486,6 +1489,8 @@ CMakeFiles/4.2.3/CMakeCXXCompiler.cmake:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
+/usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer:
+
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF:
 
 /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer:
@@ -1935,5 +1940,3 @@ CMakeFiles/4.2.3/CMakeSystem.cmake:
 /usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake:
 
 /usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusAdditionalTargetInfo.cmake:
-
-/usr/lib/x86_64-linux-gnu/cmake/Qt6DBus/Qt6DBusConfig.cmake:

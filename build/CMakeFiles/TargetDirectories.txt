@@ -1,0 +1,9 @@
+/home/grcc/dev/Quahag/build/CMakeFiles/Quahag.dir
+/home/grcc/dev/Quahag/build/CMakeFiles/edit_cache.dir
+/home/grcc/dev/Quahag/build/CMakeFiles/rebuild_cache.dir
+/home/grcc/dev/Quahag/build/CMakeFiles/list_install_components.dir
+/home/grcc/dev/Quahag/build/CMakeFiles/install.dir
+/home/grcc/dev/Quahag/build/CMakeFiles/install/local.dir
+/home/grcc/dev/Quahag/build/CMakeFiles/install/strip.dir
+/home/grcc/dev/Quahag/build/CMakeFiles/Quahag_autogen_timestamp_deps.dir
+/home/grcc/dev/Quahag/build/CMakeFiles/Quahag_autogen.dir

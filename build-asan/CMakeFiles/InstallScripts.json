@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/grcc/dev/Quahag/build-asan/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

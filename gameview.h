@@ -9,6 +9,7 @@ class GameView : public QGraphicsView{
 
 public:
     explicit GameView(QWidget *parent = nullptr);
+    ~GameView() override;
 protected:
     void keyPressEvent(QKeyEvent* event)override;
     void keyReleaseEvent(QKeyEvent* event)override;
@@ -20,6 +21,9 @@ private:
     bool m_moveLeft{false};
     bool m_moveRight{false};
     bool m_jumpRequested{false};
+    QPointF m_cameraCenter;
+    bool m_cameraInitialized{false};
+    bool m_cameraUpdating{false};
 
 };
 #endif // GAMEVIEW_H

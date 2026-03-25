@@ -11,6 +11,7 @@ constexpr qreal kGroundDrag = 200.0;
 constexpr qreal kAirAccel = 600.0;
 constexpr qreal kGroundAccel = 1200.0;
 
+
 } // namespace
 
 Player::Player() {

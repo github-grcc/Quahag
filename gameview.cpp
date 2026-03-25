@@ -2,9 +2,10 @@
 #include"player.h"
 #include <QKeyEvent>
 #include <QResizeEvent>
+#include <QTimer>
 
 GameView::GameView(QWidget *parent)
-    : QGraphicsView(parent),m_scene(new GameScene(this))
+    : QGraphicsView(parent),m_scene(new GameScene())
 {
     setScene(m_scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -16,7 +17,12 @@ GameView::GameView(QWidget *parent)
 
     connect(m_scene,&GameScene::playerMoved,this,&GameView::updateCamera);
     updateSceneInput();
-    updateCamera();
+    QTimer::singleShot(0, this, &GameView::updateCamera);
+}
+
+GameView::~GameView()
+{
+    delete m_scene;
 }
 void GameView::keyPressEvent(QKeyEvent *event){
     if (event->isAutoRepeat()) {
@@ -86,8 +92,20 @@ void GameView::updateSceneInput(){
     input.jump = m_jumpRequested;
     m_scene->setInput(input);
 }
-void GameView::updateCamera(){
-    if(!m_scene||!m_scene->player())
+void GameView::updateCamera()
+{
+    if (m_cameraUpdating || !m_scene || !m_scene->player())
         return;
-    centerOn(m_scene->player());
+
+    const QPointF targetPos = m_scene->player()->pos();
+    if (!m_cameraInitialized) {
+        m_cameraCenter = targetPos;
+        m_cameraInitialized = true;
+    }
+
+    static const qreal smoothFactor = 0.15;
+    m_cameraCenter += (targetPos - m_cameraCenter) * smoothFactor;
+    m_cameraUpdating = true;
+    centerOn(m_cameraCenter);
+    m_cameraUpdating = false;
 }

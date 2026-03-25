@@ -19,6 +19,7 @@ Player::Player() {
     setBrush(QBrush(QColor(253,184,39)));
 
 }
+
 void Player::simulate(qreal dt,const InputState &input,const QList<QGraphicsItem*> &platforms,qreal gravity){
     const bool movingLeft = input.moveLeft && !input.moveRight;
     const bool movingRight = input.moveRight && !input.moveLeft;
@@ -50,6 +51,27 @@ void Player::simulate(qreal dt,const InputState &input,const QList<QGraphicsItem
     m_onGround = false;
     resolveCollisions(platforms);
 };
+//测试
+// void Player::simulate(qreal dt,const InputState &input,const QList<QGraphicsItem*> &platforms,qreal gravity){
+//     const bool movingLeft = input.moveLeft && !input.moveRight;
+//     const bool movingRight = input.moveRight && !input.moveLeft;
+//     qreal currentDrag = m_onGround?kGroundDrag:kAirDrag;
+//     qreal currentAccel = m_onGround?kGroundAccel:kAirAccel;
+//     qreal v=1.0;
+//     if (movingLeft) {
+//         moveBy(-v,0.0);
+//     } else if (movingRight) {
+//         moveBy(v,0.0);
+//     }
+
+//     if (input.jump) {
+//         moveBy(0.0,-v);
+//     }
+
+// };
+
+
+
 void Player::resolveCollisions(const QList<QGraphicsItem*>&platforms){
     // 简单的 AABB（轴对齐包围盒）碰撞：检测重叠并沿最小轴分离。
     for (QGraphicsItem *platform : platforms) {

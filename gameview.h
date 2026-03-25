@@ -15,6 +15,7 @@ protected:
     void keyReleaseEvent(QKeyEvent* event)override;
     void resizeEvent(QResizeEvent *event)override;
 private:
+    void applyCameraTransform();
     void updateCamera();
     void updateSceneInput();
     QPointer<GameScene> m_scene;
@@ -23,7 +24,6 @@ private:
     bool m_jumpRequested{false};
     QPointF m_cameraCenter;
     bool m_cameraInitialized{false};
-    bool m_cameraUpdating{false};
 
 };
 #endif // GAMEVIEW_H

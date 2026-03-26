@@ -11,7 +11,7 @@ GameView::GameView(QWidget *parent)
     setScene(m_scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    setAlignment(Qt::AlignLeft | Qt::AlignTop);//场景的坐标原点固定在视图的左上角
     setTransformationAnchor(QGraphicsView::NoAnchor);
     setResizeAnchor(QGraphicsView::NoAnchor);
     setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
@@ -134,7 +134,10 @@ void GameView::updateSceneInput(){
     input.jump = m_jumpRequested;
     m_scene->setInput(input);
 }
-
+void GameView::wheelEvent(QWheelEvent *event)
+{
+    event->ignore();     
+}
 void GameView::applyCameraTransform()
 {
     if (!m_cameraInitialized)
@@ -161,8 +164,9 @@ void GameView::applyCameraTransform()
         clampedCenter.setY(sceneBounds.center().y());
     }
 
-    const qreal dx = halfViewWidth + sceneBounds.left() - clampedCenter.x();
-    const qreal dy = halfViewHeight + sceneBounds.top() - clampedCenter.y();
+    const qreal dx = -(clampedCenter.x()-(sceneBounds.left()+halfViewWidth));
+    const qreal dy = -(clampedCenter.y()-(sceneBounds.top()+halfViewHeight));
+
     setTransform(QTransform::fromTranslate(dx, dy), false);
 }
 
@@ -177,7 +181,7 @@ void GameView::updateCamera()
         m_cameraInitialized = true;
     }
 
-    static const qreal smoothFactor = 0.15;
+    static const qreal smoothFactor = 0.08;
     m_cameraCenter += (targetPos - m_cameraCenter) * smoothFactor;
     applyCameraTransform();
 }

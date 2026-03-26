@@ -14,6 +14,7 @@ protected:
     void keyPressEvent(QKeyEvent* event)override;
     void keyReleaseEvent(QKeyEvent* event)override;
     void resizeEvent(QResizeEvent *event)override;
+    void wheelEvent(QWheelEvent *event) override;
 private:
     void applyCameraTransform();
     void updateCamera();

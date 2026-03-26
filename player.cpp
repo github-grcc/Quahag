@@ -4,8 +4,8 @@
 #include<QPen>
 #include<QtGlobal>
 namespace {
-constexpr qreal kRunSpeed = 220.0;
-constexpr qreal kJumpImpulse = 520.0;
+constexpr qreal kRunSpeed = 320.0;
+constexpr qreal kJumpImpulse = 620.0;
 constexpr qreal kAirDrag = 10.0;
 constexpr qreal kGroundDrag = 200.0;
 constexpr qreal kAirAccel = 600.0;

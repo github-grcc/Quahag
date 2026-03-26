@@ -8,7 +8,7 @@ constexpr qreal kSceneHeight = 900.0;
 constexpr qreal t = 0.0;
 }
 GameScene::GameScene(QObject *parent) : QGraphicsScene(parent) {
-    setSceneRect(-200.0,-100.0,kSceneWidth+500.0,kSceneHeight+500.0);
+    setSceneRect(0.0,0.0,kSceneWidth,kSceneHeight);
     initWorld();
     connect(&m_timer,&QTimer::timeout,this,&GameScene::tick);
     m_frameTimer.start();

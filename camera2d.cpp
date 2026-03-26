@@ -70,12 +70,18 @@ void Camera2D::update(qreal dt)
     }
 }
 
-void Camera2D::startZoomPulse(qreal amplitude, qreal duration, qreal cycles)
+void Camera2D::startZoomPulse(qreal amplitude,
+                              qreal duration,
+                              qreal cycles,
+                              qreal center,
+                              qreal initialPhase)
 {
     m_zoomPulseAmplitude = qMax(0.0, amplitude);
     m_zoomPulseDuration = qMax(0.0, duration);
     m_zoomPulseElapsed = 0.0;
     m_zoomPulseCycles = qMax(0.0, cycles);
+    m_zoomPulseCenter = center >= 0.0 ? qMax(0.1, center) : qMax(0.1, m_targetZoom);
+    m_zoomPulseInitialPhase = initialPhase;
 }
 
 void Camera2D::addShake(qreal amplitude, qreal duration, qreal frequency)
@@ -154,8 +160,8 @@ qreal Camera2D::effectiveZoom() const
 
     const qreal progress = m_zoomPulseElapsed / m_zoomPulseDuration;
     const qreal envelope = 1.0 - progress;
-    const qreal phase = qSin(progress * m_zoomPulseCycles * 2.0 * M_PI);
-    zoom *= 1.0 + phase * m_zoomPulseAmplitude * envelope;
+    const qreal angle = progress * m_zoomPulseCycles * 2.0 * M_PI + m_zoomPulseInitialPhase;
+    zoom = m_zoomPulseCenter + qSin(angle) * m_zoomPulseAmplitude;// * envelope;
     return qMax(0.1, zoom);
 }
 

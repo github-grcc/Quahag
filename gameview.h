@@ -12,7 +12,11 @@ public:
     explicit GameView(QWidget *parent = nullptr);
     ~GameView() override;
     void setCameraZoom(qreal zoom);
-    void startCameraZoomPulse(qreal amplitude, qreal duration, qreal cycles = 0.5);
+    void startCameraZoomPulse(qreal amplitude,
+                              qreal duration,
+                              qreal cycles = 0.5,
+                              qreal center = -1.0,
+                              qreal initialPhase = 0.0);
     void addCameraShake(qreal amplitude, qreal duration, qreal frequency = 28.0);
 protected:
     void keyPressEvent(QKeyEvent* event)override;
@@ -27,6 +31,8 @@ private:
     bool m_moveLeft{false};
     bool m_moveRight{false};
     bool m_jumpRequested{false};
+    bool m_zoomPulseRequested{false};
+    bool m_shakeRequested{false};
     Camera2D m_camera;
 
 };

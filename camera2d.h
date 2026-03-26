@@ -18,7 +18,11 @@ public:
     void snapToTarget();
     void update(qreal dt);
 
-    void startZoomPulse(qreal amplitude, qreal duration, qreal cycles = 0.5);
+    void startZoomPulse(qreal amplitude,
+                        qreal duration,
+                        qreal cycles = 0.5,
+                        qreal center = 1.0,
+                        qreal initialPhase = 0.0);
     void addShake(qreal amplitude, qreal duration, qreal frequency = 28.0);
 
     QTransform transform() const;
@@ -46,6 +50,8 @@ private:
     qreal m_zoomPulseDuration{0.0};
     qreal m_zoomPulseElapsed{0.0};
     qreal m_zoomPulseCycles{0.5};
+    qreal m_zoomPulseCenter{1.0};
+    qreal m_zoomPulseInitialPhase{0.0};
 
     qreal m_shakeAmplitude{0.0};
     qreal m_shakeDuration{0.0};

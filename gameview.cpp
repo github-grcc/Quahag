@@ -40,9 +40,13 @@ void GameView::setCameraZoom(qreal zoom)
     applyCameraTransform();
 }
 
-void GameView::startCameraZoomPulse(qreal amplitude, qreal duration, qreal cycles)
+void GameView::startCameraZoomPulse(qreal amplitude,
+                                    qreal duration,
+                                    qreal cycles,
+                                    qreal center,
+                                    qreal initialPhase)
 {
-    m_camera.startZoomPulse(amplitude, duration, cycles);
+    m_camera.startZoomPulse(amplitude, duration, cycles, center, initialPhase);
 }
 
 void GameView::addCameraShake(qreal amplitude, qreal duration, qreal frequency)
@@ -62,6 +66,10 @@ void GameView::keyPressEvent(QKeyEvent *event){
         case Qt::Key_Space:
         case Qt::Key_Down:
         case Qt::Key_S:
+        
+        case Qt::Key_Q:
+        case Qt::Key_E:
+
             event->accept();
             return;
         default:
@@ -88,6 +96,13 @@ void GameView::keyPressEvent(QKeyEvent *event){
     case Qt::Key_W:
         m_jumpRequested = true;
         break;
+
+    case Qt::Key_Q:
+        m_zoomPulseRequested = true;
+        break;
+    case Qt::Key_E:
+        m_shakeRequested = true;
+        break;
     default:
         QGraphicsView::keyPressEvent(event);
         return;
@@ -107,6 +122,9 @@ void GameView::keyReleaseEvent(QKeyEvent *event){
         case Qt::Key_Space:
         case Qt::Key_Down:
         case Qt::Key_S:
+
+        case Qt::Key_Q:
+        case Qt::Key_E:
             event->accept();
             return;
         default:
@@ -132,6 +150,13 @@ void GameView::keyReleaseEvent(QKeyEvent *event){
     case Qt::Key_Up:
     case Qt::Key_W:
         m_jumpRequested = false;
+        break;
+
+    case Qt::Key_Q:
+        m_zoomPulseRequested = false;
+        break;
+    case Qt::Key_E:
+        m_shakeRequested = false;
         break;
     default:
         QGraphicsView::keyReleaseEvent(event);
@@ -172,6 +197,14 @@ void GameView::updateCamera(qreal dt)
     m_camera.setSceneBounds(sceneRect());
     m_camera.setViewportSize(viewport()->size());
     m_camera.setTargetCenter(m_scene->player()->sceneBoundingRect().center());
+    if(m_zoomPulseRequested){
+        startCameraZoomPulse(0.5,2.4,2.0,1.5,1.5*M_PI);
+        m_zoomPulseRequested = false;
+    }
+    if(m_shakeRequested){
+        addCameraShake(20.0,0.5,20.0);
+        m_shakeRequested = false;
+    }
     m_camera.update(dt);
     applyCameraTransform();
 }

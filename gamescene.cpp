@@ -1,7 +1,7 @@
 #include "gamescene.h"
 #include <QGraphicsRectItem>
 namespace {
-constexpr qreal kGravity = 900.0;
+constexpr qreal kGravity = 1800.0;
 constexpr qreal kTickIntervalMs = 16.0;
 constexpr qreal kSceneWidth = 2000.0;
 constexpr qreal kSceneHeight = 900.0;

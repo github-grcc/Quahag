@@ -23,7 +23,8 @@ GameView::GameView(QWidget *parent)
     connect(m_scene,&GameScene::playerMoved,this,&GameView::updateCamera);
     m_camera.setSceneBounds(sceneRect());
     m_camera.setViewportSize(viewport()->size());
-    m_camera.setFollowResponsiveness(4.0);
+    m_camera.setFollowResponsiveness(15.0);
+    m_camera.setFollowDamping(0.1);
     m_camera.setZoomResponsiveness(10.0);
     updateSceneInput();
     QTimer::singleShot(0, this, [this]() { updateCamera(0.0); });

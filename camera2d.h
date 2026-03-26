@@ -14,6 +14,7 @@ public:
     void setTargetCenter(const QPointF &center);
     void setTargetZoom(qreal zoom);
     void setFollowResponsiveness(qreal responsiveness);
+    void setFollowDamping(qreal damping);
     void setZoomResponsiveness(qreal responsiveness);
     void snapToTarget();
     void update(qreal dt);
@@ -40,9 +41,11 @@ private:
 
     QPointF m_targetCenter;
     QPointF m_currentCenter;
+    QPointF m_cameraVelocity;
     qreal m_targetZoom{1.0};
     qreal m_currentZoom{1.0};
     qreal m_followResponsiveness{8.0};
+    qreal m_followDamping{0.1};
     qreal m_zoomResponsiveness{10.0};
     bool m_initialized{false};
 

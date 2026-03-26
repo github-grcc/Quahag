@@ -18,6 +18,7 @@ void Camera2D::setTargetCenter(const QPointF &center)
     m_targetCenter = center;
     if (!m_initialized) {
         m_currentCenter = center;
+        m_cameraVelocity = QPointF();
         m_initialized = true;
     }
 }
@@ -35,6 +36,11 @@ void Camera2D::setFollowResponsiveness(qreal responsiveness)
     m_followResponsiveness = qMax(0.0, responsiveness);
 }
 
+void Camera2D::setFollowDamping(qreal damping)
+{
+    m_followDamping = qBound(0.0, damping, 1.0);
+}
+
 void Camera2D::setZoomResponsiveness(qreal responsiveness)
 {
     m_zoomResponsiveness = qMax(0.0, responsiveness);
@@ -46,6 +52,7 @@ void Camera2D::snapToTarget()
         return;
 
     m_currentCenter = m_targetCenter;
+    m_cameraVelocity = QPointF();
     m_currentZoom = m_targetZoom;
 }
 
@@ -55,11 +62,19 @@ void Camera2D::update(qreal dt)
         return;
 
     const qreal safeDt = qMax(0.0, dt);
-    const qreal followAlpha = expSmoothingAlpha(m_followResponsiveness, safeDt);
     const qreal zoomAlpha = expSmoothingAlpha(m_zoomResponsiveness, safeDt);
-
-    m_currentCenter += (m_targetCenter - m_currentCenter) * followAlpha;
     m_currentZoom += (m_targetZoom - m_currentZoom) * zoomAlpha;
+
+    if (safeDt > 0.0) {
+        const QPointF displacement = m_targetCenter - m_currentCenter;
+        const QPointF acceleration = displacement * m_followResponsiveness;
+        const qreal dampingFactor = qPow(1.0 - m_followDamping, safeDt * 60.0);
+        m_cameraVelocity = m_cameraVelocity * dampingFactor + acceleration * safeDt;
+        m_currentCenter += m_cameraVelocity * safeDt;
+    } else {
+        m_currentCenter = m_targetCenter;
+        m_cameraVelocity = QPointF();
+    }
 
     if (m_zoomPulseDuration > 0.0) {
         m_zoomPulseElapsed = qMin(m_zoomPulseElapsed + safeDt, m_zoomPulseDuration);

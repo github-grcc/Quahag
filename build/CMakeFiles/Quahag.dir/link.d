@@ -4,6 +4,7 @@ Quahag: \
   /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o \
   CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o \
   CMakeFiles/Quahag.dir/main.cpp.o \
+  CMakeFiles/Quahag.dir/camera2d.cpp.o \
   CMakeFiles/Quahag.dir/gameview.cpp.o \
   CMakeFiles/Quahag.dir/gamescene.cpp.o \
   CMakeFiles/Quahag.dir/player.cpp.o \
@@ -38,7 +39,6 @@ Quahag: \
   /usr/lib/gcc/x86_64-linux-gnu/15/libgcc.a \
   /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o \
   /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o \
-  /usr/lib/x86_64-linux-gnu/libm.so.6 \
   /usr/lib/i386-linux-gnu/libEGL.so.1 \
   /usr/lib/x86_64-linux-gnu/libEGL.so.1 \
   /usr/lib/i386-linux-gnu/libfontconfig.so.1 \
@@ -109,6 +109,8 @@ CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o:
 
 CMakeFiles/Quahag.dir/main.cpp.o:
 
+CMakeFiles/Quahag.dir/camera2d.cpp.o:
+
 CMakeFiles/Quahag.dir/gameview.cpp.o:
 
 CMakeFiles/Quahag.dir/gamescene.cpp.o:
@@ -176,8 +178,6 @@ CMakeFiles/Quahag.dir/player.cpp.o:
 /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o:
-
-/usr/lib/x86_64-linux-gnu/libm.so.6:
 
 /usr/lib/i386-linux-gnu/libEGL.so.1:
 

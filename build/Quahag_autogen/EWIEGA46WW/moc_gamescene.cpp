@@ -41,14 +41,17 @@ template <> constexpr inline auto GameScene::qt_create_metaobjectdata<qt_meta_ta
         "GameScene",
         "playerMoved",
         "",
+        "dt",
         "tick"
     };
 
     QtMocHelpers::UintData qt_methods {
         // Signal 'playerMoved'
-        QtMocHelpers::SignalData<void()>(1, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::SignalData<void(qreal)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QReal, 3 },
+        }}),
         // Slot 'tick'
-        QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -72,13 +75,13 @@ void GameScene::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
     auto *_t = static_cast<GameScene *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->playerMoved(); break;
+        case 0: _t->playerMoved((*reinterpret_cast< std::add_pointer_t<qreal>>(_a[1]))); break;
         case 1: _t->tick(); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
-        if (QtMocHelpers::indexOfMethod<void (GameScene::*)()>(_a, &GameScene::playerMoved, 0))
+        if (QtMocHelpers::indexOfMethod<void (GameScene::*)(qreal )>(_a, &GameScene::playerMoved, 0))
             return;
     }
 }
@@ -115,8 +118,8 @@ int GameScene::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void GameScene::playerMoved()
+void GameScene::playerMoved(qreal _t1)
 {
-    QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
 }
 QT_WARNING_POP

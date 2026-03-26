@@ -224,6 +224,30 @@ Quahag_autogen/mocs_compilation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Quahag.dir/build.make CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.s
 .PHONY : Quahag_autogen/mocs_compilation.cpp.s
 
+camera2d.o: camera2d.cpp.o
+.PHONY : camera2d.o
+
+# target to build an object file
+camera2d.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Quahag.dir/build.make CMakeFiles/Quahag.dir/camera2d.cpp.o
+.PHONY : camera2d.cpp.o
+
+camera2d.i: camera2d.cpp.i
+.PHONY : camera2d.i
+
+# target to preprocess a source file
+camera2d.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Quahag.dir/build.make CMakeFiles/Quahag.dir/camera2d.cpp.i
+.PHONY : camera2d.cpp.i
+
+camera2d.s: camera2d.cpp.s
+.PHONY : camera2d.s
+
+# target to generate assembly for a file
+camera2d.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Quahag.dir/build.make CMakeFiles/Quahag.dir/camera2d.cpp.s
+.PHONY : camera2d.cpp.s
+
 gamescene.o: gamescene.cpp.o
 .PHONY : gamescene.o
 
@@ -338,6 +362,9 @@ help:
 	@echo "... Quahag_autogen/mocs_compilation.o"
 	@echo "... Quahag_autogen/mocs_compilation.i"
 	@echo "... Quahag_autogen/mocs_compilation.s"
+	@echo "... camera2d.o"
+	@echo "... camera2d.i"
+	@echo "... camera2d.s"
 	@echo "... gamescene.o"
 	@echo "... gamescene.i"
 	@echo "... gamescene.s"

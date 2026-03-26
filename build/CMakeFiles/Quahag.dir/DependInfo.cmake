@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "" "Quahag_autogen/timestamp" "custom" "Quahag_autogen/deps"
   "/home/grcc/dev/Quahag/build/Quahag_autogen/mocs_compilation.cpp" "CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o" "gcc" "CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o.d"
+  "/home/grcc/dev/Quahag/camera2d.cpp" "CMakeFiles/Quahag.dir/camera2d.cpp.o" "gcc" "CMakeFiles/Quahag.dir/camera2d.cpp.o.d"
   "/home/grcc/dev/Quahag/gamescene.cpp" "CMakeFiles/Quahag.dir/gamescene.cpp.o" "gcc" "CMakeFiles/Quahag.dir/gamescene.cpp.o.d"
   "/home/grcc/dev/Quahag/gameview.cpp" "CMakeFiles/Quahag.dir/gameview.cpp.o" "gcc" "CMakeFiles/Quahag.dir/gameview.cpp.o.d"
   "/home/grcc/dev/Quahag/main.cpp" "CMakeFiles/Quahag.dir/main.cpp.o" "gcc" "CMakeFiles/Quahag.dir/main.cpp.o.d"

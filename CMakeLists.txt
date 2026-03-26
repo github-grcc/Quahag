@@ -14,6 +14,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
+        camera2d.cpp
+        camera2d.h
         gameview.cpp
         gameview.h
         

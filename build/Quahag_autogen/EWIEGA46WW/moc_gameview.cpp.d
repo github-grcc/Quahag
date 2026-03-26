@@ -1,5 +1,6 @@
 /home/grcc/dev/Quahag/build/Quahag_autogen/EWIEGA46WW/moc_gameview.cpp: /home/grcc/dev/Quahag/gameview.h \
   /home/grcc/dev/Quahag/build/Quahag_autogen/moc_predefs.h \
+  /home/grcc/dev/Quahag/camera2d.h \
   /home/grcc/dev/Quahag/gamescene.h \
   /home/grcc/dev/Quahag/player.h \
   /usr/include/alloca.h \
@@ -274,6 +275,8 @@
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QElapsedTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QPointer \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QRectF \
+  /usr/include/x86_64-linux-gnu/qt6/QtCore/QSizeF \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q17memory.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/q20functional.h \
@@ -407,6 +410,7 @@
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qversiontagging.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qxptype_traits.h \
   /usr/include/x86_64-linux-gnu/qt6/QtCore/qyieldcpu.h \
+  /usr/include/x86_64-linux-gnu/qt6/QtGui/QTransform \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/qaction.h \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/qbitmap.h \
   /usr/include/x86_64-linux-gnu/qt6/QtGui/qbrush.h \

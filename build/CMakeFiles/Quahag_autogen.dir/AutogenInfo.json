@@ -318,6 +318,12 @@
 	"HEADERS" : 
 	[
 		[
+			"/home/grcc/dev/Quahag/camera2d.h",
+			"MU",
+			"EWIEGA46WW/moc_camera2d.cpp",
+			null
+		],
+		[
 			"/home/grcc/dev/Quahag/gamescene.h",
 			"MU",
 			"EWIEGA46WW/moc_gamescene.cpp",
@@ -395,6 +401,7 @@
 	"SETTINGS_FILE" : "/home/grcc/dev/Quahag/build/CMakeFiles/Quahag_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "/home/grcc/dev/Quahag/camera2d.cpp", "MU", null ],
 		[ "/home/grcc/dev/Quahag/gamescene.cpp", "MU", null ],
 		[ "/home/grcc/dev/Quahag/gameview.cpp", "MU", null ],
 		[ "/home/grcc/dev/Quahag/main.cpp", "MU", null ],

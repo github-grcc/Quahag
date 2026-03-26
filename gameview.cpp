@@ -3,7 +3,6 @@
 #include <QKeyEvent>
 #include <QResizeEvent>
 #include <QTimer>
-#include <QTransform>
 
 GameView::GameView(QWidget *parent)
     : QGraphicsView(parent),m_scene(new GameScene())
@@ -22,14 +21,35 @@ GameView::GameView(QWidget *parent)
     setMinimumSize(800,480);
 
     connect(m_scene,&GameScene::playerMoved,this,&GameView::updateCamera);
+    m_camera.setSceneBounds(sceneRect());
+    m_camera.setViewportSize(viewport()->size());
+    m_camera.setFollowResponsiveness(4.0);
+    m_camera.setZoomResponsiveness(10.0);
     updateSceneInput();
-    QTimer::singleShot(0, this, &GameView::updateCamera);
+    QTimer::singleShot(0, this, [this]() { updateCamera(0.0); });
 }
 
 GameView::~GameView()
 {
     delete m_scene;
 }
+
+void GameView::setCameraZoom(qreal zoom)
+{
+    m_camera.setTargetZoom(zoom);
+    applyCameraTransform();
+}
+
+void GameView::startCameraZoomPulse(qreal amplitude, qreal duration, qreal cycles)
+{
+    m_camera.startZoomPulse(amplitude, duration, cycles);
+}
+
+void GameView::addCameraShake(qreal amplitude, qreal duration, qreal frequency)
+{
+    m_camera.addShake(amplitude, duration, frequency);
+}
+
 void GameView::keyPressEvent(QKeyEvent *event){
     if (event->isAutoRepeat()) {
         switch (event->key()) {
@@ -122,6 +142,7 @@ void GameView::keyReleaseEvent(QKeyEvent *event){
 }
 void GameView::resizeEvent(QResizeEvent *event){
     QGraphicsView::resizeEvent(event);
+    m_camera.setViewportSize(viewport()->size());
     applyCameraTransform();
 }
 void GameView::updateSceneInput(){
@@ -140,48 +161,17 @@ void GameView::wheelEvent(QWheelEvent *event)
 }
 void GameView::applyCameraTransform()
 {
-    if (!m_cameraInitialized)
-        return;
-
-    const QRectF sceneBounds = sceneRect();
-    const qreal halfViewWidth = viewport()->width() * 0.5;
-    const qreal halfViewHeight = viewport()->height() * 0.5;
-
-    QPointF clampedCenter = m_cameraCenter;
-    if (sceneBounds.width() > viewport()->width()) {
-        clampedCenter.setX(qBound(sceneBounds.left() + halfViewWidth,
-                                  clampedCenter.x(),
-                                  sceneBounds.right() - halfViewWidth));
-    } else {
-        clampedCenter.setX(sceneBounds.center().x());
-    }
-
-    if (sceneBounds.height() > viewport()->height()) {
-        clampedCenter.setY(qBound(sceneBounds.top() + halfViewHeight,
-                                  clampedCenter.y(),
-                                  sceneBounds.bottom() - halfViewHeight));
-    } else {
-        clampedCenter.setY(sceneBounds.center().y());
-    }
-
-    const qreal dx = -(clampedCenter.x()-(sceneBounds.left()+halfViewWidth));
-    const qreal dy = -(clampedCenter.y()-(sceneBounds.top()+halfViewHeight));
-
-    setTransform(QTransform::fromTranslate(dx, dy), false);
+    setTransform(m_camera.transform(), false);
 }
 
-void GameView::updateCamera()
+void GameView::updateCamera(qreal dt)
 {
     if (!m_scene || !m_scene->player())
         return;
 
-    const QPointF targetPos = m_scene->player()->pos();
-    if (!m_cameraInitialized) {
-        m_cameraCenter = targetPos;
-        m_cameraInitialized = true;
-    }
-
-    static const qreal smoothFactor = 0.08;
-    m_cameraCenter += (targetPos - m_cameraCenter) * smoothFactor;
+    m_camera.setSceneBounds(sceneRect());
+    m_camera.setViewportSize(viewport()->size());
+    m_camera.setTargetCenter(m_scene->player()->sceneBoundingRect().center());
+    m_camera.update(dt);
     applyCameraTransform();
 }

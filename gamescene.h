@@ -11,7 +11,7 @@ public:
     void setInput(const InputState &input);
     Player *player()const{return m_player;};
 signals:
-    void playerMoved();
+    void playerMoved(qreal dt);
 private slots:
     void tick();
 

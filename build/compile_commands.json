@@ -13,6 +13,12 @@
 },
 {
   "directory": "/home/grcc/dev/Quahag/build",
+  "command": "/usr/bin/g++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I/home/grcc/dev/Quahag/build/Quahag_autogen/include -isystem /usr/include/x86_64-linux-gnu/qt6/QtCore -isystem /usr/include/x86_64-linux-gnu/qt6 -isystem /usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -isystem /usr/include/x86_64-linux-gnu/qt6/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt6/QtGui -g -std=gnu++17 -o CMakeFiles/Quahag.dir/camera2d.cpp.o -c /home/grcc/dev/Quahag/camera2d.cpp",
+  "file": "/home/grcc/dev/Quahag/camera2d.cpp",
+  "output": "CMakeFiles/Quahag.dir/camera2d.cpp.o"
+},
+{
+  "directory": "/home/grcc/dev/Quahag/build",
   "command": "/usr/bin/g++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I/home/grcc/dev/Quahag/build/Quahag_autogen/include -isystem /usr/include/x86_64-linux-gnu/qt6/QtCore -isystem /usr/include/x86_64-linux-gnu/qt6 -isystem /usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -isystem /usr/include/x86_64-linux-gnu/qt6/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt6/QtGui -g -std=gnu++17 -o CMakeFiles/Quahag.dir/gameview.cpp.o -c /home/grcc/dev/Quahag/gameview.cpp",
   "file": "/home/grcc/dev/Quahag/gameview.cpp",
   "output": "CMakeFiles/Quahag.dir/gameview.cpp.o"

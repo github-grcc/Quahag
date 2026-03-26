@@ -410,6 +410,13 @@ CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/q23type_traits.h \
  /home/grcc/dev/Quahag/build/Quahag_autogen/EWIEGA46WW/moc_gameview.cpp \
  /home/grcc/dev/Quahag/build/Quahag_autogen/EWIEGA46WW/../../../gameview.h \
+ /home/grcc/dev/Quahag/build/Quahag_autogen/EWIEGA46WW/../../../camera2d.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QRectF \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qrect.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/QSizeF \
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qsize.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/QTransform \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qtransform.h \
  /home/grcc/dev/Quahag/build/Quahag_autogen/EWIEGA46WW/../../../gamescene.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QGraphicsView \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgraphicsview.h \

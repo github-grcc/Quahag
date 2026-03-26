@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "Quahag_autogen"
   "CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o"
   "CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o.d"
+  "CMakeFiles/Quahag.dir/camera2d.cpp.o"
+  "CMakeFiles/Quahag.dir/camera2d.cpp.o.d"
   "CMakeFiles/Quahag.dir/gamescene.cpp.o"
   "CMakeFiles/Quahag.dir/gamescene.cpp.o.d"
   "CMakeFiles/Quahag.dir/gameview.cpp.o"

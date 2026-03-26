@@ -107,10 +107,24 @@ CMakeFiles/Quahag.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Quahag.dir/main.cpp.s"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/grcc/dev/Quahag/main.cpp -o CMakeFiles/Quahag.dir/main.cpp.s
 
+CMakeFiles/Quahag.dir/camera2d.cpp.o: CMakeFiles/Quahag.dir/flags.make
+CMakeFiles/Quahag.dir/camera2d.cpp.o: /home/grcc/dev/Quahag/camera2d.cpp
+CMakeFiles/Quahag.dir/camera2d.cpp.o: CMakeFiles/Quahag.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Quahag.dir/camera2d.cpp.o"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Quahag.dir/camera2d.cpp.o -MF CMakeFiles/Quahag.dir/camera2d.cpp.o.d -o CMakeFiles/Quahag.dir/camera2d.cpp.o -c /home/grcc/dev/Quahag/camera2d.cpp
+
+CMakeFiles/Quahag.dir/camera2d.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Quahag.dir/camera2d.cpp.i"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/grcc/dev/Quahag/camera2d.cpp > CMakeFiles/Quahag.dir/camera2d.cpp.i
+
+CMakeFiles/Quahag.dir/camera2d.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Quahag.dir/camera2d.cpp.s"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/grcc/dev/Quahag/camera2d.cpp -o CMakeFiles/Quahag.dir/camera2d.cpp.s
+
 CMakeFiles/Quahag.dir/gameview.cpp.o: CMakeFiles/Quahag.dir/flags.make
 CMakeFiles/Quahag.dir/gameview.cpp.o: /home/grcc/dev/Quahag/gameview.cpp
 CMakeFiles/Quahag.dir/gameview.cpp.o: CMakeFiles/Quahag.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Quahag.dir/gameview.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Quahag.dir/gameview.cpp.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Quahag.dir/gameview.cpp.o -MF CMakeFiles/Quahag.dir/gameview.cpp.o.d -o CMakeFiles/Quahag.dir/gameview.cpp.o -c /home/grcc/dev/Quahag/gameview.cpp
 
 CMakeFiles/Quahag.dir/gameview.cpp.i: cmake_force
@@ -124,7 +138,7 @@ CMakeFiles/Quahag.dir/gameview.cpp.s: cmake_force
 CMakeFiles/Quahag.dir/gamescene.cpp.o: CMakeFiles/Quahag.dir/flags.make
 CMakeFiles/Quahag.dir/gamescene.cpp.o: /home/grcc/dev/Quahag/gamescene.cpp
 CMakeFiles/Quahag.dir/gamescene.cpp.o: CMakeFiles/Quahag.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Quahag.dir/gamescene.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Quahag.dir/gamescene.cpp.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Quahag.dir/gamescene.cpp.o -MF CMakeFiles/Quahag.dir/gamescene.cpp.o.d -o CMakeFiles/Quahag.dir/gamescene.cpp.o -c /home/grcc/dev/Quahag/gamescene.cpp
 
 CMakeFiles/Quahag.dir/gamescene.cpp.i: cmake_force
@@ -138,7 +152,7 @@ CMakeFiles/Quahag.dir/gamescene.cpp.s: cmake_force
 CMakeFiles/Quahag.dir/player.cpp.o: CMakeFiles/Quahag.dir/flags.make
 CMakeFiles/Quahag.dir/player.cpp.o: /home/grcc/dev/Quahag/player.cpp
 CMakeFiles/Quahag.dir/player.cpp.o: CMakeFiles/Quahag.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Quahag.dir/player.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Quahag.dir/player.cpp.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Quahag.dir/player.cpp.o -MF CMakeFiles/Quahag.dir/player.cpp.o.d -o CMakeFiles/Quahag.dir/player.cpp.o -c /home/grcc/dev/Quahag/player.cpp
 
 CMakeFiles/Quahag.dir/player.cpp.i: cmake_force
@@ -153,6 +167,7 @@ CMakeFiles/Quahag.dir/player.cpp.s: cmake_force
 Quahag_OBJECTS = \
 "CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o" \
 "CMakeFiles/Quahag.dir/main.cpp.o" \
+"CMakeFiles/Quahag.dir/camera2d.cpp.o" \
 "CMakeFiles/Quahag.dir/gameview.cpp.o" \
 "CMakeFiles/Quahag.dir/gamescene.cpp.o" \
 "CMakeFiles/Quahag.dir/player.cpp.o"
@@ -162,6 +177,7 @@ Quahag_EXTERNAL_OBJECTS =
 
 Quahag: CMakeFiles/Quahag.dir/Quahag_autogen/mocs_compilation.cpp.o
 Quahag: CMakeFiles/Quahag.dir/main.cpp.o
+Quahag: CMakeFiles/Quahag.dir/camera2d.cpp.o
 Quahag: CMakeFiles/Quahag.dir/gameview.cpp.o
 Quahag: CMakeFiles/Quahag.dir/gamescene.cpp.o
 Quahag: CMakeFiles/Quahag.dir/player.cpp.o
@@ -173,7 +189,7 @@ Quahag: /usr/lib/x86_64-linux-gnu/libGLX.so
 Quahag: /usr/lib/x86_64-linux-gnu/libOpenGL.so
 Quahag: /usr/lib/x86_64-linux-gnu/libQt6Core.so.6.9.2
 Quahag: CMakeFiles/Quahag.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable Quahag"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/grcc/dev/Quahag/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable Quahag"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Quahag.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -22,7 +22,7 @@ void GameScene::tick(){
         return;
     const qreal dt = m_frameTimer.restart() / 1000.0;
     m_player->simulate(dt,m_input,m_platforms,kGravity);
-    emit playerMoved();
+    emit playerMoved(dt);
 }
 void GameScene::initWorld(){
     m_player=new Player();

@@ -18,16 +18,18 @@ set(PROJECT_SOURCES
         camera2d.h
         gameview.cpp
         gameview.h
-        
+        gamescene.cpp
+        gamescene.h
+        player.cpp
+        player.h
+        tilemap.h
+        tilemap.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Quahag
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        gamescene.h gamescene.cpp
-        player.h player.cpp
-        
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Quahag APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

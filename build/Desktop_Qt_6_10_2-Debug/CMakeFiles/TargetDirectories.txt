@@ -1,9 +1,0 @@
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/Quahag.dir
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/edit_cache.dir
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/rebuild_cache.dir
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/list_install_components.dir
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/install.dir
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/install/local.dir
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/install/strip.dir
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/Quahag_autogen_timestamp_deps.dir
-/home/grcc/dev/Quahag/build/Desktop_Qt_6_10_2-Debug/CMakeFiles/Quahag_autogen.dir

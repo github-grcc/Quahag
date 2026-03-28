@@ -4,6 +4,7 @@
 #include<QGraphicsScene>
 #include<QTimer>
 #include"player.h"
+#include"tilemap.h"
 class GameScene:public QGraphicsScene{
     Q_OBJECT
 public:
@@ -18,6 +19,8 @@ private slots:
 private:
     void initWorld();
     Player *m_player{nullptr};
+    TileMap m_tileMap;
+    void addPlayer(Player *player,QPointF point);
     void createPlatform(const QPointF &pos, const QSizeF &size);
     QList<QGraphicsItem *> m_platforms;
     InputState m_input;

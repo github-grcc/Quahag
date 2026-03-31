@@ -1,11 +1,11 @@
-#include "gameview.h"
-#include"player.h"
+#include "ui/gameview.h"
+
 #include <QKeyEvent>
 #include <QResizeEvent>
 #include <QTimer>
 
 GameView::GameView(QWidget *parent)
-    : QGraphicsView(parent),m_scene(new GameScene())
+    : QGraphicsView(parent),m_scene(new GameScene(this))
 {
     setScene(m_scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -21,7 +21,7 @@ GameView::GameView(QWidget *parent)
     setMinimumSize(800,480);
 
     connect(m_scene,&GameScene::playerMoved,this,&GameView::updateCamera);
-    m_camera.setSceneBounds(sceneRect());
+    m_camera.setSceneBounds(m_scene->sceneRect());
     m_camera.setViewportSize(viewport()->size());
     m_camera.setFollowResponsiveness(15.0);
     m_camera.setFollowDamping(0.1);
@@ -32,7 +32,6 @@ GameView::GameView(QWidget *parent)
 
 GameView::~GameView()
 {
-    delete m_scene;
 }
 
 void GameView::setCameraZoom(qreal zoom)
@@ -195,7 +194,7 @@ void GameView::updateCamera(qreal dt)
     if (!m_scene || !m_scene->player())
         return;
 
-    m_camera.setSceneBounds(sceneRect());
+    m_camera.setSceneBounds(m_scene->sceneRect());
     m_camera.setViewportSize(viewport()->size());
     m_camera.setTargetCenter(m_scene->player()->sceneBoundingRect().center());
     if(m_zoomPulseRequested){

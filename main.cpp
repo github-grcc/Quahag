@@ -1,4 +1,4 @@
-#include "gameview.h"
+#include "ui/gameview.h"
 
 #include <QApplication>
 

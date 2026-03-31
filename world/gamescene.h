@@ -1,16 +1,20 @@
 #ifndef GAMESCENE_H
 #define GAMESCENE_H
-#include<QElapsedTimer>
-#include<QGraphicsScene>
-#include<QTimer>
-#include"player.h"
-#include"tilemap.h"
+#include <QElapsedTimer>
+#include <QGraphicsScene>
+#include <QTimer>
+
+#include "core/inputstate.h"
+#include "entities/actoritem.h"
+#include "entities/player.h"
+#include "world/tilemap.h"
+
 class GameScene:public QGraphicsScene{
     Q_OBJECT
 public:
     explicit GameScene(QObject *parent=nullptr);
     void setInput(const InputState &input);
-    Player *player()const{return m_player;};
+    Player *player()const{return m_player;}
 signals:
     void playerMoved(qreal dt);
 private slots:
@@ -18,15 +22,14 @@ private slots:
 
 private:
     void initWorld();
+    void registerActor(ActorItem *actor);
+
     Player *m_player{nullptr};
     TileMap m_tileMap;
-    void addPlayer(Player *player,QPointF point);
-    void createPlatform(const QPointF &pos, const QSizeF &size);
-    QList<QGraphicsItem *> m_platforms;
+    QList<ActorItem *> m_actors;
     InputState m_input;
     QTimer m_timer;
     QElapsedTimer m_frameTimer;
-    
 };
 
 #endif // GAMESCENE_H

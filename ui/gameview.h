@@ -1,9 +1,10 @@
 #ifndef GAMEVIEW_H
 #define GAMEVIEW_H
-#include "camera2d.h"
-#include "gamescene.h"
-#include<QGraphicsView>
-#include<QPointer>
+#include "graphics/camera2d.h"
+#include "world/gamescene.h"
+
+#include <QGraphicsView>
+#include <QPointer>
 
 class GameView : public QGraphicsView{
     Q_OBJECT

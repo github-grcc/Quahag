@@ -14,16 +14,23 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        camera2d.cpp
-        camera2d.h
-        gameview.cpp
-        gameview.h
-        gamescene.cpp
-        gamescene.h
-        player.cpp
-        player.h
-        tilemap.h
-        tilemap.cpp
+        core/inputstate.h
+        entities/actoritem.cpp
+        entities/actoritem.h
+        entities/player.cpp
+        entities/player.h
+        graphics/camera2d.cpp
+        graphics/camera2d.h
+        graphics/tilelayeritem.cpp
+        graphics/tilelayeritem.h
+        ui/gameview.cpp
+        ui/gameview.h
+        world/gamescene.cpp
+        world/gamescene.h
+        world/levelbuilder.cpp
+        world/levelbuilder.h
+        world/tilemap.cpp
+        world/tilemap.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -50,6 +57,7 @@ else()
 endif()
 
 target_link_libraries(Quahag PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_include_directories(Quahag PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

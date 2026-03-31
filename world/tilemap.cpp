@@ -1,5 +1,7 @@
-#include "tilemap.h"
-#include<QPoint>
+#include "world/tilemap.h"
+
+#include <QtGlobal>
+
 int TileMap::mapWidth() const{
     return m_tiles.isEmpty() ? 0 : m_tiles[0].size();
 }
@@ -25,6 +27,10 @@ TileMap::TileType TileMap::tileAt(int row,int col) const{
         return TileType::Empty;
     return static_cast<TileType>(m_tiles[row][col]);
 }
+bool TileMap::isSolidTile(int row, int col) const
+{
+    return tileAt(row, col) == TileType::Platform;
+}
 QPointF TileMap::tileToScene(int row,int col) const{
     return QPointF(col*tileWidth(),row*tileHeight());
 }
@@ -33,6 +39,37 @@ QPointF TileMap::tileCenterToScene(int row,int col) const{
 }
 QPointF TileMap::tileBottomCenterToScene(int row,int col) const{
     return QPointF((col+0.5)*tileWidth(),(row+1.0)*tileHeight());
+}
+QRectF TileMap::sceneBounds() const
+{
+    return QRectF(0.0, 0.0, mapWidth() * tileWidth(), mapHeight() * tileHeight());
+}
+QPoint TileMap::playerSpawnTile() const
+{
+    return m_playerSpawnTile;
+}
+QPointF TileMap::playerSpawnScenePosition() const
+{
+    return tileCenterToScene(m_playerSpawnTile.y(), m_playerSpawnTile.x());
+}
+QVector<QPoint> TileMap::solidTilesOverlapping(const QRectF &sceneRect) const
+{
+    QVector<QPoint> result;
+    if (sceneRect.isEmpty())
+        return result;
+
+    const int leftCol = qMax(0, static_cast<int>(sceneRect.left() / tileWidth()));
+    const int rightCol = qMin(mapWidth() - 1, static_cast<int>((sceneRect.right() - 0.001) / tileWidth()));
+    const int topRow = qMax(0, static_cast<int>(sceneRect.top() / tileHeight()));
+    const int bottomRow = qMin(mapHeight() - 1, static_cast<int>((sceneRect.bottom() - 0.001) / tileHeight()));
+
+    for (int row = topRow; row <= bottomRow; ++row) {
+        for (int col = leftCol; col <= rightCol; ++col) {
+            if (isSolidTile(row, col))
+                result.append(QPoint(col, row));
+        }
+    }
+    return result;
 }
 TileMap::TileMap()
 {
@@ -123,4 +160,15 @@ void TileMap::initTiles(){
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     };
+
+    for (int row = 0; row < m_tiles.size(); ++row) {
+        for (int col = 0; col < m_tiles[row].size(); ++col) {
+            if (m_tiles[row][col] == static_cast<int>(TileType::PlayerSpawn)) {
+                m_playerSpawnTile = QPoint(col, row);
+                return;
+            }
+        }
+    }
+
+    m_playerSpawnTile = QPoint();
 }

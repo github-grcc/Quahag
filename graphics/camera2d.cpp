@@ -1,4 +1,4 @@
-#include "camera2d.h"
+#include "graphics/camera2d.h"
 
 #include <QtGlobal>
 #include <QtMath>

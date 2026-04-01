@@ -19,7 +19,8 @@ public:
 
     void setInput(const InputState &input);
     void tick(qreal dt, const TileMap &tileMap, qreal gravity) override;
-    EntityKind kind()const override;
+    EntityKind kind() const override{return EntityKind::Player;}
+    Faction faction() const override{return Faction::Player;}
     QRectF boundingRect() const override;
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,

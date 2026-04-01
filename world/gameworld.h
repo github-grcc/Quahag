@@ -15,14 +15,14 @@ public:
     explicit GameWorld(QObject *parent=nullptr);
     void step(TickContext &ctx);
     void spawn(ActorItem *entity);
-    void destory(ActorItem *entity);
-    void destoryLater(ActorItem *entity);
+    void destroy(ActorItem *entity);
+    void destroyLater(ActorItem *entity);
 
     const TileMap &tileMap()const{return m_tileMap;}
     TileMap &tileMap(){return m_tileMap;}
     const QVector<ActorItem*> &entities()const{return m_entities;}
-    QVector<ActorItem*> &entitiesOfKind(EntityKind kind)const;
-    QVector<ActorItem*> &entitiesOfFaction(Faction faction)const;
+    const QVector<ActorItem*> &entitiesOfKind(EntityKind kind)const;
+    const QVector<ActorItem*> &entitiesOfFaction(Faction faction)const;
     Player *player()const;
 signals:
     void entitySpawned(ActorItem *entity);
@@ -38,10 +38,10 @@ private:
     
     QVector<ActorItem*> m_entities;
     QVector<ActorItem*> m_pendingSpawn;
-    QVector<ActorItem*> m_pendingDestory;
+    QVector<ActorItem*> m_pendingDestroy;
     
-    QHash<EntityKind,QVector<ActorItem*>> m_byKind;
-    QHash<Faction,QVector<ActorItem*>> m_byFaction;
+    QHash<EntityKind,QVector<ActorItem*>> m_entitiesByKind;
+    QHash<Faction,QVector<ActorItem*>> m_entitiesByFaction;
 
     QPointer<Player> m_player;
 

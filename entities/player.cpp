@@ -16,9 +16,7 @@ constexpr qreal kGroundAccel = 1200.0;
 Player::Player()
 {
 }
-EntityKind Player::kind()const{
-    return EntityKind::Player;
-}
+
 void Player::setInput(const InputState &input)
 {
     m_input = input;

@@ -3,7 +3,7 @@
 
 #include "core/inputstate.h"
 #include "entities/actoritem.h"
-
+#include"world/gameworld.h"
 #include <QRectF>
 
 class TileMap;
@@ -19,7 +19,7 @@ public:
 
     void setInput(const InputState &input);
     void tick(qreal dt, const TileMap &tileMap, qreal gravity) override;
-
+    EntityKind kind()const override;
     QRectF boundingRect() const override;
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,

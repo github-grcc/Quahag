@@ -15,6 +15,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(PROJECT_SOURCES
         main.cpp
         core/inputstate.h
+        core/tickcontext.h
+        core/entitytypes.h
         entities/actoritem.cpp
         entities/actoritem.h
         entities/player.cpp
@@ -25,6 +27,8 @@ set(PROJECT_SOURCES
         graphics/tilelayeritem.h
         ui/gameview.cpp
         ui/gameview.h
+        world/gameworld.h
+        world/gameworld.cpp
         world/gamescene.cpp
         world/gamescene.h
         world/levelbuilder.cpp

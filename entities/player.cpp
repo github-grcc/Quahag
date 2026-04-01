@@ -16,7 +16,9 @@ constexpr qreal kGroundAccel = 1200.0;
 Player::Player()
 {
 }
-
+EntityKind Player::kind()const{
+    return EntityKind::Player;
+}
 void Player::setInput(const InputState &input)
 {
     m_input = input;
@@ -38,24 +40,24 @@ void Player::tick(qreal dt, const TileMap &tileMap, qreal gravity)
 {
     const bool movingLeft = m_input.moveLeft && !m_input.moveRight;
     const bool movingRight = m_input.moveRight && !m_input.moveLeft;
-    const qreal currentDrag = m_onGround ? kGroundDrag : kAirDrag;
-    const qreal currentAccel = m_onGround ? kGroundAccel : kAirAccel;
+    const qreal currentDrag = onGround() ? kGroundDrag : kAirDrag;
+    const qreal currentAccel = onGround() ? kGroundAccel : kAirAccel;
 
     if (movingLeft) {
-        m_velocity.setX(m_velocity.x()-currentAccel*dt);
+        setVelocityX(velocityX()-currentAccel*dt);
     } else if (movingRight) {
-        m_velocity.setX(m_velocity.x()+currentAccel*dt);
+        setVelocityX(velocityX()+currentAccel*dt);
     }
-    if(m_velocity.x()>0){
-        m_velocity.setX(qMax(0.0,m_velocity.x()-currentDrag*dt));
-    }else if(m_velocity.x()<0){
-        m_velocity.setX(qMin(0.0,m_velocity.x()+currentDrag*dt));
+    if(velocityX()>0){
+        setVelocityX(qMax(0.0,velocityX()-currentDrag*dt));
+    }else if(velocityX()<0){
+        setVelocityX(qMin(0.0,velocityX()+currentDrag*dt));
     }
-    m_velocity.setX(qBound(-kRunSpeed,m_velocity.x(),kRunSpeed));
+    setVelocityX(qBound(-kRunSpeed,velocityX(),kRunSpeed));
 
-    if (m_input.jump && m_onGround) {
-        m_velocity.setY(-kJumpImpulse);
-        m_onGround = false;
+    if (m_input.jump && onGround()) {
+        setVelocityY(-kJumpImpulse);
+        setOnGround(false);
     }
 
     moveHorizontally(dt, tileMap);
@@ -64,19 +66,19 @@ void Player::tick(qreal dt, const TileMap &tileMap, qreal gravity)
 
 void Player::moveHorizontally(qreal dt, const TileMap &tileMap)
 {
-    if (qFuzzyIsNull(m_velocity.x()))
+    if (qFuzzyIsNull(velocityX()))
         return;
 
-    moveBy(m_velocity.x() * dt, 0.0);
+    moveBy(velocityX() * dt, 0.0);
     resolveTileCollisionsX(tileMap);
 }
 
 void Player::moveVertically(qreal dt, const TileMap &tileMap, qreal gravity)
 {
-    m_velocity.setY(m_velocity.y() + gravity * dt);
-    moveBy(0.0, m_velocity.y() * dt);
+    setVelocityY(velocityY() + gravity * dt);
+    moveBy(0.0, velocityY() * dt);
 
-    m_onGround = false;
+    setOnGround(false);
     resolveTileCollisionsY(tileMap);
 }
 
@@ -90,12 +92,12 @@ void Player::resolveTileCollisionsX(const TileMap &tileMap)
             continue;
 
         const QRectF overlap = playerRect.intersected(tileRect);
-        if (m_velocity.x() > 0.0) {
+        if (velocityX() > 0.0) {
             setX(x() - overlap.width());
-            m_velocity.setX(0.0);
-        } else if (m_velocity.x() < 0.0) {
+            setVelocityX(0.0);
+        } else if (velocityX() < 0.0) {
             setX(x() + overlap.width());
-            m_velocity.setX(0.0);
+            setVelocityX(0.0);
         }
         playerRect = sceneBoundingRect();
     }
@@ -111,13 +113,13 @@ void Player::resolveTileCollisionsY(const TileMap &tileMap)
             continue;
 
         const QRectF overlap = playerRect.intersected(tileRect);
-        if (m_velocity.y() > 0.0) {
+        if (velocityY() > 0.0) {
             setY(y() - overlap.height());
-            m_velocity.setY(0.0);
-            m_onGround = true;
-        } else if (m_velocity.y() < 0.0) {
+            setVelocityY(0.0);
+            setOnGround(true);
+        } else if (velocityY() < 0.0) {
             setY(y() + overlap.height());
-            m_velocity.setY(0.0);
+            setVelocityY(0.0);
         }
         playerRect = sceneBoundingRect();
     }

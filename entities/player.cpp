@@ -1,4 +1,5 @@
 #include "entities/player.h"
+#include "world/gameworld.h"
 #include "world/tilemap.h"
 
 #include <QPainter>
@@ -17,11 +18,6 @@ Player::Player()
 {
 }
 
-void Player::setInput(const InputState &input)
-{
-    m_input = input;
-}
-
 QRectF Player::boundingRect() const
 {
     return m_bodyRect;
@@ -34,26 +30,33 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     painter->drawRect(m_bodyRect);
 }
 
-void Player::tick(qreal dt, const TileMap &tileMap, qreal gravity)
+void Player::tick(const TickContext &ctx)
 {
-    const bool movingLeft = m_input.moveLeft && !m_input.moveRight;
-    const bool movingRight = m_input.moveRight && !m_input.moveLeft;
+    if (!ctx.world)
+        return;
+
+    const InputState input = ctx.input ? *ctx.input : InputState{};
+    const TileMap &tileMap = ctx.world->tileMap();
+    const qreal dt = ctx.dt;
+    const qreal gravity = ctx.gravity;
+    const bool movingLeft = input.moveLeft && !input.moveRight;
+    const bool movingRight = input.moveRight && !input.moveLeft;
     const qreal currentDrag = onGround() ? kGroundDrag : kAirDrag;
     const qreal currentAccel = onGround() ? kGroundAccel : kAirAccel;
 
     if (movingLeft) {
-        setVelocityX(velocityX()-currentAccel*dt);
+        setVelocityX(velocityX() - currentAccel * dt);
     } else if (movingRight) {
-        setVelocityX(velocityX()+currentAccel*dt);
+        setVelocityX(velocityX() + currentAccel * dt);
     }
-    if(velocityX()>0){
-        setVelocityX(qMax(0.0,velocityX()-currentDrag*dt));
-    }else if(velocityX()<0){
-        setVelocityX(qMin(0.0,velocityX()+currentDrag*dt));
+    if (velocityX() > 0) {
+        setVelocityX(qMax(0.0, velocityX() - currentDrag * dt));
+    } else if (velocityX() < 0) {
+        setVelocityX(qMin(0.0, velocityX() + currentDrag * dt));
     }
-    setVelocityX(qBound(-kRunSpeed,velocityX(),kRunSpeed));
+    setVelocityX(qBound(-kRunSpeed, velocityX(), kRunSpeed));
 
-    if (m_input.jump && onGround()) {
+    if (input.jump && onGround()) {
         setVelocityY(-kJumpImpulse);
         setOnGround(false);
     }

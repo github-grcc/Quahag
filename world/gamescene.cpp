@@ -1,44 +1,66 @@
 #include "world/gamescene.h"
+
+#include "entities/actoritem.h"
+#include "graphics/tilelayeritem.h"
+#include "world/gameworld.h"
 #include "world/levelbuilder.h"
 
-namespace {
-constexpr qreal kGravity = 1800.0;
-constexpr qreal kTickIntervalMs = 16.0;
+GameScene::GameScene(QObject *parent)
+    : QGraphicsScene(parent)
+{
 }
 
-GameScene::GameScene(QObject *parent) : QGraphicsScene(parent) {
-    setSceneRect(m_tileMap.sceneBounds());
-    initWorld();
-    connect(&m_timer,&QTimer::timeout,this,&GameScene::tick);
-    m_frameTimer.start();
-    m_timer.start(static_cast<int>(kTickIntervalMs));
-}
-
-void GameScene::setInput(const InputState &input){
-    m_input=input;
-}
-
-void GameScene::tick(){
-    if(!m_player)
+void GameScene::attachWorld(GameWorld *world)
+{
+    if (m_world == world)
         return;
 
-    const qreal dt = m_frameTimer.restart() / 1000.0;
-    m_player->setInput(m_input);
-    for (ActorItem *actor : std::as_const(m_actors)) {
-        actor->tick(dt, m_tileMap, kGravity);
-    }
-    emit playerMoved(dt);
+    if (m_world)
+        disconnect(m_world, nullptr, this, nullptr);
+
+    m_world = world;
+    rebuildScene();
+
+    if (!m_world)
+        return;
+
+    connect(m_world, &GameWorld::entitySpawned, this, &GameScene::addEntityItem);
+    connect(m_world, &GameWorld::entityAboutToBeDestroyed, this, &GameScene::removeEntityItem);
 }
 
-void GameScene::initWorld(){
-    const LevelBuilder builder;
-    const auto buildResult = builder.build(*this, m_tileMap);
-    m_player = buildResult.player;
-    registerActor(m_player);
-}
-
-void GameScene::registerActor(ActorItem *actor)
+Player *GameScene::player() const
 {
-    if (actor && !m_actors.contains(actor))
-        m_actors.append(actor);
+    return m_world ? m_world->player() : nullptr;
+}
+
+void GameScene::rebuildScene()
+{
+    clear();
+    if (!m_world)
+        return;
+
+    setSceneRect(m_world->tileMap().sceneBounds());
+
+    auto *tileLayer = new TileLayerItem(m_world->tileMap());
+    tileLayer->setZValue(0.0);
+    addItem(tileLayer);
+
+    for (ActorItem *entity : m_world->entities())
+        addEntityItem(entity);
+}
+
+void GameScene::addEntityItem(ActorItem *entity)
+{
+    if (!entity || entity->scene() == this)
+        return;
+
+    addItem(entity);
+}
+
+void GameScene::removeEntityItem(ActorItem *entity)
+{
+    if (!entity || entity->scene() != this)
+        return;
+
+    removeItem(entity);
 }

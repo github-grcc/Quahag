@@ -1,12 +1,27 @@
 #include "ui/gameview.h"
 
+#include "core/tickcontext.h"
+#include "entities/player.h"
+#include "world/gameworld.h"
+#include "world/levelbuilder.h"
+
 #include <QKeyEvent>
 #include <QResizeEvent>
 #include <QTimer>
 
 GameView::GameView(QWidget *parent)
-    : QGraphicsView(parent),m_scene(new GameScene(this))
+    : QGraphicsView(parent)
+    , m_scene(new GameScene(this))
+    , m_loop(this)
 {
+    auto *world = new GameWorld(this);
+    const LevelBuilder builder;
+    builder.build(*world);
+    TickContext initCtx;
+    initCtx.world = world;
+    world->step(initCtx);
+    m_scene->attachWorld(world);
+
     setScene(m_scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -20,13 +35,15 @@ GameView::GameView(QWidget *parent)
     setBackgroundBrush(QColor(25,28,35));
     setMinimumSize(800,480);
 
-    connect(m_scene,&GameScene::playerMoved,this,&GameView::updateCamera);
+    connect(&m_loop, &GameLoop::stepped, this, &GameView::updateCamera);
     m_camera.setSceneBounds(m_scene->sceneRect());
     m_camera.setViewportSize(viewport()->size());
     m_camera.setFollowResponsiveness(15.0);
     m_camera.setFollowDamping(0.1);
     m_camera.setZoomResponsiveness(10.0);
-    updateSceneInput();
+    m_loop.setWorld(world);
+    m_loop.setInputState(&m_input);
+    m_loop.start();
     QTimer::singleShot(0, this, [this]() { updateCamera(0.0); });
 }
 
@@ -85,16 +102,16 @@ void GameView::keyPressEvent(QKeyEvent *event){
         return;
     case Qt::Key_Left:
     case Qt::Key_A:
-        m_moveLeft = true;
+        m_input.moveLeft = true;
         break;
     case Qt::Key_Right:
     case Qt::Key_D:
-        m_moveRight = true;
+        m_input.moveRight = true;
         break;
     case Qt::Key_Space:
     case Qt::Key_Up:
     case Qt::Key_W:
-        m_jumpRequested = true;
+        m_input.jump = true;
         break;
 
     case Qt::Key_Q:
@@ -107,8 +124,6 @@ void GameView::keyPressEvent(QKeyEvent *event){
         QGraphicsView::keyPressEvent(event);
         return;
     }
-
-    updateSceneInput();
 }
 void GameView::keyReleaseEvent(QKeyEvent *event){
     if (event->isAutoRepeat()) {
@@ -140,16 +155,16 @@ void GameView::keyReleaseEvent(QKeyEvent *event){
         return;
     case Qt::Key_Left:
     case Qt::Key_A:
-        m_moveLeft = false;
+        m_input.moveLeft = false;
         break;
     case Qt::Key_Right:
     case Qt::Key_D:
-        m_moveRight = false;
+        m_input.moveRight = false;
         break;
     case Qt::Key_Space:
     case Qt::Key_Up:
     case Qt::Key_W:
-        m_jumpRequested = false;
+        m_input.jump = false;
         break;
 
     case Qt::Key_Q:
@@ -162,23 +177,11 @@ void GameView::keyReleaseEvent(QKeyEvent *event){
         QGraphicsView::keyReleaseEvent(event);
         return;
     }
-
-    updateSceneInput();
 }
 void GameView::resizeEvent(QResizeEvent *event){
     QGraphicsView::resizeEvent(event);
     m_camera.setViewportSize(viewport()->size());
     applyCameraTransform();
-}
-void GameView::updateSceneInput(){
-    if (!m_scene)
-        return;
-
-    InputState input;
-    input.moveLeft = m_moveLeft;
-    input.moveRight = m_moveRight;
-    input.jump = m_jumpRequested;
-    m_scene->setInput(input);
 }
 void GameView::wheelEvent(QWheelEvent *event)
 {

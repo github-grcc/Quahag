@@ -1,11 +1,15 @@
 #pragma once
-#include"world/tilemap.h"
-#include"core/inputstate.h"
-#include<QtGlobal>
-struct TickContext{
+
+#include "core/inputstate.h"
+
+#include <QtGlobal>
+
+class GameWorld;
+
+struct TickContext
+{
     qreal dt{0.0};
-    const TileMap &tileMap;
-    class GameWorld *world{nullptr};
+    GameWorld *world{nullptr};
     const InputState *input{nullptr};
-    qreal gravity;
+    qreal gravity{0.0};
 };

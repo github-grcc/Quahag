@@ -3,9 +3,8 @@
 
 #include <QPointF>
 
-class QGraphicsScene;
+class GameWorld;
 class Player;
-class TileMap;
 
 class LevelBuilder
 {
@@ -15,7 +14,7 @@ public:
         QPointF playerSpawn;
     };
 
-    BuildResult build(QGraphicsScene &scene, const TileMap &tileMap) const;
+    BuildResult build(GameWorld &world) const;
 };
 
 #endif // LEVELBUILDER_H

@@ -14,6 +14,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
+        core/gameloop.cpp
+        core/gameloop.h
         core/inputstate.h
         core/tickcontext.h
         core/entitytypes.h

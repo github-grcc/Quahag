@@ -1,5 +1,6 @@
 #ifndef GAMEVIEW_H
 #define GAMEVIEW_H
+#include "core/gameloop.h"
 #include "graphics/camera2d.h"
 #include "world/gamescene.h"
 
@@ -27,13 +28,11 @@ protected:
 private:
     void applyCameraTransform();
     void updateCamera(qreal dt = 0.0);
-    void updateSceneInput();
     QPointer<GameScene> m_scene;
-    bool m_moveLeft{false};
-    bool m_moveRight{false};
-    bool m_jumpRequested{false};
+    InputState m_input;
     bool m_zoomPulseRequested{false};
     bool m_shakeRequested{false};
+    GameLoop m_loop;
     Camera2D m_camera;
 
 };

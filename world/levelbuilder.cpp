@@ -1,24 +1,19 @@
 #include "world/levelbuilder.h"
 
 #include "entities/player.h"
-#include "graphics/tilelayeritem.h"
+#include "world/gameworld.h"
 #include "world/tilemap.h"
 
-#include <QGraphicsScene>
-
-LevelBuilder::BuildResult LevelBuilder::build(QGraphicsScene &scene, const TileMap &tileMap) const
+LevelBuilder::BuildResult LevelBuilder::build(GameWorld &world) const
 {
-    auto *tileLayer = new TileLayerItem(tileMap);
-    tileLayer->setZValue(0.0);
-    scene.addItem(tileLayer);
-
     BuildResult result;
+    const TileMap &tileMap = world.tileMap();
     result.playerSpawn = tileMap.playerSpawnScenePosition();
 
     auto *player = new Player();
     player->setPos(result.playerSpawn);
     player->setZValue(2.0);
-    scene.addItem(player);
+    world.spawn(player);
     result.player = player;
     return result;
 }

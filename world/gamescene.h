@@ -1,35 +1,33 @@
 #ifndef GAMESCENE_H
 #define GAMESCENE_H
-#include <QElapsedTimer>
+
 #include <QGraphicsScene>
-#include <QTimer>
+#include <QPointer>
 
-#include "core/inputstate.h"
-#include "entities/actoritem.h"
-#include "entities/player.h"
-#include "world/tilemap.h"
+#include "world/gameworld.h"
 
-class GameScene:public QGraphicsScene{
+class ActorItem;
+class Player;
+
+class GameScene : public QGraphicsScene
+{
     Q_OBJECT
 public:
-    explicit GameScene(QObject *parent=nullptr);
-    void setInput(const InputState &input);
-    Player *player()const{return m_player;}
+    explicit GameScene(QObject *parent = nullptr);
+
+    void attachWorld(GameWorld *world);
+    GameWorld *world() const { return m_world; }
+    Player *player() const;
+
 signals:
     void playerMoved(qreal dt);
-private slots:
-    void tick();
 
 private:
-    void initWorld();
-    void registerActor(ActorItem *actor);
+    void rebuildScene();
+    void addEntityItem(ActorItem *entity);
+    void removeEntityItem(ActorItem *entity);
 
-    Player *m_player{nullptr};
-    TileMap m_tileMap;
-    QList<ActorItem *> m_actors;
-    InputState m_input;
-    QTimer m_timer;
-    QElapsedTimer m_frameTimer;
+    QPointer<GameWorld> m_world;
 };
 
 #endif // GAMESCENE_H

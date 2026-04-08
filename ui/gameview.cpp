@@ -17,6 +17,7 @@ GameView::GameView(QWidget *parent)
     auto *world = new GameWorld(this);
     const LevelBuilder builder;
     builder.build(*world);
+    
     TickContext initCtx;
     initCtx.world = world;
     world->step(initCtx);

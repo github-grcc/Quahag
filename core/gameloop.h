@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/inputstate.h"
+#include"core/tickcontext.h"
 
 #include <QElapsedTimer>
 #include <QObject>
@@ -22,6 +23,8 @@ public:
 
 signals:
     void stepped(qreal dt);
+    void cameraShakeRequested(CameraShakeEvent cameraShakeEvent);
+    void cameraZoomPulseRequested(CameraZoomPulseEvent cameraZoomPulseEvent);
 
 private slots:
     void tick();

@@ -3,7 +3,7 @@
 #include "core/gameloop.h"
 #include "graphics/camera2d.h"
 #include "world/gamescene.h"
-
+#include"core/tickcontext.h"
 #include <QGraphicsView>
 #include <QPointer>
 
@@ -14,12 +14,11 @@ public:
     explicit GameView(QWidget *parent = nullptr);
     ~GameView() override;
     void setCameraZoom(qreal zoom);
-    void startCameraZoomPulse(qreal amplitude,
-                              qreal duration,
-                              qreal cycles = 0.5,
-                              qreal center = -1.0,
-                              qreal initialPhase = 0.0);
-    void addCameraShake(qreal amplitude, qreal duration, qreal frequency = 28.0);
+    void startCameraZoomPulse(CameraZoomPulseEvent zoomPulseEvent);
+    void addCameraShake(CameraShakeEvent shakeEvent);
+private slots:
+    void addShake(CameraShakeEvent shakeEvent);
+    void startZoomPulse(CameraZoomPulseEvent zoomPulseEvent);
 protected:
     void keyPressEvent(QKeyEvent* event)override;
     void keyReleaseEvent(QKeyEvent* event)override;
@@ -32,6 +31,9 @@ private:
     InputState m_input;
     bool m_zoomPulseRequested{false};
     bool m_shakeRequested{false};
+    CameraShakeEvent m_shakeEvent;
+    CameraZoomPulseEvent m_zoomPulseEvent;
+
     GameLoop m_loop;
     Camera2D m_camera;
 

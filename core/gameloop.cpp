@@ -40,12 +40,21 @@ void GameLoop::tick()
 {
     if (!m_world)
         return;
-
+    WorldEvents events;
     TickContext ctx;
     ctx.dt = m_elapsedTimer.restart() / 1000.0;
     ctx.world = m_world;
     ctx.input = m_input;
     ctx.gravity = kGravity;
+    ctx.events=&events;
+
     m_world->step(ctx);
+
+    for(const CameraShakeEvent &shake:events.cameraShakes){
+        emit cameraShakeRequested(shake);
+    }
+    for(const CameraZoomPulseEvent &zoomPulse:events.cameraZoomPulses){
+        emit cameraZoomPulseRequested(zoomPulse);
+    }
     emit stepped(ctx.dt);
 }

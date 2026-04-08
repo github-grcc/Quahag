@@ -1,6 +1,7 @@
 #include "world/levelbuilder.h"
 
 #include "entities/player.h"
+#include"entities/enemy.h"
 #include "world/gameworld.h"
 #include "world/tilemap.h"
 
@@ -14,6 +15,17 @@ LevelBuilder::BuildResult LevelBuilder::build(GameWorld &world) const
     player->setPos(result.playerSpawn);
     player->setZValue(2.0);
     world.spawn(player);
+
+    for(int j=0;j<tileMap.mapHeight();j++){
+        for(int i=0;i<tileMap.mapWidth();i++){
+            if(tileMap.tileAt(j,i)==TileMap::TileType::EnemySpawn){
+                auto *enemy = new Enemy();
+                enemy->setPos(tileMap.tileCenterToScene(j,i));
+                enemy->setZValue(2.0);
+                world.spawn(enemy);
+            }
+        }
+    }
     result.player = player;
     return result;
 }

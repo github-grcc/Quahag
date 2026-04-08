@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         entities/actoritem.h
         entities/player.cpp
         entities/player.h
+        entities/enemy.h
+        entities/enemy.cpp
         graphics/camera2d.cpp
         graphics/camera2d.h
         graphics/tilelayeritem.cpp

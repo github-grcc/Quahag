@@ -11,7 +11,8 @@ public:
     enum class TileType{
         Empty = 0,
         Platform=1,
-        PlayerSpawn = 2
+        PlayerSpawn = 2,
+        EnemySpawn=3
     };
 
     TileMap();

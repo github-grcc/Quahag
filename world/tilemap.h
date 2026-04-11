@@ -24,6 +24,7 @@ public:
     TileType tileAt(int row,int col) const;
     bool isSolidTile(int row, int col) const;
     QPointF tileToScene(int row,int col) const;
+    QPoint sceneToTile(QPointF scenePos) const;
     QPointF tileCenterToScene(int row,int col) const;
     QPointF tileBottomCenterToScene(int row,int col) const;
     QRectF sceneBounds() const;

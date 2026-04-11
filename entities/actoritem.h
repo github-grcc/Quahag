@@ -31,14 +31,17 @@ public:
     void setVelocityY(qreal y) { m_velocity.setY(y); }
 
     bool onGround() const { return m_onGround; }
-
+    qreal age()const{return m_age;}
+    
 protected:
     void setOnGround(bool value) { m_onGround = value; }
-
+    void setAge(qreal age){m_age=age;}
+    void advanceAge(qreal dt){m_age+=dt;}
 private:
     QPointF m_velocity{0.0, 0.0};
     bool m_onGround{false};
     bool m_pendingDestroy{false};
+    qreal m_age{0.0};
 };
 
 #endif // ACTORITEM_H

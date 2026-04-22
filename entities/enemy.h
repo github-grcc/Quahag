@@ -5,6 +5,7 @@
 
 class TileMap;
 class QPainter;
+// class Player;
 class QStyleOptionGraphicsItem;
 class QWidget;
 enum class EnemyState{
@@ -30,7 +31,7 @@ public:
     EnemyState state()const{return m_state;}
 private:
     void updateState(const TickContext &ctx);
-    void transitionTo(EnemyState newState);
+    void transitionTo(EnemyState newState, const TickContext &ctx);
 
     void behavePatrol(const TickContext &ctx);
     void behaveAlert(const TickContext &ctx);
@@ -65,7 +66,7 @@ private:
     int m_walkDirection{1};
     qreal m_patrolTimer{0.0};
 
-    QPointer<Player> m_seenPlayer;
+    Player *m_seenPlayer{nullptr};
     qreal m_lastSeenPlayerTime{-9.0};
     qreal m_lastVisonCheckTime{0.0};
     qreal m_visionDistance{0.0};
@@ -76,6 +77,6 @@ private:
 
     int m_health{3};
     qreal m_lastDamageTime{-9.0};
-    qreal m_seed{0.0};
+    qreal m_seed{0.6};
     QRectF m_bodyRect{-12.0, -24.0, 24.0, 48.0};
 };

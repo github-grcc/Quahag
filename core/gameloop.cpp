@@ -55,6 +55,12 @@ void GameLoop::tick()
     }
     for(const CameraZoomPulseEvent &zoomPulse:events.cameraZoomPulses){
         emit cameraZoomPulseRequested(zoomPulse);
+        m_zoomPulseActive = true;
     }
+    if(events.stopZoomPulseRequested && m_zoomPulseActive){
+        emit cameraZoomPulseStopRequested();
+        m_zoomPulseActive = false;
+    }
+    events.zoomPulseActive = m_zoomPulseActive;
     emit stepped(ctx.dt);
 }

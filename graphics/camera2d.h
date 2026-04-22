@@ -26,6 +26,9 @@ public:
                         qreal initialPhase = 0.0);
     void addShake(qreal amplitude, qreal duration, qreal frequency = 28.0);
 
+    bool isZoomPulseActive() const;
+    void stopZoomPulse();
+
     QTransform transform() const;
     QPointF currentCenter() const { return m_currentCenter; }
     qreal currentZoom() const { return m_currentZoom; }

@@ -21,6 +21,8 @@ struct CameraZoomPulseEvent{
 struct WorldEvents{
     QVector<CameraShakeEvent> cameraShakes;
     QVector<CameraZoomPulseEvent> cameraZoomPulses;
+    bool stopZoomPulseRequested{false};
+    bool zoomPulseActive{false};
 };
 struct TickContext
 {

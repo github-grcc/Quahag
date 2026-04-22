@@ -25,6 +25,7 @@ signals:
     void stepped(qreal dt);
     void cameraShakeRequested(CameraShakeEvent cameraShakeEvent);
     void cameraZoomPulseRequested(CameraZoomPulseEvent cameraZoomPulseEvent);
+    void cameraZoomPulseStopRequested();
 
 private slots:
     void tick();
@@ -34,4 +35,5 @@ private:
     const InputState *m_input{nullptr};
     QTimer m_timer;
     QElapsedTimer m_elapsedTimer;
+    bool m_zoomPulseActive{false};
 };

@@ -39,6 +39,7 @@ GameView::GameView(QWidget *parent)
     connect(&m_loop, &GameLoop::stepped, this, &GameView::updateCamera);
     connect(&m_loop,&GameLoop::cameraShakeRequested,this,&GameView::addShake);
     connect(&m_loop,&GameLoop::cameraZoomPulseRequested,this,&GameView::startZoomPulse);
+    connect(&m_loop,&GameLoop::cameraZoomPulseStopRequested,this,&GameView::stopZoomPulse);
 
     m_camera.setSceneBounds(m_scene->sceneRect());
     m_camera.setViewportSize(viewport()->size());
@@ -198,6 +199,10 @@ void GameView::addShake(CameraShakeEvent shakeEvent){
 void GameView::startZoomPulse(CameraZoomPulseEvent zoomPulseEvent){
     m_zoomPulseRequested=true;
     m_zoomPulseEvent=zoomPulseEvent;
+}
+void GameView::stopZoomPulse(){
+    m_camera.stopZoomPulse();
+    m_camera.setTargetZoom(1.0);
 }
 void GameView::updateCamera(qreal dt)
 {

@@ -99,6 +99,17 @@ void Camera2D::startZoomPulse(qreal amplitude,
     m_zoomPulseInitialPhase = initialPhase;
 }
 
+bool Camera2D::isZoomPulseActive() const
+{
+    return m_zoomPulseDuration > 0.0 && m_zoomPulseElapsed < m_zoomPulseDuration;
+}
+
+void Camera2D::stopZoomPulse()
+{
+    m_zoomPulseDuration = 0.0;
+    m_zoomPulseElapsed = 0.0;
+}
+
 void Camera2D::addShake(qreal amplitude, qreal duration, qreal frequency)
 {
     m_shakeAmplitude = qMax(m_shakeAmplitude, qMax(0.0, amplitude));

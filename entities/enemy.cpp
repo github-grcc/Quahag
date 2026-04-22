@@ -23,7 +23,7 @@ constexpr qreal kPatrolWalkDuration=5.0;
 constexpr qreal kAlertDuration=0.3;
 constexpr qreal kConfusedDuration=2.0;
 constexpr qreal kStunnedDuration=0.5;
-constexpr qreal kMaxVisionDistance=200.0;
+constexpr qreal kMaxVisionDistance=300.0;
 constexpr qreal kVisionCheckInterval=0.2;
 constexpr qreal kVisionTop=M_PI/4.0;
 constexpr qreal kVisionBottom=M_PI/3.0;
@@ -45,7 +45,7 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     painter->drawRect(m_bodyRect);
 }
 void Enemy::tick(const TickContext &ctx)
-{   m_seenPlayer=ctx.world->player();
+{   
     if (!ctx.world)
         return;
     advanceAge(ctx.dt);
@@ -65,41 +65,42 @@ void Enemy::updateState(const TickContext &ctx)
     case EnemyState::Patrol:
         behavePatrol(ctx);
         if(checkTransitionToAlert(ctx)){
-            transitionTo(EnemyState::Alert);
+            transitionTo(EnemyState::Alert, ctx);
         }
         break;
     case EnemyState::Alert:
         behaveAlert(ctx);
         if(m_stateTimer>=kAlertDuration&&m_seenPlayer){
-            transitionTo(EnemyState::Chase);
+            transitionTo(EnemyState::Chase, ctx);
         }else if(!m_seenPlayer){
-            transitionTo(EnemyState::Confused);
+            transitionTo(EnemyState::Confused, ctx);
         }
         break;
     case EnemyState::Chase:
         behaveChase(ctx);
         if(!m_seenPlayer){
-            transitionTo(EnemyState::Confused);
+            transitionTo(EnemyState::Confused, ctx);
         }
         break;
     case EnemyState::Confused:
         behaveConfused(ctx);
         if(checkTransitionToAlert(ctx)){
-            transitionTo(EnemyState::Alert);
+            transitionTo(EnemyState::Alert, ctx);
         }else if(m_stateTimer>=kConfusedDuration){
-            transitionTo(EnemyState::Patrol);
+            transitionTo(EnemyState::Patrol, ctx);
         }
         break;
     case EnemyState::Stunned:
         behaveStunned(ctx);
         if(m_stateTimer>=kStunnedDuration){
-            transitionTo(m_seenPlayer?EnemyState::Chase:EnemyState::Patrol);
+            transitionTo(m_seenPlayer?EnemyState::Chase:EnemyState::Patrol, ctx);
         }
         break;
     }
 }
-void Enemy::transitionTo(EnemyState newState)
+void Enemy::transitionTo(EnemyState newState, const TickContext &ctx)
 {
+    const EnemyState oldState = m_state;
     switch(m_state){
     case EnemyState::Patrol:
         m_patrolTimer=0.0;
@@ -112,6 +113,9 @@ void Enemy::transitionTo(EnemyState newState)
     switch(m_state){
     case EnemyState::Alert:
         m_shotCooldown=qMax(m_shotCooldown,kAlertDuration);
+        if(oldState==EnemyState::Patrol && ctx.events && !ctx.events->zoomPulseActive){
+            ctx.events->cameraZoomPulses.append(CameraZoomPulseEvent{});
+        }
         break;
     case EnemyState::Confused:
         setVelocityX(0.0);
@@ -128,7 +132,7 @@ void Enemy::behavePatrol(const TickContext &ctx)
     const TileMap &tileMap=ctx.world->tileMap();
     m_patrolTimer+=ctx.dt;
     const qreal cycleTime=fmod(age()+m_seed*kPatrolCycleDuration,kPatrolCycleDuration);
-    const bool shouldWalk=cycleTime<kPatrolCycleDuration&&onGround()&&age()-m_lastDamageTime>0.5;
+    const bool shouldWalk=cycleTime<kPatrolWalkDuration&&onGround()&&age()-m_lastDamageTime>0.5;
     if(shouldWalk){
         if(!hasGroundAhead(tileMap)||hasWallAhead(tileMap)){
             m_walkDirection=-m_walkDirection;
@@ -243,11 +247,11 @@ void Enemy::updateVision(const TickContext &ctx){
 bool Enemy::isInVisionCone(const Player *player)const{
     QPointF eye=eyePosition();
     const qreal angleToPlayer=qAtan2(player->y()-eye.y(),player->x()-eye.x());
-    const qreal baseAngle=m_facing?0.0:M_PI;
+    const qreal baseAngle=m_facing>0?0.0:M_PI;
     qreal angleDiff=angleToPlayer-baseAngle;
     while(angleDiff>M_PI)angleDiff-=2*M_PI;
     while(angleDiff<-M_PI)angleDiff+=2*M_PI;
-    const qreal halfCone=player->y()>y()?kVisionTop:kVisionBottom;
+    const qreal halfCone=player->y()>y()?kVisionBottom:kVisionTop;
     return qAbs(angleDiff)<=halfCone;
 }
 bool Enemy::hasLineOfSight(const QPointF &from,const QPointF &to,const TileMap &tileMap)const{
@@ -256,10 +260,10 @@ bool Enemy::hasLineOfSight(const QPointF &from,const QPointF &to,const TileMap &
     const qreal dist= qSqrt(dx*dx+dy*dy);
     const int steps=qCeil(dist/tileMap.tileWidth());
     for(int i=0;i<=steps;++i){
-        const qreal t=i/steps;
+        const qreal t=i/static_cast<qreal>(steps);
         const qreal checkX=from.x()+dx*t;
         const qreal checkY=from.y()+dy*t;
-        if(tileMap.isSolidTile(static_cast<int>(checkY),static_cast<int>(checkX)))
+        if(tileMap.isSolidTile(static_cast<int>(checkY/tileMap.tileHeight()),static_cast<int>(checkX/tileMap.tileWidth())))
             return false;
     }
     return true;
@@ -270,15 +274,15 @@ QPointF Enemy::eyePosition()const{
 bool Enemy::hasGroundAhead(const TileMap &tileMap)const{
     const qreal checkX=x()+m_facing*(m_bodyRect.width()/2+5);
     const qreal checkY=y()+m_bodyRect.height()/2+5;
-    return tileMap.isSolidTile(static_cast<int>(checkY),static_cast<int>(checkX));
+    return tileMap.isSolidTile(static_cast<int>(checkY/tileMap.tileHeight()),static_cast<int>(checkX/tileMap.tileWidth()));
 }
 bool Enemy::hasWallAhead(const TileMap &tileMap)const{
     const qreal checkX=x()+m_facing*(m_bodyRect.width()/2+2);
     const qreal checkY=y();
-    return tileMap.isSolidTile(static_cast<int>(checkY),static_cast<int>(checkX));
+    return tileMap.isSolidTile(static_cast<int>(checkY/tileMap.tileHeight()),static_cast<int>(checkX/tileMap.tileWidth()));
 }
 void Enemy::tryShoot(const TickContext &ctx){
-    if(m_shotCooldown>0||m_seenPlayer)return;
+    if(m_shotCooldown>0||!m_seenPlayer)return;
     // auto *bullet = new Bullet(this);
     // bullet->setPos(x() + m_facing * 10 + qCos(m_aimAngle) * 35,
     //                y() - 20 + qSin(m_aimAngle) * 35);
@@ -289,8 +293,11 @@ void Enemy::takeDamage(const TickContext &ctx){
     m_lastDamageTime=age();
     m_shotCooldown=qMax(m_shotCooldown,kDamageShotInterval);
     if(--m_health<=0){
+        if(ctx.events && ctx.events->zoomPulseActive){
+            ctx.events->stopZoomPulseRequested=true;
+        }
         ctx.world->destroyLater(this);
     }else{
-        transitionTo(EnemyState::Stunned);
+        transitionTo(EnemyState::Stunned, ctx);
     }
 }

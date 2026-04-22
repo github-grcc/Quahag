@@ -19,6 +19,7 @@ public:
 private slots:
     void addShake(CameraShakeEvent shakeEvent);
     void startZoomPulse(CameraZoomPulseEvent zoomPulseEvent);
+    void stopZoomPulse();
 protected:
     void keyPressEvent(QKeyEvent* event)override;
     void keyReleaseEvent(QKeyEvent* event)override;

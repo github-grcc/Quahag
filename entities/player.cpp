@@ -125,3 +125,10 @@ void Player::resolveTileCollisionsY(const TileMap &tileMap)
         playerRect = sceneBoundingRect();
     }
 }
+
+void Player::takeDamage(const TickContext &ctx)
+{
+    if (--m_health <= 0) {
+        ctx.world->destroyLater(this);
+    }
+}

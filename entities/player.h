@@ -24,6 +24,9 @@ public:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = nullptr) override;
 
+    void takeDamage(const TickContext &ctx);
+    int health() const { return m_health; }
+
 private:
     void moveHorizontally(qreal dt, const TileMap &tileMap);
     void moveVertically(qreal dt, const TileMap &tileMap, qreal gravity);
@@ -31,6 +34,7 @@ private:
     void resolveTileCollisionsY(const TileMap &tileMap);
 
     QRectF m_bodyRect{-12.0, -24.0, 24.0, 48.0};
+    int m_health{3};
 };
 
 #endif // PLAYER_H

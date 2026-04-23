@@ -1,6 +1,8 @@
 #include "bullet.h"
 #include"world/tilemap.h"
 #include"world/gameworld.h"
+#include"entities/player.h"
+#include"entities/enemy.h"
 #include<QPainter>
 #include<QtGlobal>
 Bullet::Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle, qreal speed)
@@ -35,12 +37,38 @@ void Bullet::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 bool Bullet::checkCollision(const TickContext &ctx)
 {
     QRectF bulletRect = sceneBoundingRect();
+
+    const auto &entities = ctx.world->entities();
+    for (ActorItem *entity : entities) {
+        if (entity == m_owner)
+            continue;
+        if (entity == this)
+            continue;
+
+        EntityKind kind = entity->kind();
+        if (kind != EntityKind::Player && kind != EntityKind::Enemy)
+            continue;
+
+        if (bulletRect.intersects(entity->sceneBoundingRect())) {
+            if (kind == EntityKind::Player) {
+                Player *player = static_cast<Player *>(entity);
+                player->takeDamage(ctx);
+            } else if (kind == EntityKind::Enemy) {
+                Enemy *enemy = static_cast<Enemy *>(entity);
+                enemy->takeDamage(ctx);
+            }
+            ctx.world->destroyLater(this);
+            return true;
+        }
+    }
+
     const auto tiles = ctx.world->tileMap().solidTilesOverlapping(bulletRect);
     for (const QPoint &tile : tiles) {
-        const QRectF tileRect(ctx.world->tileMap().tileToScene(tile.y(), tile.x()), ctx.world->tileMap().tileSize().toSizeF()); 
+        const QRectF tileRect(ctx.world->tileMap().tileToScene(tile.y(), tile.x()), ctx.world->tileMap().tileSize().toSizeF());
         if (!bulletRect.intersects(tileRect))
             continue;
-        
+        ctx.world->destroyLater(this);
+        return true;
     }
     return false;
 }

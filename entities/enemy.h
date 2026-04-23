@@ -57,6 +57,7 @@ private:
     bool hasWallAhead(const TileMap &tileMap) const;
     
     void tryShoot(const TickContext &ctx);
+public:
     void takeDamage(const TickContext &ctx);
 
     EnemyState m_state{EnemyState::Patrol};

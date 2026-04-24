@@ -1,4 +1,5 @@
 #include "entities/enemy.h"
+#include "entities/player.h"
 #include "world/gameworld.h"
 #include "world/tilemap.h"
 #include"entities/bullet.h"
@@ -149,10 +150,6 @@ void Enemy::behavePatrol(const TickContext &ctx)
 void Enemy::behaveAlert(const TickContext &ctx){
     setVelocityX(0.0);
     if(m_seenPlayer){
-        
-        
-
-
         const QPointF eye=eyePosition();
         m_aimAngle=qAtan2(m_seenPlayer->y()-eye.y(),m_seenPlayer->x()-eye.x());
     }

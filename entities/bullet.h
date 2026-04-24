@@ -1,6 +1,7 @@
 #pragma once
 #include "entities/actoritem.h"
 #include"core/tickcontext.h"
+#include <QPointer>
 #include <QRectF>
 class TileMap;
 class QPainter;
@@ -20,7 +21,7 @@ public:
                QWidget *widget = nullptr) override;
 private:
     bool checkCollision(const TickContext &ctx);
-    ActorItem *m_owner{nullptr};
+    QPointer<ActorItem> m_owner;
     qreal m_shootAngle{0.0};
     qreal m_speed{200.0};
     QPointF m_spawnPosition{0.0, 0.0};

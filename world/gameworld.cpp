@@ -1,6 +1,7 @@
 #include "world/gameworld.h"
 
 #include "entities/player.h"
+#include <QGraphicsScene>
 
 GameWorld::GameWorld(QObject *parent)
     : QObject(parent)
@@ -80,6 +81,9 @@ void GameWorld::flushDestroys()
         emit entityAboutToBeDestroyed(entity);
         m_entities.removeOne(entity);
         unindexEntity(entity);
+        if (entity->scene()) {
+            entity->scene()->removeItem(entity);
+        }
         delete entity;
     }
 

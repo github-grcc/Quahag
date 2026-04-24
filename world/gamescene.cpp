@@ -59,8 +59,9 @@ void GameScene::addEntityItem(ActorItem *entity)
 
 void GameScene::removeEntityItem(ActorItem *entity)
 {
-    if (!entity || entity->scene() != this)
+    if (!entity)
         return;
 
-    removeItem(entity);
+    if (entity->scene() == this)
+        removeItem(entity);
 }

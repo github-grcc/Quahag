@@ -1,11 +1,11 @@
 #pragma once
 #include "entities/actoritem.h"
-#include"entities/player.h"
+#include <QPointer>
 #include <QRectF>
 
 class TileMap;
 class QPainter;
-// class Player;
+class Player;
 class QStyleOptionGraphicsItem;
 class QWidget;
 enum class EnemyState{
@@ -67,7 +67,7 @@ public:
     int m_walkDirection{1};
     qreal m_patrolTimer{0.0};
 
-    Player *m_seenPlayer{nullptr};
+    QPointer<Player> m_seenPlayer;
     qreal m_lastSeenPlayerTime{-9.0};
     qreal m_lastVisonCheckTime{0.0};
     qreal m_visionDistance{0.0};

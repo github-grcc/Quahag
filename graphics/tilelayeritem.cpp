@@ -1,7 +1,7 @@
 #include "graphics/tilelayeritem.h"
 
 #include "world/tilemap.h"
-
+#include<QStyleOptionGraphicsItem>
 #include <QImage>
 #include <QPainter>
 #include <QPainterPath>
@@ -86,16 +86,20 @@ QRectF TileLayerItem::boundingRect() const
 }
 
 void TileLayerItem::paint(QPainter *painter,
-                          const QStyleOptionGraphicsItem *,
+                          const QStyleOptionGraphicsItem *option,
                           QWidget *)
 {
     painter->setRenderHint(QPainter::Antialiasing, false); // 保持像素锐利
     painter->setPen(Qt::NoPen);
 
     QRandomGenerator rng(42); // 固定种子让每次刷新图案稳定
-
-    for (int row = 0; row < m_tileMap.mapHeight(); ++row) {
-        for (int col = 0; col < m_tileMap.mapWidth(); ++col) {
+    QRectF exposed = option->exposedRect;
+    int startRow = qMax(0, static_cast<int>(exposed.top() / m_tileMap.tileHeight()));
+    int endRow = qMin(m_tileMap.mapHeight() - 1, static_cast<int>(exposed.bottom() / m_tileMap.tileHeight()));
+    int startCol = qMax(0, static_cast<int>(exposed.left() / m_tileMap.tileWidth()));
+    int endCol = qMin(m_tileMap.mapWidth() - 1, static_cast<int>(exposed.right() / m_tileMap.tileWidth()));
+    for (int row = startRow; row <= endRow; ++row) {
+        for (int col = startCol; col <= endCol; ++col) {
             if (m_tileMap.tileAt(row, col) != TileMap::TileType::Platform)
                 continue;
 

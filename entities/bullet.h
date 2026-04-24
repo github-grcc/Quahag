@@ -10,7 +10,7 @@ class Bullet : public ActorItem
 {
     Q_OBJECT
 public:
-    Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle, qreal speed);
+    Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle);
     void tick(const TickContext &ctx) override;
     EntityKind kind() const override { return EntityKind::Bullet; }
     Faction faction() const override { return Faction::Enemy; }
@@ -22,7 +22,7 @@ private:
     bool checkCollision(const TickContext &ctx);
     ActorItem *m_owner{nullptr};
     qreal m_shootAngle{0.0};
-    qreal m_speed{100.0};
+    qreal m_speed{200.0};
     QPointF m_spawnPosition{0.0, 0.0};
     QRectF m_bodyRect{-5.0,-5.0,10.0,10.0};
 };

@@ -5,11 +5,10 @@
 #include"entities/enemy.h"
 #include<QPainter>
 #include<QtGlobal>
-Bullet::Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle, qreal speed)
+Bullet::Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle)
 {
     m_owner = owner;
     m_shootAngle = shootAngle;
-    m_speed = speed;
     m_spawnPosition = spawnPosition;
     setPos(spawnPosition);
     setRotation(m_shootAngle * 180.0 / M_PI);

@@ -1,7 +1,6 @@
 #include "world/gameworld.h"
 
 #include "entities/player.h"
-#include <QGraphicsScene>
 
 GameWorld::GameWorld(QObject *parent)
     : QObject(parent)
@@ -20,27 +19,45 @@ Player *GameWorld::player() const
 
 QVector<ActorItem *> GameWorld::entities() const
 {
-    QVector<ActorItem *> result;
-    result.reserve(static_cast<int>(m_entities.size()));
+    if (!m_entitiesDirty)
+        return m_cachedEntities;
+
+    m_cachedEntities.clear();
+    m_cachedEntities.reserve(static_cast<int>(m_entities.size()));
     for (const auto &ptr : m_entities) {
         if (ptr && !ptr->pendingDestroy())
-            result.append(ptr.get());
+            m_cachedEntities.append(ptr.get());
+    }
+    m_entitiesDirty = false;
+    return m_cachedEntities;
+}
+
+QVector<ActorItem *> GameWorld::entitiesOfKind(EntityKind kind) const
+{
+    QVector<ActorItem *> result;
+    const auto it = m_entitiesByKind.constFind(kind);
+    if (it != m_entitiesByKind.cend()) {
+        result.reserve(it.value().size());
+        for (ActorItem *e : it.value()) {
+            if (e && !e->pendingDestroy())
+                result.append(e);
+        }
     }
     return result;
 }
 
-const QVector<ActorItem *> &GameWorld::entitiesOfKind(EntityKind kind) const
+QVector<ActorItem *> GameWorld::entitiesOfFaction(Faction faction) const
 {
-    static const QVector<ActorItem *> kEmptyEntities;
-    const auto it = m_entitiesByKind.constFind(kind);
-    return it != m_entitiesByKind.cend() ? it.value() : kEmptyEntities;
-}
-
-const QVector<ActorItem *> &GameWorld::entitiesOfFaction(Faction faction) const
-{
-    static const QVector<ActorItem *> kEmptyEntities;
+    QVector<ActorItem *> result;
     const auto it = m_entitiesByFaction.constFind(faction);
-    return it != m_entitiesByFaction.cend() ? it.value() : kEmptyEntities;
+    if (it != m_entitiesByFaction.cend()) {
+        result.reserve(it.value().size());
+        for (ActorItem *e : it.value()) {
+            if (e && !e->pendingDestroy())
+                result.append(e);
+        }
+    }
+    return result;
 }
 
 void GameWorld::step(const TickContext &ctx)
@@ -59,6 +76,7 @@ void GameWorld::step(const TickContext &ctx)
 
 void GameWorld::destroyLater(ActorItem *entity)
 {
+    Q_ASSERT(!m_inFlushDestroys);
     if (!entity || entity->pendingDestroy())
         return;
 
@@ -79,6 +97,7 @@ void GameWorld::flushSpawns()
     }
 
     m_pendingSpawn.clear();
+    m_entitiesDirty = true;
 }
 
 void GameWorld::flushDestroys()
@@ -89,17 +108,13 @@ void GameWorld::flushDestroys()
     const QVector<ActorItem *> toDestroy = std::move(m_pendingDestroy);
     m_pendingDestroy.clear();
 
+    m_inFlushDestroys = true;
     for (ActorItem *entity : toDestroy) {
         if (!entity)
             continue;
 
         emit entityAboutToBeDestroyed(entity);
         unindexEntity(entity);
-
-        QGraphicsScene *scene = entity->scene();
-        if (scene) {
-            scene->removeItem(entity);
-        }
 
         auto it = std::find_if(m_entities.begin(), m_entities.end(),
                                [entity](const std::unique_ptr<ActorItem> &ptr) {
@@ -109,6 +124,8 @@ void GameWorld::flushDestroys()
             m_entities.erase(it);
         }
     }
+    m_entitiesDirty = true;
+    m_inFlushDestroys = false;
 }
 
 void GameWorld::indexEntity(ActorItem *entity)
@@ -153,10 +170,8 @@ void GameWorld::clearAllEntities()
 
     for (auto &ptr : m_entities) {
         if (ptr) {
-            QGraphicsScene *scene = ptr->scene();
-            if (scene) {
-                scene->removeItem(ptr.get());
-            }
+            emit entityAboutToBeDestroyed(ptr.get());
+            unindexEntity(ptr.get());
         }
     }
 

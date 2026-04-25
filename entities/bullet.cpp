@@ -5,6 +5,11 @@
 #include"entities/enemy.h"
 #include<QPainter>
 #include<QtGlobal>
+
+namespace {
+constexpr qreal kMaxBulletLifetime = 5.0;
+}
+
 Bullet::Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle)
 {
     m_owner = owner;
@@ -17,7 +22,14 @@ Bullet::Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle)
 }
 void Bullet::tick(const TickContext &ctx)
 {
-    checkCollision(ctx);
+    advanceAge(ctx.dt);
+    if (age() > kMaxBulletLifetime) {
+        if (ctx.world)
+            ctx.world->destroyLater(this);
+        return;
+    }
+    if (checkCollision(ctx))
+        return;
     setPos(pos() + velocity() * ctx.dt);
 }
 
@@ -52,11 +64,9 @@ bool Bullet::checkCollision(const TickContext &ctx)
             continue;
 
         if (bulletRect.intersects(entity->sceneBoundingRect())) {
-            if (kind == EntityKind::Player) {
-                Player *player = static_cast<Player *>(entity);
+            if (auto *player = qobject_cast<Player *>(entity)) {
                 player->takeDamage(ctx);
-            } else if (kind == EntityKind::Enemy) {
-                Enemy *enemy = static_cast<Enemy *>(entity);
+            } else if (auto *enemy = qobject_cast<Enemy *>(entity)) {
                 enemy->takeDamage(ctx);
             }
             ctx.world->destroyLater(this);

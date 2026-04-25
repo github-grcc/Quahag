@@ -14,6 +14,7 @@ class ActorItem : public QGraphicsObject
     Q_OBJECT
 public:
     explicit ActorItem(QGraphicsItem *parent = nullptr);
+    ~ActorItem() override = default;
     virtual void tick(const TickContext &ctx) = 0;
 
     virtual EntityKind kind() const = 0;

@@ -29,6 +29,7 @@ public:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = nullptr) override;
     EnemyState state()const{return m_state;}
+    void takeDamage(const TickContext &ctx);
 private:
     void updateState(const TickContext &ctx);
     void transitionTo(EnemyState newState, const TickContext &ctx);
@@ -57,8 +58,6 @@ private:
     bool hasWallAhead(const TileMap &tileMap) const;
     
     void tryShoot(const TickContext &ctx);
-public:
-    void takeDamage(const TickContext &ctx);
 
     EnemyState m_state{EnemyState::Patrol};
     qreal m_stateTimer{0.0};

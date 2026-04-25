@@ -26,6 +26,7 @@ public:
     template<typename T, typename... Args>
     T *createEntity(Args&&... args) {
         static_assert(std::is_base_of_v<ActorItem, T>, "T must derive from ActorItem");
+        Q_ASSERT(!m_inFlushDestroys);
         auto entity = std::make_unique<T>(std::forward<Args>(args)...);
         T *raw = entity.get();
         m_pendingSpawn.push_back(std::move(entity));
@@ -38,8 +39,8 @@ public:
     TileMap &tileMap() { return m_tileMap; }
 
     QVector<ActorItem *> entities() const;
-    const QVector<ActorItem *> &entitiesOfKind(EntityKind kind) const;
-    const QVector<ActorItem *> &entitiesOfFaction(Faction faction) const;
+    QVector<ActorItem *> entitiesOfKind(EntityKind kind) const;
+    QVector<ActorItem *> entitiesOfFaction(Faction faction) const;
     Player *player() const;
 
 signals:
@@ -59,8 +60,13 @@ private:
     std::vector<std::unique_ptr<ActorItem>> m_pendingSpawn;
     QVector<ActorItem *> m_pendingDestroy;
 
+    bool m_inFlushDestroys{false};
+
     QHash<EntityKind, QVector<ActorItem *>> m_entitiesByKind;
     QHash<Faction, QVector<ActorItem *>> m_entitiesByFaction;
 
     QPointer<Player> m_player;
+
+    mutable QVector<ActorItem *> m_cachedEntities;
+    mutable bool m_entitiesDirty{true};
 };

@@ -1,3 +1,5 @@
 build/
 clawstrike/
 build-asan/
+.claude/
+CLAUDE.md

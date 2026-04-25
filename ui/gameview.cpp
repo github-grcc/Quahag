@@ -17,11 +17,12 @@ GameView::GameView(QWidget *parent)
     auto *world = new GameWorld(this);
     const LevelBuilder builder;
     builder.build(*world);
-    
+
+    m_scene->attachWorld(world);
+
     TickContext initCtx;
     initCtx.world = world;
     world->step(initCtx);
-    m_scene->attachWorld(world);
 
     setScene(m_scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -206,7 +207,7 @@ void GameView::stopZoomPulse(){
 }
 void GameView::updateCamera(qreal dt)
 {
-    if (!m_scene || !m_scene->player())
+    if (!m_scene || !m_scene->player() || m_scene->player()->pendingDestroy())
         return;
 
     m_camera.setSceneBounds(m_scene->sceneRect());

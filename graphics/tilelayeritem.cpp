@@ -74,7 +74,7 @@ QImage TileLayerItem::generateWoodTile(int width, int height, int seed)
     painter.end();
     return img;
 }
-TileLayerItem::TileLayerItem(const TileMap &tileMap, QGraphicsItem *parent)
+TileLayerItem::TileLayerItem(const TileMap *tileMap, QGraphicsItem *parent)
     : QGraphicsItem(parent), m_tileMap(tileMap)
 {
     initWoodTextures();
@@ -82,7 +82,9 @@ TileLayerItem::TileLayerItem(const TileMap &tileMap, QGraphicsItem *parent)
 
 QRectF TileLayerItem::boundingRect() const
 {
-    return m_tileMap.sceneBounds();
+    if (!m_tileMap)
+        return {};
+    return m_tileMap->sceneBounds();
 }
 
 void TileLayerItem::paint(QPainter *painter,
@@ -92,19 +94,22 @@ void TileLayerItem::paint(QPainter *painter,
     painter->setRenderHint(QPainter::Antialiasing, false); // 保持像素锐利
     painter->setPen(Qt::NoPen);
 
+    if (!m_tileMap)
+        return;
+
     QRandomGenerator rng(42); // 固定种子让每次刷新图案稳定
     QRectF exposed = option->exposedRect;
-    int startRow = qMax(0, static_cast<int>(exposed.top() / m_tileMap.tileHeight()));
-    int endRow = qMin(m_tileMap.mapHeight() - 1, static_cast<int>(exposed.bottom() / m_tileMap.tileHeight()));
-    int startCol = qMax(0, static_cast<int>(exposed.left() / m_tileMap.tileWidth()));
-    int endCol = qMin(m_tileMap.mapWidth() - 1, static_cast<int>(exposed.right() / m_tileMap.tileWidth()));
+    int startRow = qMax(0, static_cast<int>(exposed.top() / m_tileMap->tileHeight()));
+    int endRow = qMin(m_tileMap->mapHeight() - 1, static_cast<int>(exposed.bottom() / m_tileMap->tileHeight()));
+    int startCol = qMax(0, static_cast<int>(exposed.left() / m_tileMap->tileWidth()));
+    int endCol = qMin(m_tileMap->mapWidth() - 1, static_cast<int>(exposed.right() / m_tileMap->tileWidth()));
     for (int row = startRow; row <= endRow; ++row) {
         for (int col = startCol; col <= endCol; ++col) {
-            if (m_tileMap.tileAt(row, col) != TileMap::TileType::Platform)
+            if (m_tileMap->tileAt(row, col) != TileMap::TileType::Platform)
                 continue;
 
-            QRectF targetRect(m_tileMap.tileToScene(row, col),
-                              m_tileMap.tileSize().toSizeF());
+            QRectF targetRect(m_tileMap->tileToScene(row, col),
+                              m_tileMap->tileSize().toSizeF());
 
             // 随机选取一种预生成的木纹
             int texIdx = rng.bounded(m_woodTextures.size());

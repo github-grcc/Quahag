@@ -59,7 +59,7 @@ void GameScene::rebuildScene()
 
     setSceneRect(m_world->tileMap().sceneBounds());
 
-    auto *tileLayer = new TileLayerItem(m_world->tileMap());
+    auto *tileLayer = new TileLayerItem(&m_world->tileMap());
     tileLayer->setZValue(0.0);
     m_tileLayer.reset(tileLayer);
     addItem(tileLayer);

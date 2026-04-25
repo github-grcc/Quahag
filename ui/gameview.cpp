@@ -88,6 +88,7 @@ void GameView::keyPressEvent(QKeyEvent *event){
         
         case Qt::Key_Q:
         case Qt::Key_E:
+        case Qt::Key_J:
 
             event->accept();
             return;
@@ -116,6 +117,9 @@ void GameView::keyPressEvent(QKeyEvent *event){
         m_input.jump = true;
         break;
 
+    case Qt::Key_J:
+        m_input.attack = true;
+        break;
     case Qt::Key_Q:
         m_zoomPulseRequested = true;
         break;
@@ -142,6 +146,7 @@ void GameView::keyReleaseEvent(QKeyEvent *event){
 
         case Qt::Key_Q:
         case Qt::Key_E:
+        case Qt::Key_J:
             event->accept();
             return;
         default:
@@ -169,6 +174,9 @@ void GameView::keyReleaseEvent(QKeyEvent *event){
         m_input.jump = false;
         break;
 
+    case Qt::Key_J:
+        m_input.attack = false;
+        break;
     case Qt::Key_Q:
         m_zoomPulseRequested = false;
         break;

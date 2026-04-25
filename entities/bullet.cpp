@@ -35,9 +35,12 @@ void Bullet::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 bool Bullet::checkCollision(const TickContext &ctx)
 {
+    if (!ctx.world)
+        return false;
+
     QRectF bulletRect = sceneBoundingRect();
 
-    const auto &entities = ctx.world->entities();
+    const auto entities = ctx.world->entities();
     for (ActorItem *entity : entities) {
         if (entity == m_owner)
             continue;

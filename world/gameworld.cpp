@@ -8,9 +8,25 @@ GameWorld::GameWorld(QObject *parent)
 {
 }
 
+GameWorld::~GameWorld()
+{
+    clearAllEntities();
+}
+
 Player *GameWorld::player() const
 {
     return m_player;
+}
+
+QVector<ActorItem *> GameWorld::entities() const
+{
+    QVector<ActorItem *> result;
+    result.reserve(static_cast<int>(m_entities.size()));
+    for (const auto &ptr : m_entities) {
+        if (ptr && !ptr->pendingDestroy())
+            result.append(ptr.get());
+    }
+    return result;
 }
 
 const QVector<ActorItem *> &GameWorld::entitiesOfKind(EntityKind kind) const
@@ -31,7 +47,7 @@ void GameWorld::step(const TickContext &ctx)
 {
     flushSpawns();
 
-    const QVector<ActorItem *> currentEntities = m_entities;
+    const QVector<ActorItem *> currentEntities = entities();
     for (ActorItem *entity : currentEntities) {
         if (!entity || entity->pendingDestroy())
             continue;
@@ -39,14 +55,6 @@ void GameWorld::step(const TickContext &ctx)
     }
 
     flushDestroys();
-}
-
-void GameWorld::spawn(ActorItem *entity)
-{
-    if (!entity)
-        return;
-
-    m_pendingSpawn.append(entity);
 }
 
 void GameWorld::destroyLater(ActorItem *entity)
@@ -60,13 +68,14 @@ void GameWorld::destroyLater(ActorItem *entity)
 
 void GameWorld::flushSpawns()
 {
-    for (ActorItem *entity : std::as_const(m_pendingSpawn)) {
-        if (!entity)
+    for (auto &ptr : m_pendingSpawn) {
+        if (!ptr)
             continue;
 
-        m_entities.append(entity);
-        indexEntity(entity);
-        emit entitySpawned(entity);
+        ActorItem *raw = ptr.get();
+        m_entities.push_back(std::move(ptr));
+        indexEntity(raw);
+        emit entitySpawned(raw);
     }
 
     m_pendingSpawn.clear();
@@ -74,24 +83,39 @@ void GameWorld::flushSpawns()
 
 void GameWorld::flushDestroys()
 {
-    for (ActorItem *entity : std::as_const(m_pendingDestroy)) {
+    if (m_pendingDestroy.isEmpty())
+        return;
+
+    const QVector<ActorItem *> toDestroy = std::move(m_pendingDestroy);
+    m_pendingDestroy.clear();
+
+    for (ActorItem *entity : toDestroy) {
         if (!entity)
             continue;
 
         emit entityAboutToBeDestroyed(entity);
-        m_entities.removeOne(entity);
         unindexEntity(entity);
-        if (entity->scene()) {
-            entity->scene()->removeItem(entity);
-        }
-        delete entity;
-    }
 
-    m_pendingDestroy.clear();
+        QGraphicsScene *scene = entity->scene();
+        if (scene) {
+            scene->removeItem(entity);
+        }
+
+        auto it = std::find_if(m_entities.begin(), m_entities.end(),
+                               [entity](const std::unique_ptr<ActorItem> &ptr) {
+                                   return ptr.get() == entity;
+                               });
+        if (it != m_entities.end()) {
+            m_entities.erase(it);
+        }
+    }
 }
 
 void GameWorld::indexEntity(ActorItem *entity)
 {
+    if (!entity)
+        return;
+
     m_entitiesByKind[entity->kind()].append(entity);
     m_entitiesByFaction[entity->faction()].append(entity);
 
@@ -101,9 +125,43 @@ void GameWorld::indexEntity(ActorItem *entity)
 
 void GameWorld::unindexEntity(ActorItem *entity)
 {
-    m_entitiesByKind[entity->kind()].removeOne(entity);
-    m_entitiesByFaction[entity->faction()].removeOne(entity);
+    if (!entity)
+        return;
+
+    auto kindIt = m_entitiesByKind.find(entity->kind());
+    if (kindIt != m_entitiesByKind.end()) {
+        kindIt.value().removeOne(entity);
+        if (kindIt.value().isEmpty())
+            m_entitiesByKind.erase(kindIt);
+    }
+
+    auto factionIt = m_entitiesByFaction.find(entity->faction());
+    if (factionIt != m_entitiesByFaction.end()) {
+        factionIt.value().removeOne(entity);
+        if (factionIt.value().isEmpty())
+            m_entitiesByFaction.erase(factionIt);
+    }
 
     if (entity == m_player)
-        m_player = nullptr;
+        m_player.clear();
+}
+
+void GameWorld::clearAllEntities()
+{
+    m_pendingSpawn.clear();
+    m_pendingDestroy.clear();
+
+    for (auto &ptr : m_entities) {
+        if (ptr) {
+            QGraphicsScene *scene = ptr->scene();
+            if (scene) {
+                scene->removeItem(ptr.get());
+            }
+        }
+    }
+
+    m_entitiesByKind.clear();
+    m_entitiesByFaction.clear();
+    m_player.clear();
+    m_entities.clear();
 }

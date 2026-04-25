@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QVector>
+#include <memory>
 
 #include "core/entitytypes.h"
 #include "core/tickcontext.h"
@@ -18,14 +19,25 @@ class GameWorld : public QObject
     Q_OBJECT
 public:
     explicit GameWorld(QObject *parent = nullptr);
+    ~GameWorld() override;
+
     void step(const TickContext &ctx);
 
-    void spawn(ActorItem *entity);
+    template<typename T, typename... Args>
+    T *createEntity(Args&&... args) {
+        static_assert(std::is_base_of_v<ActorItem, T>, "T must derive from ActorItem");
+        auto entity = std::make_unique<T>(std::forward<Args>(args)...);
+        T *raw = entity.get();
+        m_pendingSpawn.push_back(std::move(entity));
+        return raw;
+    }
+
     void destroyLater(ActorItem *entity);
 
     const TileMap &tileMap() const { return m_tileMap; }
     TileMap &tileMap() { return m_tileMap; }
-    const QVector<ActorItem *> &entities() const { return m_entities; }
+
+    QVector<ActorItem *> entities() const;
     const QVector<ActorItem *> &entitiesOfKind(EntityKind kind) const;
     const QVector<ActorItem *> &entitiesOfFaction(Faction faction) const;
     Player *player() const;
@@ -39,11 +51,12 @@ private:
     void flushDestroys();
     void indexEntity(ActorItem *entity);
     void unindexEntity(ActorItem *entity);
+    void clearAllEntities();
 
     TileMap m_tileMap;
 
-    QVector<ActorItem *> m_entities;
-    QVector<ActorItem *> m_pendingSpawn;
+    std::vector<std::unique_ptr<ActorItem>> m_entities;
+    std::vector<std::unique_ptr<ActorItem>> m_pendingSpawn;
     QVector<ActorItem *> m_pendingDestroy;
 
     QHash<EntityKind, QVector<ActorItem *>> m_entitiesByKind;

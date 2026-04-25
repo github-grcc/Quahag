@@ -3,6 +3,7 @@
 #include "core/inputstate.h"
 #include<QVector>
 #include <QtGlobal>
+#include <QPointer>
 
 class GameWorld;
 struct CameraShakeEvent{
@@ -27,7 +28,7 @@ struct WorldEvents{
 struct TickContext
 {
     qreal dt{0.0};
-    GameWorld *world{nullptr};
+    QPointer<GameWorld> world;
     const InputState *input{nullptr};
     qreal gravity{0.0};
     WorldEvents *events{nullptr};

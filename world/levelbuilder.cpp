@@ -11,18 +11,16 @@ LevelBuilder::BuildResult LevelBuilder::build(GameWorld &world) const
     const TileMap &tileMap = world.tileMap();
     result.playerSpawn = tileMap.playerSpawnScenePosition();
 
-    auto *player = new Player();
+    auto *player = world.createEntity<Player>();
     player->setPos(result.playerSpawn);
     player->setZValue(2.0);
-    world.spawn(player);
 
     for(int j=0;j<tileMap.mapHeight();j++){
         for(int i=0;i<tileMap.mapWidth();i++){
             if(tileMap.tileAt(j,i)==TileMap::TileType::EnemySpawn){
-                auto *enemy = new Enemy();
+                auto *enemy = world.createEntity<Enemy>();
                 enemy->setPos(tileMap.tileCenterToScene(j,i));
                 enemy->setZValue(2.0);
-                world.spawn(enemy);
             }
         }
     }

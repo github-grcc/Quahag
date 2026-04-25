@@ -129,6 +129,8 @@ void Player::resolveTileCollisionsY(const TileMap &tileMap)
 void Player::takeDamage(const TickContext &ctx)
 {
     if (--m_health <= 0) {
-        ctx.world->destroyLater(this);
+        if (ctx.world) {
+            ctx.world->destroyLater(this);
+        }
     }
 }

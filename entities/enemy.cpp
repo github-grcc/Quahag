@@ -46,7 +46,7 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     painter->drawRect(m_bodyRect);
 }
 void Enemy::tick(const TickContext &ctx)
-{   
+{
     if (!ctx.world)
         return;
     advanceAge(ctx.dt);
@@ -280,10 +280,7 @@ bool Enemy::hasWallAhead(const TileMap &tileMap)const{
 }
 void Enemy::tryShoot(const TickContext &ctx){
     if(m_shotCooldown>0||!m_seenPlayer)return;
-    auto *bullet = new Bullet(this,eyePosition(),m_aimAngle);
-    // bullet->setPos(x() + m_facing * 10 + qCos(m_aimAngle) * 35,
-    // //                y() - 20 + qSin(m_aimAngle) * 35);
-    ctx.world->spawn(bullet);
+    ctx.world->createEntity<Bullet>(this, eyePosition(), m_aimAngle);
     m_shotCooldown = kShotInterval;
 }
 void Enemy::takeDamage(const TickContext &ctx){

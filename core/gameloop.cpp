@@ -46,18 +46,18 @@ void GameLoop::tick()
     ctx.world = m_world;
     ctx.input = m_input;
     ctx.gravity = kGravity;
-    ctx.events=&events;
+    ctx.events = &events;
 
     m_world->step(ctx);
 
-    for(const CameraShakeEvent &shake:events.cameraShakes){
+    for (const CameraShakeEvent &shake : events.cameraShakes) {
         emit cameraShakeRequested(shake);
     }
-    for(const CameraZoomPulseEvent &zoomPulse:events.cameraZoomPulses){
+    for (const CameraZoomPulseEvent &zoomPulse : events.cameraZoomPulses) {
         emit cameraZoomPulseRequested(zoomPulse);
         m_zoomPulseActive = true;
     }
-    if(events.stopZoomPulseRequested && m_zoomPulseActive){
+    if (events.stopZoomPulseRequested && m_zoomPulseActive) {
         emit cameraZoomPulseStopRequested();
         m_zoomPulseActive = false;
     }

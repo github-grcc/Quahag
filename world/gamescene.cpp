@@ -10,13 +10,29 @@ GameScene::GameScene(QObject *parent)
 {
 }
 
+GameScene::~GameScene()
+{
+    if (m_world) {
+        disconnect(m_world, nullptr, this, nullptr);
+    }
+
+    for (QGraphicsItem *item : items()) {
+        if (item != m_tileLayer.get()) {
+            removeItem(item);
+        }
+    }
+
+    m_tileLayer.reset();
+}
+
 void GameScene::attachWorld(GameWorld *world)
 {
     if (m_world == world)
         return;
 
-    if (m_world)
+    if (m_world) {
         disconnect(m_world, nullptr, this, nullptr);
+    }
 
     m_world = world;
     rebuildScene();
@@ -36,6 +52,8 @@ Player *GameScene::player() const
 void GameScene::rebuildScene()
 {
     clear();
+    m_tileLayer.reset();
+
     if (!m_world)
         return;
 
@@ -43,6 +61,7 @@ void GameScene::rebuildScene()
 
     auto *tileLayer = new TileLayerItem(m_world->tileMap());
     tileLayer->setZValue(0.0);
+    m_tileLayer.reset(tileLayer);
     addItem(tileLayer);
 
     for (ActorItem *entity : m_world->entities())

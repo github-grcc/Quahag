@@ -7,31 +7,31 @@
 #include <QtGlobal>
 
 namespace {
-constexpr qreal kRunSpeed = 420.0;
+constexpr qreal kRunSpeed = 600.0;
 constexpr qreal kJumpImpulse = 820.0;
-constexpr qreal kAirDrag = 10.0;
-constexpr qreal kGroundDrag = 500.0;
-constexpr qreal kAirAccel = 600.0;
-constexpr qreal kGroundAccel = 1300.0;
+constexpr qreal kAirDrag = 1000.0;
+constexpr qreal kGroundDrag = 3000.0;
+constexpr qreal kAirAccel = 2000.0;
+constexpr qreal kGroundAccel = 3000.0;
 
 // Coyote time
-constexpr qreal kCoyoteTime = 0.08;
+constexpr qreal kCoyoteTime = 0.1;
 
 // Jump system
 constexpr int kMaxJumps = 2;
 constexpr qreal kDoubleJumpImpulse = 800.0;
 
 // Wall slide
-constexpr qreal kWallSlideSpeed = 120.0;
+constexpr qreal kWallSlideSpeed = 100.0;
 constexpr qreal kWallJumpHorizontal = 400.0;
 constexpr qreal kWallJumpVertical = 700.0;
 constexpr qreal kWallJumpLockTime = 0.12;
 
 // Attack
-constexpr qreal kAttackRange = 30.0;
-constexpr qreal kAttackHeight = 30.0;
-constexpr qreal kAttackCooldown = 0.25;
-constexpr qreal kAttackVisualDuration = 0.1;
+constexpr qreal kAttackRange = 50.0;
+constexpr qreal kAttackHeight = 50.0;
+constexpr qreal kAttackCooldown = 0.1;
+constexpr qreal kAttackVisualDuration = 0.2;
 } // namespace
 
 Player::Player()

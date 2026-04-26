@@ -4,7 +4,7 @@
 #include "world/gameworld.h"
 
 namespace {
-constexpr qreal kGravity = 1800.0;
+constexpr qreal kGravity = 2000.0;
 constexpr int kTickIntervalMs = 16;
 }
 

@@ -11,7 +11,7 @@ void TileLayerItem::initWoodTextures()
 {
     m_woodTextures.clear();
     for (int i = 0; i < m_textureCount; ++i) {
-        QImage img = generateWoodTile(30, 30, i + 1);
+        QImage img = generateWoodTile(m_tileMap->tileWidth(), m_tileMap->tileHeight(), i + 1);
         m_woodTextures.append(QPixmap::fromImage(img));
     }
 }

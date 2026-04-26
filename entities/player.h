@@ -54,7 +54,7 @@ private:
     void processAttack(bool attackPressed, const TickContext &ctx);
 
     QRectF m_bodyRect{-12.0, -24.0, 24.0, 48.0};
-    int m_health{20};
+    int m_health{3};
 
     // State
     PlayerState m_state{PlayerState::Grounded};

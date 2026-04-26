@@ -23,7 +23,7 @@ private:
     bool checkCollision(const TickContext &ctx);
     QPointer<ActorItem> m_owner;
     qreal m_shootAngle{0.0};
-    qreal m_speed{200.0};
+    qreal m_speed{800.0};
     QPointF m_spawnPosition{0.0, 0.0};
-    QRectF m_bodyRect{-5.0,-5.0,10.0,10.0};
+    QRectF m_bodyRect{-2.0,-2.0,4.0,4.0};
 };

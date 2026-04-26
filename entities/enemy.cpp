@@ -24,13 +24,16 @@ constexpr qreal kPatrolWalkDuration=5.0;
 constexpr qreal kAlertDuration=0.3;
 constexpr qreal kConfusedDuration=2.0;
 constexpr qreal kStunnedDuration=0.5;
-constexpr qreal kMaxVisionDistance=300.0;
+constexpr qreal kMaxVisionDistance=500.0;
 constexpr qreal kVisionCheckInterval=0.2;
 constexpr qreal kVisionTop=M_PI/4.0;
 constexpr qreal kVisionBottom=M_PI/3.0;
 constexpr qreal kShotInterval=0.2;
 constexpr qreal kDamageShotInterval=0.5;
-constexpr qreal kVisionGrowRate=1000;
+constexpr qreal kVisionGrowRate=2000;
+
+// Enemy-specific gravity (clawstrike: 400 vs cat's 2000)
+constexpr qreal kEnemyGravity=400.0;
 } // namespace
 Enemy::Enemy()
 {
@@ -53,7 +56,7 @@ void Enemy::tick(const TickContext &ctx)
     m_stateTimer += ctx.dt;
     updateVision(ctx);
     updateState(ctx);
-    applyGravity(ctx.dt, ctx.world->tileMap(), ctx.gravity);
+    applyGravity(ctx.dt, ctx.world->tileMap(), kEnemyGravity);
     applyMovement(ctx.dt, ctx.world->tileMap());
     if(m_shotCooldown>0.0){
         m_shotCooldown-=ctx.dt;

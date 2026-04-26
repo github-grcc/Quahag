@@ -18,6 +18,7 @@ public:
 
     void setWorld(GameWorld *world);
     void setInputState(const InputState *input);
+    void setWorldPaused(bool paused);
     void start();
     void stop();
 
@@ -36,4 +37,5 @@ private:
     QTimer m_timer;
     QElapsedTimer m_elapsedTimer;
     bool m_zoomPulseActive{false};
+    bool m_worldPaused{false};
 };

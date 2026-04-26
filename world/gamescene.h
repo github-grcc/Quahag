@@ -22,11 +22,12 @@ public:
     GameWorld *world() const { return m_world; }
     Player *player() const;
 
+    void rebuildScene();
+
 signals:
     void playerMoved(qreal dt);
 
 private:
-    void rebuildScene();
     void addEntityItem(ActorItem *entity);
     void removeEntityItem(ActorItem *entity);
 

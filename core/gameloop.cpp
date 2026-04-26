@@ -24,6 +24,11 @@ void GameLoop::setInputState(const InputState *input)
     m_input = input;
 }
 
+void GameLoop::setWorldPaused(bool paused)
+{
+    m_worldPaused = paused;
+}
+
 void GameLoop::start()
 {
     if (!m_elapsedTimer.isValid())
@@ -48,7 +53,8 @@ void GameLoop::tick()
     ctx.gravity = kGravity;
     ctx.events = &events;
 
-    m_world->step(ctx);
+    if (!m_worldPaused)
+        m_world->step(ctx);
 
     for (const CameraShakeEvent &shake : events.cameraShakes) {
         emit cameraShakeRequested(shake);

@@ -7,6 +7,8 @@
 #include <QGraphicsView>
 #include <QPointer>
 
+class QPainter;
+
 class GameView : public QGraphicsView{
     Q_OBJECT
 
@@ -25,9 +27,11 @@ protected:
     void keyReleaseEvent(QKeyEvent* event)override;
     void resizeEvent(QResizeEvent *event)override;
     void wheelEvent(QWheelEvent *event) override;
+    void drawForeground(QPainter *painter, const QRectF &rect) override;
 private:
     void applyCameraTransform();
     void updateCamera(qreal dt = 0.0);
+    void resetGame();
     QPointer<GameScene> m_scene;
     InputState m_input;
     bool m_zoomPulseRequested{false};
@@ -38,5 +42,7 @@ private:
     GameLoop m_loop;
     Camera2D m_camera;
 
+    enum class GameState { Title, Playing, GameOver };
+    GameState m_gameState{GameState::Title};
 };
 #endif // GAMEVIEW_H

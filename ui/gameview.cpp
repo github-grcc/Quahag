@@ -6,6 +6,7 @@
 #include "world/levelbuilder.h"
 
 #include <QKeyEvent>
+#include <QPainter>
 #include <QResizeEvent>
 #include <QTimer>
 
@@ -47,7 +48,9 @@ GameView::GameView(QWidget *parent)
     m_camera.setFollowResponsiveness(15.0);
     m_camera.setFollowDamping(0.1);
     m_camera.setZoomResponsiveness(10.0);
+    m_camera.setTargetZoom(2.0);
     m_loop.setWorld(world);
+    m_loop.setWorldPaused(true);
     m_loop.setInputState(&m_input);
     m_loop.start();
     QTimer::singleShot(0, this, [this]() { updateCamera(0.0); });
@@ -74,6 +77,24 @@ void GameView::addCameraShake(CameraShakeEvent shakeEvent)
 }
 
 void GameView::keyPressEvent(QKeyEvent *event){
+    // Game state routing
+    if (m_gameState == GameState::Title) {
+        if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+            m_gameState = GameState::Playing;
+            m_loop.setWorldPaused(false);
+            m_camera.setTargetZoom(1.0);
+        }
+        event->accept();
+        return;
+    }
+    if (m_gameState == GameState::GameOver) {
+        if (event->key() == Qt::Key_R && !event->isAutoRepeat()) {
+            resetGame();
+        }
+        event->accept();
+        return;
+    }
+
     if (event->isAutoRepeat()) {
         switch (event->key()) {
         case Qt::Key_Left:
@@ -132,6 +153,11 @@ void GameView::keyPressEvent(QKeyEvent *event){
     }
 }
 void GameView::keyReleaseEvent(QKeyEvent *event){
+    if (m_gameState != GameState::Playing) {
+        event->accept();
+        return;
+    }
+
     if (event->isAutoRepeat()) {
         switch (event->key()) {
         case Qt::Key_Left:
@@ -195,8 +221,55 @@ void GameView::resizeEvent(QResizeEvent *event){
 }
 void GameView::wheelEvent(QWheelEvent *event)
 {
-    event->ignore();     
+    event->ignore();
 }
+
+void GameView::drawForeground(QPainter *painter, const QRectF &)
+{
+    if (m_gameState == GameState::Playing)
+        return;
+
+    painter->save();
+    painter->resetTransform();
+    const QRect r = viewport()->rect();
+
+    const QPoint shadow(2, 2);
+    QFont titleFont;
+    titleFont.setPixelSize(48);
+    titleFont.setBold(true);
+    QFont promptFont;
+    promptFont.setPixelSize(24);
+
+    if (m_gameState == GameState::Title) {
+        painter->setFont(titleFont);
+        painter->setPen(QColor(0, 0, 0, 180));
+        painter->drawText(r.translated(shadow), Qt::AlignHCenter | Qt::AlignTop, "Quahag圆哈镇");
+        painter->setPen(Qt::white);
+        painter->drawText(r, Qt::AlignHCenter | Qt::AlignTop, "Quahag圆哈镇");
+
+        painter->setFont(promptFont);
+        painter->setPen(QColor(0, 0, 0, 180));
+        painter->drawText(r.translated(shadow), Qt::AlignHCenter | Qt::AlignBottom, "space to start");
+        painter->setPen(Qt::white);
+        painter->drawText(r, Qt::AlignHCenter | Qt::AlignBottom, "space to start");
+    } else if (m_gameState == GameState::GameOver) {
+        painter->setFont(titleFont);
+        painter->setPen(QColor(0, 0, 0, 180));
+        painter->drawText(r.translated(shadow), Qt::AlignCenter, "死掉了");
+        painter->setPen(Qt::white);
+        painter->drawText(r, Qt::AlignCenter, "死掉了");
+
+        painter->setFont(promptFont);
+        QRect promptRect(r.left(), r.center().y() + 50, r.width(), 40);
+        painter->setPen(QColor(0, 0, 0, 180));
+        painter->drawText(promptRect.translated(shadow), Qt::AlignHCenter | Qt::AlignTop, "r to play again");
+        painter->setPen(Qt::white);
+        painter->drawText(promptRect, Qt::AlignHCenter | Qt::AlignTop, "r to play again");
+    }
+
+    painter->restore();
+}
+
 void GameView::applyCameraTransform()
 {
     setTransform(m_camera.transform(), false);
@@ -213,12 +286,44 @@ void GameView::stopZoomPulse(){
     m_camera.stopZoomPulse();
     m_camera.setTargetZoom(1.0);
 }
+
+void GameView::resetGame()
+{
+    m_camera.stopZoomPulse();
+    m_shakeRequested = false;
+    m_zoomPulseRequested = false;
+
+    GameWorld *world = m_scene->world();
+    if (!world)
+        return;
+
+    world->clearAllEntities();
+    m_scene->rebuildScene();
+
+    const LevelBuilder builder;
+    builder.build(*world);
+
+    TickContext initCtx;
+    initCtx.world = world;
+    world->step(initCtx);
+
+    m_camera.setTargetZoom(1.0);
+    m_camera.snapToTarget();
+
+    m_input = InputState{};
+    m_gameState = GameState::Playing;
+}
+
 void GameView::updateCamera(qreal dt)
 {
     if (!m_scene)
         return;
 
     const bool playerAlive = m_scene->player() && !m_scene->player()->pendingDestroy();
+
+    if (m_gameState == GameState::Playing && !playerAlive) {
+        m_gameState = GameState::GameOver;
+    }
 
     if (playerAlive) {
         m_camera.setSceneBounds(m_scene->sceneRect());

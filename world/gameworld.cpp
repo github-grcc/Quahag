@@ -179,4 +179,5 @@ void GameWorld::clearAllEntities()
     m_entitiesByFaction.clear();
     m_player.clear();
     m_entities.clear();
+    m_entitiesDirty = true;
 }

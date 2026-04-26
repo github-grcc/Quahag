@@ -43,6 +43,8 @@ public:
     QVector<ActorItem *> entitiesOfFaction(Faction faction) const;
     Player *player() const;
 
+    void clearAllEntities();
+
 signals:
     void entitySpawned(ActorItem *entity);
     void entityAboutToBeDestroyed(ActorItem *entity);
@@ -52,7 +54,6 @@ private:
     void flushDestroys();
     void indexEntity(ActorItem *entity);
     void unindexEntity(ActorItem *entity);
-    void clearAllEntities();
 
     TileMap m_tileMap;
 

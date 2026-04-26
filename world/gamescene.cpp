@@ -51,8 +51,8 @@ Player *GameScene::player() const
 
 void GameScene::rebuildScene()
 {
+    (void)m_tileLayer.release(); // clear() will delete the item
     clear();
-    m_tileLayer.reset();
 
     if (!m_world)
         return;

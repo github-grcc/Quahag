@@ -1,9 +1,12 @@
 #include "entities/player.h"
 #include "entities/enemy.h"
+#include "entities/particle.h"
+#include "entities/claweffect.h"
 #include "world/gameworld.h"
 #include "world/tilemap.h"
 
 #include <QPainter>
+#include <QRandomGenerator>
 #include <QtGlobal>
 
 namespace {
@@ -48,14 +51,16 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     painter->setPen(Qt::NoPen);
 
     // Attack flash (underneath body)
-    if (m_attackTimer > 0.0) {
+    if (age() - m_lastDamageTime < 0.1) {
+        painter->setBrush(Qt::white);
+        painter->drawRect(m_bodyRect);
+    } else if (m_attackTimer > 0.0) {
         painter->setBrush(QColor(255, 255, 255, 120));
         painter->drawRect(m_bodyRect);
-    }else{
+    } else {
         // Main body
         painter->setBrush(QColor(253, 184, 39));
         painter->drawRect(m_bodyRect);
-
     }
 
 
@@ -358,6 +363,11 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
     if (!attackPressed || m_attackCooldown > 0.0)
         return;
 
+    // Camera shake on attack
+    if (ctx.events) {
+        ctx.events->cameraShakes.append(CameraShakeEvent{5.0, 0.05, 28.0});
+    }
+
     const QRectF playerRect = sceneBoundingRect();
     QRectF hitbox;
     if (m_facing == 1) {
@@ -378,13 +388,44 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
             enemy->takeDamage(ctx);
     }
 
+    // Spawn ClawEffect at attack position
+    if (ctx.world) {
+        auto *rng = QRandomGenerator::global();
+        QPointF attackPos = sceneBoundingRect().center();
+        attackPos.setX(attackPos.x() + m_facing * 60.0);
+        attackPos.setX(attackPos.x() + rng->bounded(30.0) - 15.0);
+        attackPos.setY(attackPos.y() + rng->bounded(50.0) - 25.0);
+
+        ctx.world->createEntity<ClawEffect>(attackPos);
+    }
+
     m_attackCooldown = kAttackCooldown;
     m_attackTimer = kAttackVisualDuration;
 }
 
 void Player::takeDamage(const TickContext &ctx)
 {
+    m_lastDamageTime = age();
+
+    // Camera shake on damage
+    if (ctx.events) {
+        ctx.events->cameraShakes.append(CameraShakeEvent{10.0, 0.1, 28.0});
+    }
+
+    // Damage particles
+    if (ctx.world) {
+        Particle::fireworks(ctx.world, sceneBoundingRect().center(), 10,
+                            m_bodyRect.width() / 2.0,
+                            m_bodyRect.height() / 2.0);
+    }
+
     if (--m_health <= 0) {
+        // Death particles
+        if (ctx.world) {
+            Particle::fireworks(ctx.world, sceneBoundingRect().center(), 50,
+                                m_bodyRect.width() / 2.0,
+                                m_bodyRect.height() / 2.0);
+        }
         if (ctx.world) {
             ctx.world->destroyLater(this);
         }

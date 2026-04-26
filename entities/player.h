@@ -79,6 +79,9 @@ private:
     // Edge detection
     bool m_prevJump{false};
     bool m_prevAttack{false};
+
+    // Damage flash
+    qreal m_lastDamageTime{-9.0};
 };
 
 #endif // PLAYER_H

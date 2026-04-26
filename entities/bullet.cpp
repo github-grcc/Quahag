@@ -3,6 +3,7 @@
 #include"world/gameworld.h"
 #include"entities/player.h"
 #include"entities/enemy.h"
+#include "core/entitytypes.h"
 #include<QPainter>
 #include<QtGlobal>
 
@@ -19,6 +20,7 @@ Bullet::Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle)
     setRotation(m_shootAngle * 180.0 / M_PI);
     setVelocityX(m_speed * cos(m_shootAngle));
     setVelocityY(m_speed * sin(m_shootAngle));
+    setZValue(ZLayer::Bullets);
 }
 void Bullet::tick(const TickContext &ctx)
 {

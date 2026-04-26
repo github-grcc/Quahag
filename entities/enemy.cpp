@@ -1,9 +1,11 @@
 #include "entities/enemy.h"
 #include "entities/player.h"
+#include "entities/particle.h"
 #include "world/gameworld.h"
 #include "world/tilemap.h"
 #include"entities/bullet.h"
 #include <QPainter>
+#include <QRandomGenerator>
 #include<QtMath>
 #include<QtNumeric>
 #include<cmath>
@@ -45,7 +47,11 @@ QRectF Enemy::boundingRect() const
 void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->setPen(Qt::NoPen);
-    painter->setBrush(QColor(75, 207, 89));
+    if (age() - m_lastDamageTime < 0.1) {
+        painter->setBrush(Qt::white);
+    } else {
+        painter->setBrush(QColor(75, 207, 89));
+    }
     painter->drawRect(m_bodyRect);
 }
 void Enemy::tick(const TickContext &ctx)
@@ -289,7 +295,21 @@ void Enemy::tryShoot(const TickContext &ctx){
 void Enemy::takeDamage(const TickContext &ctx){
     m_lastDamageTime=age();
     m_shotCooldown=qMax(m_shotCooldown,kDamageShotInterval);
+
+    // Damage particles
+    if(ctx.world){
+        Particle::fireworks(ctx.world, sceneBoundingRect().center(), 10,
+                            m_bodyRect.width()/2.0,
+                            m_bodyRect.height()/2.0);
+    }
+
     if(--m_health<=0){
+        // Death particles
+        if(ctx.world){
+            Particle::fireworks(ctx.world, sceneBoundingRect().center(), 50,
+                                m_bodyRect.width()/2.0,
+                                m_bodyRect.height()/2.0);
+        }
         if(ctx.events && ctx.events->zoomPulseActive){
             ctx.events->stopZoomPulseRequested=true;
         }

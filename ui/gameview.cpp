@@ -30,7 +30,7 @@ GameView::GameView(QWidget *parent)
     setAlignment(Qt::AlignLeft | Qt::AlignTop);//场景的坐标原点固定在视图的左上角
     setTransformationAnchor(QGraphicsView::NoAnchor);
     setResizeAnchor(QGraphicsView::NoAnchor);
-    setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     setFrameShape(QFrame::NoFrame);
     setCacheMode(QGraphicsView::CacheNone);
@@ -215,20 +215,26 @@ void GameView::stopZoomPulse(){
 }
 void GameView::updateCamera(qreal dt)
 {
-    if (!m_scene || !m_scene->player() || m_scene->player()->pendingDestroy())
+    if (!m_scene)
         return;
 
-    m_camera.setSceneBounds(m_scene->sceneRect());
-    m_camera.setViewportSize(viewport()->size());
-    m_camera.setTargetCenter(m_scene->player()->sceneBoundingRect().center());
-    if(m_zoomPulseRequested){
-        startCameraZoomPulse(m_zoomPulseEvent);
-        m_zoomPulseRequested = false;
+    const bool playerAlive = m_scene->player() && !m_scene->player()->pendingDestroy();
+
+    if (playerAlive) {
+        m_camera.setSceneBounds(m_scene->sceneRect());
+        m_camera.setViewportSize(viewport()->size());
+        m_camera.setTargetCenter(m_scene->player()->sceneBoundingRect().center());
+        if (m_zoomPulseRequested) {
+            startCameraZoomPulse(m_zoomPulseEvent);
+            m_zoomPulseRequested = false;
+        }
+        if (m_shakeRequested) {
+            addCameraShake(m_shakeEvent);
+            m_shakeRequested = false;
+        }
     }
-    if(m_shakeRequested){
-        addCameraShake(m_shakeEvent);
-        m_shakeRequested = false;
-    }
+
+    // Always advance camera timers so zoom pulse / shake can decay naturally
     m_camera.update(dt);
     applyCameraTransform();
 }

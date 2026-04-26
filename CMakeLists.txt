@@ -23,6 +23,10 @@ set(PROJECT_SOURCES
         entities/actoritem.h
         entities/player.cpp
         entities/player.h
+        entities/particle.cpp
+        entities/particle.h
+        entities/claweffect.cpp
+        entities/claweffect.h
         entities/bullet.h
         entities/bullet.cpp
         entities/enemy.h

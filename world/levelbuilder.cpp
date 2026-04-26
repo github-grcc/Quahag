@@ -13,14 +13,14 @@ LevelBuilder::BuildResult LevelBuilder::build(GameWorld &world) const
 
     auto *player = world.createEntity<Player>();
     player->setPos(result.playerSpawn);
-    player->setZValue(2.0);
+    player->setZValue(ZLayer::Player);
 
     for(int j=0;j<tileMap.mapHeight();j++){
         for(int i=0;i<tileMap.mapWidth();i++){
             if(tileMap.tileAt(j,i)==TileMap::TileType::EnemySpawn){
                 auto *enemy = world.createEntity<Enemy>();
                 enemy->setPos(tileMap.tileCenterToScene(j,i));
-                enemy->setZValue(2.0);
+                enemy->setZValue(ZLayer::Enemies);
             }
         }
     }

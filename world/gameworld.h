@@ -44,13 +44,13 @@ public:
     Player *player() const;
 
     void clearAllEntities();
+    void flushSpawns();
 
 signals:
     void entitySpawned(ActorItem *entity);
     void entityAboutToBeDestroyed(ActorItem *entity);
 
 private:
-    void flushSpawns();
     void flushDestroys();
     void indexEntity(ActorItem *entity);
     void unindexEntity(ActorItem *entity);
@@ -67,7 +67,4 @@ private:
     QHash<Faction, QVector<ActorItem *>> m_entitiesByFaction;
 
     QPointer<Player> m_player;
-
-    mutable QVector<ActorItem *> m_cachedEntities;
-    mutable bool m_entitiesDirty{true};
 };

@@ -9,7 +9,13 @@ GameWorld::GameWorld(QObject *parent)
 
 GameWorld::~GameWorld()
 {
-    clearAllEntities();
+    // Release ownership so ~QGraphicsScene::clear() can delete entities.
+    // (The base ~QGraphicsScene always calls clear(); if unique_ptrs still
+    // own the entities we get a double-free.)
+    for (auto &ptr : m_entities)
+        (void)ptr.release();
+    for (auto &ptr : m_pendingSpawn)
+        (void)ptr.release();
 }
 
 Player *GameWorld::player() const
@@ -19,17 +25,13 @@ Player *GameWorld::player() const
 
 QVector<ActorItem *> GameWorld::entities() const
 {
-    if (!m_entitiesDirty)
-        return m_cachedEntities;
-
-    m_cachedEntities.clear();
-    m_cachedEntities.reserve(static_cast<int>(m_entities.size()));
+    QVector<ActorItem *> result;
+    result.reserve(static_cast<int>(m_entities.size()));
     for (const auto &ptr : m_entities) {
         if (ptr && !ptr->pendingDestroy())
-            m_cachedEntities.append(ptr.get());
+            result.append(ptr.get());
     }
-    m_entitiesDirty = false;
-    return m_cachedEntities;
+    return result;
 }
 
 QVector<ActorItem *> GameWorld::entitiesOfKind(EntityKind kind) const
@@ -97,7 +99,6 @@ void GameWorld::flushSpawns()
     }
 
     m_pendingSpawn.clear();
-    m_entitiesDirty = true;
 }
 
 void GameWorld::flushDestroys()
@@ -124,7 +125,6 @@ void GameWorld::flushDestroys()
             m_entities.erase(it);
         }
     }
-    m_entitiesDirty = true;
     m_inFlushDestroys = false;
 }
 
@@ -168,16 +168,15 @@ void GameWorld::clearAllEntities()
     m_pendingSpawn.clear();
     m_pendingDestroy.clear();
 
+    // Emit signal so GameScene removes entities from the scene before deletion.
+    // (Skip unindexEntity — the indices are cleared wholesale below.)
     for (auto &ptr : m_entities) {
-        if (ptr) {
+        if (ptr)
             emit entityAboutToBeDestroyed(ptr.get());
-            unindexEntity(ptr.get());
-        }
     }
 
     m_entitiesByKind.clear();
     m_entitiesByFaction.clear();
     m_player.clear();
     m_entities.clear();
-    m_entitiesDirty = true;
 }

@@ -1,6 +1,5 @@
 #include "ui/gameview.h"
 
-#include "core/tickcontext.h"
 #include "entities/player.h"
 #include "world/gameworld.h"
 #include "world/levelbuilder.h"
@@ -299,13 +298,8 @@ void GameView::resetGame()
 
     world->clearAllEntities();
     m_scene->rebuildScene();
-
-    const LevelBuilder builder;
-    builder.build(*world);
-
-    TickContext initCtx;
-    initCtx.world = world;
-    world->step(initCtx);
+    LevelBuilder().build(*world);
+    world->flushSpawns();
 
     m_camera.setTargetZoom(1.0);
     m_camera.snapToTarget();

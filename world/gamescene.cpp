@@ -15,14 +15,8 @@ GameScene::~GameScene()
     if (m_world) {
         disconnect(m_world, nullptr, this, nullptr);
     }
-
-    for (QGraphicsItem *item : items()) {
-        if (item != m_tileLayer.get()) {
-            removeItem(item);
-        }
-    }
-
-    m_tileLayer.reset();
+    // Base ~QGraphicsScene() calls clear() which deletes all items
+    // (tile layer + any entities released by ~GameWorld).
 }
 
 void GameScene::attachWorld(GameWorld *world)
@@ -51,18 +45,16 @@ Player *GameScene::player() const
 
 void GameScene::rebuildScene()
 {
-    (void)m_tileLayer.release(); // clear() will delete the item
-    clear();
+    clear(); // Deletes all scene-owned items (tile layer)
 
     if (!m_world)
         return;
 
     setSceneRect(m_world->tileMap().sceneBounds());
 
-    auto *tileLayer = new TileLayerItem(&m_world->tileMap());
-    tileLayer->setZValue(ZLayer::Background);
-    m_tileLayer.reset(tileLayer);
-    addItem(tileLayer);
+    m_tileLayer = new TileLayerItem(&m_world->tileMap());
+    m_tileLayer->setZValue(ZLayer::Background);
+    addItem(m_tileLayer);
 
     for (ActorItem *entity : m_world->entities())
         addEntityItem(entity);

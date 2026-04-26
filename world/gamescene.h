@@ -3,7 +3,6 @@
 
 #include <QGraphicsScene>
 #include <QPointer>
-#include <memory>
 
 #include "world/gameworld.h"
 
@@ -32,7 +31,7 @@ private:
     void removeEntityItem(ActorItem *entity);
 
     QPointer<GameWorld> m_world;
-    std::unique_ptr<QGraphicsItem> m_tileLayer;
+    QGraphicsItem *m_tileLayer{nullptr};
 };
 
 #endif // GAMESCENE_H

@@ -1,4 +1,5 @@
 #pragma once
+#include <QHash>
 #include <QRectF>
 #include <QVector>
 #include <QPoint>
@@ -12,8 +13,14 @@ public:
         Empty = 0,
         Platform=1,
         PlayerSpawn = 2,
-        EnemySpawn=3
+        EnemySpawn=3,
+        OneWayUp=4,
+        OneWayDown=5,
+        OneWayRight=6,
+        OneWayLeft=7
     };
+
+    static bool isOneWayWallType(TileType type);
 
     TileMap();
     int mapWidth() const;
@@ -31,10 +38,17 @@ public:
     QPoint playerSpawnTile() const;
     QPointF playerSpawnScenePosition() const;
     QVector<QPoint> solidTilesOverlapping(const QRectF &sceneRect) const;
+
+    bool tryPassOneWayWall(int row, int col, const QRectF &entityRect, qreal velX, qreal velY);
+    bool isWallOpen(int row, int col) const;
+    void updateOneWayWalls(qreal dt, const QVector<QRectF> &entityRects);
+
 private:
+    void openWall(int row, int col);
     QVector<QVector<int>> m_tiles;
     QSize m_tileSize;
     QPoint m_playerSpawnTile;
+    mutable QHash<QPoint, qreal> m_openWalls;
     void initTiles();
     void setTileSize(QSize size);
 

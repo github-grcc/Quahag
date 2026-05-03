@@ -65,9 +65,9 @@ QImage TileLayerItem::generateWoodTile(int width, int height, int seed)
         int nx = rng.bounded(width);
         int ny = rng.bounded(height);
         QColor orig = img.pixelColor(nx, ny);
-        QColor noise(orig.red()   - rng.bounded(25),
-                     orig.green() - rng.bounded(20),
-                     orig.blue()  - rng.bounded(20));
+        QColor noise(qBound(0, orig.red()   - rng.bounded(25), 255),
+                     qBound(0, orig.green() - rng.bounded(20), 255),
+                     qBound(0, orig.blue()  - rng.bounded(20), 255));
         img.setPixelColor(nx, ny, noise);
     }
 
@@ -105,15 +105,37 @@ void TileLayerItem::paint(QPainter *painter,
     int endCol = qMin(m_tileMap->mapWidth() - 1, static_cast<int>(exposed.right() / m_tileMap->tileWidth()));
     for (int row = startRow; row <= endRow; ++row) {
         for (int col = startCol; col <= endCol; ++col) {
-            if (m_tileMap->tileAt(row, col) != TileMap::TileType::Platform)
-                continue;
-
+            TileMap::TileType type = m_tileMap->tileAt(row, col);
             QRectF targetRect(m_tileMap->tileToScene(row, col),
                               m_tileMap->tileSize().toSizeF());
 
-            // 随机选取一种预生成的木纹
-            int texIdx = rng.bounded(m_woodTextures.size());
-            painter->drawPixmap(targetRect.toRect(), m_woodTextures.at(texIdx));
+            if (type == TileMap::TileType::Platform) {
+                int texIdx = rng.bounded(m_woodTextures.size());
+                painter->drawPixmap(targetRect.toRect(), m_woodTextures.at(texIdx));
+            } else if (TileMap::isOneWayWallType(type)) {
+                if (m_tileMap->isWallOpen(row, col))
+                    continue;
+
+                painter->setBrush(QColor(100, 65, 30));
+                painter->drawRect(targetRect);
+
+                painter->setPen(QColor(220, 180, 100));
+                QFont font = painter->font();
+                font.setPixelSize(10);
+                font.setBold(true);
+                painter->setFont(font);
+
+                QString text;
+                switch (type) {
+                case TileMap::TileType::OneWayUp:    text = QStringLiteral("^\n^"); break;
+                case TileMap::TileType::OneWayDown:  text = QStringLiteral("v\nv"); break;
+                case TileMap::TileType::OneWayRight: text = QStringLiteral(">>");   break;
+                case TileMap::TileType::OneWayLeft:  text = QStringLiteral("<<");   break;
+                default: break;
+                }
+                painter->drawText(targetRect, Qt::AlignCenter, text);
+                painter->setPen(Qt::NoPen);
+            }
         }
     }
 }

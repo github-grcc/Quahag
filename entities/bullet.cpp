@@ -76,11 +76,16 @@ bool Bullet::checkCollision(const TickContext &ctx)
         }
     }
 
-    const auto tiles = ctx.world->tileMap().solidTilesOverlapping(bulletRect);
+    TileMap &tileMap = ctx.world->tileMap();
+    const auto tiles = tileMap.solidTilesOverlapping(bulletRect);
     for (const QPoint &tile : tiles) {
-        const QRectF tileRect(ctx.world->tileMap().tileToScene(tile.y(), tile.x()), ctx.world->tileMap().tileSize().toSizeF());
+        const QRectF tileRect(tileMap.tileToScene(tile.y(), tile.x()), tileMap.tileSize().toSizeF());
         if (!bulletRect.intersects(tileRect))
             continue;
+
+        if (tileMap.tryPassOneWayWall(tile.y(), tile.x(), bulletRect, velocityX(), velocityY()))
+            continue;
+
         ctx.world->destroyLater(this);
         return true;
     }

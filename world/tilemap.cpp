@@ -39,7 +39,12 @@ TileMap::TileType TileMap::tileAt(int row, int col) const
 }
 bool TileMap::isSolidTile(int row, int col) const
 {
-    return tileAt(row, col) == TileType::Platform;
+    TileType type = tileAt(row, col);
+    if (type == TileType::Platform)
+        return true;
+    if (isOneWayWallType(type))
+        return !isWallOpen(row, col);
+    return false;
 }
 QPointF TileMap::tileToScene(int row, int col) const
 {
@@ -115,7 +120,19 @@ void TileMap::initTiles()
         tileRow.reserve(width);
         for (int col = 0; col < width && col < line.length(); ++col)
         {
-            tileRow.append(line[col].digitValue());
+            const QChar ch = line[col];
+            int tileValue;
+            if (ch == 'u')
+                tileValue = 4;
+            else if (ch == 'd')
+                tileValue = 5;
+            else if (ch == 'r')
+                tileValue = 6;
+            else if (ch == 'l')
+                tileValue = 7;
+            else
+                tileValue = ch.digitValue();
+            tileRow.append(tileValue);
         }
         // Pad with Empty if line is shorter than expected width
         while (tileRow.size() < width)
@@ -139,4 +156,90 @@ void TileMap::initTiles()
     }
 
     m_playerSpawnTile = QPoint();
+}
+
+bool TileMap::isOneWayWallType(TileType type)
+{
+    return type == TileType::OneWayUp || type == TileType::OneWayDown || type == TileType::OneWayRight || type == TileType::OneWayLeft;
+}
+
+bool TileMap::tryPassOneWayWall(int row, int col, const QRectF &entityRect,
+                                qreal velX, qreal velY)
+{
+    TileType type = tileAt(row, col);
+    if (!isOneWayWallType(type))
+        return false;
+
+    QPointF tileCenter = QRectF(tileToScene(row, col), m_tileSize.toSizeF()).center();
+    QPointF entityCenter = entityRect.center();
+
+    bool canPass = false;
+    switch (type)
+    {
+    case TileType::OneWayRight:
+        canPass = entityCenter.x() < tileCenter.x() && velX > 0.0;
+        break;
+    case TileType::OneWayLeft:
+        canPass = entityCenter.x() > tileCenter.x() && velX < 0.0;
+        break;
+    case TileType::OneWayUp:
+        canPass = entityCenter.y() > tileCenter.y() && velY < 0.0;
+        break;
+    case TileType::OneWayDown:
+        canPass = entityCenter.y() < tileCenter.y() && velY > 0.0;
+        break;
+    default:
+        break;
+    }
+    if (!canPass)
+        return false;
+
+    openWall(row, col);
+    return true;
+}
+
+bool TileMap::isWallOpen(int row, int col) const
+{
+    return m_openWalls.contains(QPoint(col, row));
+}
+
+void TileMap::updateOneWayWalls(qreal dt, const QVector<QRectF> &entityRects)
+{
+    QList<QPoint> toRemove;
+    for (auto it = m_openWalls.begin(); it != m_openWalls.end(); ++it)
+    {
+        const QPoint &tile = it.key();
+        qreal &remaining = it.value();
+
+        QRectF tileRect(tileToScene(tile.y(), tile.x()), m_tileSize.toSizeF());
+
+        bool anyOverlap = false;
+        for (const QRectF &rect : entityRects)
+        {
+            if (rect.intersects(tileRect))
+            {
+                anyOverlap = true;
+                break;
+            }
+        }
+
+        if (anyOverlap)
+        {
+            remaining = 1.5;
+        }
+        else
+        {
+            remaining -= dt;
+            if (remaining <= 0.0)
+                toRemove.append(tile);
+        }
+    }
+
+    for (const QPoint &tile : toRemove)
+        m_openWalls.remove(tile);
+}
+
+void TileMap::openWall(int row, int col)
+{
+    m_openWalls[QPoint(col, row)] = 0.5;
 }

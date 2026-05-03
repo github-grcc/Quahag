@@ -44,10 +44,10 @@ private:
     bool checkTransitionToChase(const TickContext &ctx);
 
 
-    void applyMovement(qreal dt,const TileMap &tileMap);
-    void applyGravity(qreal dt,const TileMap &tileMap, qreal gravity);
-    void resolveTileCollisionsX(const TileMap &tileMap);
-    void resolveTileCollisionsY(const TileMap &tileMap);
+    void applyMovement(qreal dt, TileMap &tileMap);
+    void applyGravity(qreal dt, TileMap &tileMap, qreal gravity);
+    void resolveTileCollisionsX(TileMap &tileMap);
+    void resolveTileCollisionsY(TileMap &tileMap);
 
     void updateVision(const TickContext &ctx);
     bool isInVisionCone(const Player *player) const;

@@ -73,6 +73,17 @@ void GameWorld::step(const TickContext &ctx)
         entity->tick(ctx);
     }
 
+    // Update one-way wall timers
+    {
+        QVector<QRectF> entityRects;
+        entityRects.reserve(currentEntities.size());
+        for (const ActorItem *e : currentEntities) {
+            if (!e->pendingDestroy())
+                entityRects.append(e->sceneBoundingRect());
+        }
+        m_tileMap.updateOneWayWalls(ctx.dt, entityRects);
+    }
+
     flushDestroys();
 }
 

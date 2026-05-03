@@ -36,10 +36,10 @@ public:
     int health() const { return m_health; }
 
 private:
-    void moveHorizontally(qreal dt, const TileMap &tileMap);
-    void moveVertically(qreal dt, const TileMap &tileMap);
-    void resolveTileCollisionsX(const TileMap &tileMap);
-    void resolveTileCollisionsY(const TileMap &tileMap);
+    void moveHorizontally(qreal dt, TileMap &tileMap);
+    void moveVertically(qreal dt, TileMap &tileMap);
+    void resolveTileCollisionsX(TileMap &tileMap);
+    void resolveTileCollisionsY(TileMap &tileMap);
 
     // State machine
     void updateState(const TickContext &ctx, bool jumpPressed);
@@ -48,7 +48,7 @@ private:
     void behaveWallSliding(const TickContext &ctx, bool jumpPressed);
 
     // Wall detection
-    int detectWallSide(const TileMap &tileMap) const;
+    int detectWallSide(TileMap &tileMap) const;
 
     // Attack
     void processAttack(bool attackPressed, const TickContext &ctx);

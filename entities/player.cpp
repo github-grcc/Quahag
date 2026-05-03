@@ -81,7 +81,7 @@ void Player::tick(const TickContext &ctx)
         return;
 
     advanceAge(ctx.dt);
-    const TileMap &tileMap = ctx.world->tileMap();
+    TileMap &tileMap = ctx.world->tileMap();
     const qreal dt = ctx.dt;
     const InputState input = ctx.input ? *ctx.input : InputState{};
 
@@ -273,7 +273,7 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
     }
 }
 
-void Player::moveHorizontally(qreal dt, const TileMap &tileMap)
+void Player::moveHorizontally(qreal dt, TileMap &tileMap)
 {
     if (qFuzzyIsNull(velocityX()))
         return;
@@ -282,7 +282,7 @@ void Player::moveHorizontally(qreal dt, const TileMap &tileMap)
     resolveTileCollisionsX(tileMap);
 }
 
-void Player::moveVertically(qreal dt, const TileMap &tileMap)
+void Player::moveVertically(qreal dt, TileMap &tileMap)
 {
     moveBy(0.0, velocityY() * dt);
 
@@ -290,13 +290,16 @@ void Player::moveVertically(qreal dt, const TileMap &tileMap)
     resolveTileCollisionsY(tileMap);
 }
 
-void Player::resolveTileCollisionsX(const TileMap &tileMap)
+void Player::resolveTileCollisionsX(TileMap &tileMap)
 {
     QRectF playerRect = sceneBoundingRect();
     const auto tiles = tileMap.solidTilesOverlapping(playerRect);
     for (const QPoint &tile : tiles) {
         const QRectF tileRect(tileMap.tileToScene(tile.y(), tile.x()), tileMap.tileSize().toSizeF());
         if (!playerRect.intersects(tileRect))
+            continue;
+
+        if (tileMap.tryPassOneWayWall(tile.y(), tile.x(), playerRect, velocityX(), velocityY()))
             continue;
 
         const QRectF overlap = playerRect.intersected(tileRect);
@@ -311,13 +314,16 @@ void Player::resolveTileCollisionsX(const TileMap &tileMap)
     }
 }
 
-void Player::resolveTileCollisionsY(const TileMap &tileMap)
+void Player::resolveTileCollisionsY(TileMap &tileMap)
 {
     QRectF playerRect = sceneBoundingRect();
     const auto tiles = tileMap.solidTilesOverlapping(playerRect);
     for (const QPoint &tile : tiles) {
         const QRectF tileRect(tileMap.tileToScene(tile.y(), tile.x()), tileMap.tileSize().toSizeF());
         if (!playerRect.intersects(tileRect))
+            continue;
+
+        if (tileMap.tryPassOneWayWall(tile.y(), tile.x(), playerRect, velocityX(), velocityY()))
             continue;
 
         const QRectF overlap = playerRect.intersected(tileRect);
@@ -333,7 +339,7 @@ void Player::resolveTileCollisionsY(const TileMap &tileMap)
     }
 }
 
-int Player::detectWallSide(const TileMap &tileMap) const
+int Player::detectWallSide(TileMap &tileMap) const
 {
     const QRectF r = sceneBoundingRect();
     const int tileW = tileMap.tileWidth();
@@ -344,14 +350,16 @@ int Player::detectWallSide(const TileMap &tileMap) const
     // Check left side
     const int leftCol = static_cast<int>((r.left() - 1.0) / tileW);
     for (int row = topRow; row <= botRow; ++row) {
-        if (tileMap.isSolidTile(row, leftCol))
+        if (tileMap.isSolidTile(row, leftCol)
+            && !TileMap::isOneWayWallType(tileMap.tileAt(row, leftCol)))
             return -1;
     }
 
     // Check right side
     const int rightCol = static_cast<int>((r.right() + 1.0) / tileW);
     for (int row = topRow; row <= botRow; ++row) {
-        if (tileMap.isSolidTile(row, rightCol))
+        if (tileMap.isSolidTile(row, rightCol)
+            && !TileMap::isOneWayWallType(tileMap.tileAt(row, rightCol)))
             return 1;
     }
 

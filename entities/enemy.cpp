@@ -184,23 +184,27 @@ bool Enemy::checkTransitionToAlert(const TickContext &ctx){
 bool Enemy::checkTransitionToChase(const TickContext &ctx){
     return m_seenPlayer&&m_state==EnemyState::Alert;
 }
-void Enemy::applyGravity(qreal dt,const TileMap &tileMap,qreal gravity){
+void Enemy::applyGravity(qreal dt, TileMap &tileMap,qreal gravity){
     setVelocityY(velocityY()+gravity*dt);
     moveBy(0.0,velocityY()*dt);
     setOnGround(false);
     resolveTileCollisionsY(tileMap);
 }
-void Enemy::applyMovement(qreal dt,const TileMap &tileMap){
+void Enemy::applyMovement(qreal dt, TileMap &tileMap){
     if(qFuzzyIsNull(velocityX()))return;
     moveBy(velocityX()*dt,0.0);
     resolveTileCollisionsX(tileMap);
 }
-void Enemy::resolveTileCollisionsX(const TileMap &tileMap){
+void Enemy::resolveTileCollisionsX(TileMap &tileMap){
     QRectF enemyRect=sceneBoundingRect();
     const auto tiles=tileMap.solidTilesOverlapping(enemyRect);
     for(const QPoint &tile:tiles){
         const QRectF tileRect(tileMap.tileToScene(tile.y(),tile.x()),tileMap.tileSize().toSizeF());
         if(!enemyRect.intersects(tileRect))continue;
+
+        if (tileMap.tryPassOneWayWall(tile.y(), tile.x(), enemyRect, velocityX(), velocityY()))
+            continue;
+
         const QRectF overlap=enemyRect.intersected(tileRect);
         if(velocityX()>0.0){
             setX(x()-overlap.width());
@@ -214,12 +218,16 @@ void Enemy::resolveTileCollisionsX(const TileMap &tileMap){
         enemyRect=sceneBoundingRect();
     }
 }
-void Enemy::resolveTileCollisionsY(const TileMap &tileMap){
+void Enemy::resolveTileCollisionsY(TileMap &tileMap){
     QRectF enemyRect=sceneBoundingRect();
     const auto tiles=tileMap.solidTilesOverlapping(enemyRect);
     for(const QPoint &tile:tiles){
         const QRectF tileRect(tileMap.tileToScene(tile.y(),tile.x()),tileMap.tileSize().toSizeF());
         if (!enemyRect.intersects(tileRect)) continue;
+
+        if (tileMap.tryPassOneWayWall(tile.y(), tile.x(), enemyRect, velocityX(), velocityY()))
+            continue;
+
         const QRectF overlap=enemyRect.intersected(tileRect);
         if (velocityY()>0.0) {
             setY(y()-overlap.height());

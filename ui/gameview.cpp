@@ -47,7 +47,7 @@ GameView::GameView(QWidget *parent)
     m_camera.setFollowResponsiveness(15.0);
     m_camera.setFollowDamping(0.1);
     m_camera.setZoomResponsiveness(10.0);
-    m_camera.setTargetZoom(2.0);
+    m_camera.setTargetZoom(5.0);
     m_loop.setWorld(world);
     m_loop.setWorldPaused(true);
     m_loop.setInputState(&m_input);

@@ -6,39 +6,60 @@
 #include "world/tilemap.h"
 
 #include <QPainter>
+#include <QPixmap>
+#include <QGraphicsColorizeEffect>
+#include <QPropertyAnimation>
 #include <QRandomGenerator>
 #include <QtGlobal>
+#include <QDebug>
 
-namespace {
-constexpr qreal kRunSpeed = 600.0;
-constexpr qreal kJumpImpulse = 820.0;
-constexpr qreal kAirDrag = 1000.0;
-constexpr qreal kGroundDrag = 3000.0;
-constexpr qreal kAirAccel = 2000.0;
-constexpr qreal kGroundAccel = 3000.0;
+namespace
+{
+    constexpr qreal kRunSpeed = 600.0;
+    constexpr qreal kJumpImpulse = 820.0;
+    constexpr qreal kAirDrag = 1000.0;
+    constexpr qreal kGroundDrag = 3000.0;
+    constexpr qreal kAirAccel = 2000.0;
+    constexpr qreal kGroundAccel = 3000.0;
 
-// Coyote time
-constexpr qreal kCoyoteTime = 0.1;
+    // Coyote time
+    constexpr qreal kCoyoteTime = 0.1;
 
-// Jump system
-constexpr int kMaxJumps = 2;
-constexpr qreal kDoubleJumpImpulse = 800.0;
+    // Jump system
+    constexpr int kMaxJumps = 2;
+    constexpr qreal kDoubleJumpImpulse = 800.0;
 
-// Wall slide
-constexpr qreal kWallSlideSpeed = 100.0;
-constexpr qreal kWallJumpHorizontal = 400.0;
-constexpr qreal kWallJumpVertical = 700.0;
-constexpr qreal kWallJumpLockTime = 0.12;
+    // Wall slide
+    constexpr qreal kWallSlideSpeed = 100.0;
+    constexpr qreal kWallJumpHorizontal = 400.0;
+    constexpr qreal kWallJumpVertical = 700.0;
+    constexpr qreal kWallJumpLockTime = 0.12;
 
-// Attack
-constexpr qreal kAttackRange = 50.0;
-constexpr qreal kAttackHeight = 50.0;
-constexpr qreal kAttackCooldown = 0.1;
-constexpr qreal kAttackVisualDuration = 0.2;
+    // Attack
+    constexpr qreal kAttackRange = 50.0;
+    constexpr qreal kAttackHeight = 50.0;
+    constexpr qreal kAttackCooldown = 0.1;
+    constexpr qreal kAttackVisualDuration = 0.2;
 } // namespace
 
 Player::Player()
 {
+    QPixmap originalIdleSprite;
+    QPixmap originalAttackSprite;
+
+    originalIdleSprite.load("/home/grcc/dev/Quahag/rsc/sprites/player_idle.jpg");
+    originalAttackSprite.load("/home/grcc/dev/Quahag/rsc/sprites/player_attack.jpg");
+
+    m_idleSprite = originalIdleSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_attackSprite = originalAttackSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_colorizeEffect= new QGraphicsColorizeEffect(this);
+    m_colorizeEffect->setColor(Qt::white);
+    m_colorizeEffect->setStrength(0.0);
+    setGraphicsEffect(m_colorizeEffect);
+    m_damageAnimation = new QPropertyAnimation(m_colorizeEffect, "strength", this);
+    m_damageAnimation->setDuration(150);
+    m_damageAnimation->setStartValue(1.0);
+    m_damageAnimation->setEndValue(0.0);
 }
 
 QRectF Player::boundingRect() const
@@ -50,19 +71,35 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 {
     painter->setPen(Qt::NoPen);
 
-    // Attack flash (underneath body)
-    if (age() - m_lastDamageTime < 0.1) {
-        painter->setBrush(Qt::white);
-        painter->drawRect(m_bodyRect);
-    } else if (m_attackTimer > 0.0) {
-        painter->setBrush(QColor(255, 255, 255, 120));
-        painter->drawRect(m_bodyRect);
-    } else {
-        // Main body
-        painter->setBrush(QColor(253, 184, 39));
-        painter->drawRect(m_bodyRect);
-    }
+    // // Attack flash (underneath body)
+    // if (age() - m_lastDamageTime < 0.1) {
+    //     painter->setBrush(Qt::white);
+    //     painter->drawRect(m_bodyRect);
+    // } else if (m_attackTimer > 0.0) {
+    //     // painter->setBrush(QColor(255, 255, 255, 120));
+    //     // painter->drawRect(m_bodyRect);
+    //     painter->drawPixmap(-m_spriteSize.width()/2, -m_spriteSize.height()/2, m_attackSprite);
 
+    // } else {
+    //     // Main body
+    //     // painter->setBrush(QColor(253, 184, 39));
+    //     // painter->drawRect(m_bodyRect);
+    //     painter->drawPixmap(-m_spriteSize.width()/2, -m_spriteSize.height()/2, m_idleSprite);
+
+    // }
+    if (m_attackTimer > 0.0)
+    {
+        painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_attackSprite);
+    }
+    else
+    {
+        painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_idleSprite);
+    }
+    if (age() - m_lastDamageTime < 0.1 && m_damageAnimation->state() != QAbstractAnimation::Running)
+    {
+        m_damageAnimation->start();
+        qDebug() << "damage animation running\n";
+    }
 
     // // Facing indicator
     // painter->setBrush(QColor(200, 140, 20));
@@ -97,16 +134,22 @@ void Player::tick(const TickContext &ctx)
     m_wallJumpLockTimer = qMax(0.0, m_wallJumpLockTimer - dt);
 
     // Coyote timer
-    if (onGround()) {
+    if (onGround())
+    {
         m_coyoteTimer = 0.0;
-    } else {
+    }
+    else
+    {
         m_coyoteTimer += dt;
     }
 
     // ---- Facing direction ----
-    if (input.moveLeft && !input.moveRight) {
+    if (input.moveLeft && !input.moveRight)
+    {
         m_facing = -1;
-    } else if (input.moveRight && !input.moveLeft) {
+    }
+    else if (input.moveRight && !input.moveLeft)
+    {
         m_facing = 1;
     }
 
@@ -121,12 +164,15 @@ void Player::tick(const TickContext &ctx)
     moveVertically(dt, tileMap);
 
     // ---- Post-collision fixup ----
-    if (onGround()) {
+    if (onGround())
+    {
         m_jumpsUsed = 0;
         m_coyoteTimer = 0.0;
         if (m_state != PlayerState::Grounded)
             m_state = PlayerState::Grounded;
-    } else if (m_state == PlayerState::Grounded) {
+    }
+    else if (m_state == PlayerState::Grounded)
+    {
         m_state = PlayerState::Airborne;
     }
 
@@ -136,7 +182,8 @@ void Player::tick(const TickContext &ctx)
 
 void Player::updateState(const TickContext &ctx, bool jumpPressed)
 {
-    switch (m_state) {
+    switch (m_state)
+    {
     case PlayerState::Grounded:
         behaveGrounded(ctx, jumpPressed);
         break;
@@ -170,7 +217,8 @@ void Player::behaveGrounded(const TickContext &ctx, bool jumpPressed)
     setVelocityX(qBound(-kRunSpeed, velocityX(), kRunSpeed));
 
     // Coyote jump: allow jump just after leaving ground
-    if (jumpPressed && (onGround() || m_coyoteTimer < kCoyoteTime)) {
+    if (jumpPressed && (onGround() || m_coyoteTimer < kCoyoteTime))
+    {
         setVelocityY(-kJumpImpulse);
         m_jumpsUsed = 1;
         m_state = PlayerState::Airborne;
@@ -202,17 +250,19 @@ void Player::behaveAirborne(const TickContext &ctx, bool jumpPressed)
     setVelocityY(velocityY() + gravity * dt);
 
     // Double jump
-    if (jumpPressed && m_jumpsUsed < kMaxJumps) {
+    if (jumpPressed && m_jumpsUsed < kMaxJumps)
+    {
         setVelocityY(-kDoubleJumpImpulse);
         m_jumpsUsed++;
     }
 
     // Wall slide transition: must be falling, against a wall, pressing into it,
     // and not in wall-jump lockout
-    if (m_wallSide != 0 && velocityY() >= 0.0 && m_wallJumpLockTimer <= 0.0) {
-        const bool pressingTowardWall = (m_wallSide == -1 && movingLeft)
-                                     || (m_wallSide == 1 && movingRight);
-        if (pressingTowardWall) {
+    if (m_wallSide != 0 && velocityY() >= 0.0 && m_wallJumpLockTimer <= 0.0)
+    {
+        const bool pressingTowardWall = (m_wallSide == -1 && movingLeft) || (m_wallSide == 1 && movingRight);
+        if (pressingTowardWall)
+        {
             m_state = PlayerState::WallSliding;
         }
     }
@@ -225,7 +275,8 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
     const qreal gravity = ctx.gravity;
 
     // Exit wall slide if no wall or on ground
-    if (m_wallSide == 0 || onGround()) {
+    if (m_wallSide == 0 || onGround())
+    {
         m_state = onGround() ? PlayerState::Grounded : PlayerState::Airborne;
         return;
     }
@@ -239,24 +290,27 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
         setVelocityY(kWallSlideSpeed);
 
     // Allow movement away from wall using air accel
-    const bool pressingAway = (m_wallSide == -1 && input.moveRight)
-                           || (m_wallSide == 1 && input.moveLeft);
-    const bool pressingToward = (m_wallSide == -1 && input.moveLeft)
-                             || (m_wallSide == 1 && input.moveRight);
+    const bool pressingAway = (m_wallSide == -1 && input.moveRight) || (m_wallSide == 1 && input.moveLeft);
+    const bool pressingToward = (m_wallSide == -1 && input.moveLeft) || (m_wallSide == 1 && input.moveRight);
 
-    if (pressingAway) {
+    if (pressingAway)
+    {
         const qreal dir = (m_wallSide == -1) ? 1.0 : -1.0;
         setVelocityX(velocityX() + dir * kAirAccel * dt);
         // Apply air drag
         if (velocityX() * dir > 0.0)
             setVelocityX(qMax(0.0, qAbs(velocityX()) - kAirDrag * dt) * dir);
-    } else if (!pressingToward) {
+    }
+    else if (!pressingToward)
+    {
         // Not pressing anything horizontally: apply drag toward zero
         if (velocityX() > 0.0)
             setVelocityX(qMax(0.0, velocityX() - kAirDrag * dt));
         else if (velocityX() < 0.0)
             setVelocityX(qMin(0.0, velocityX() + kAirDrag * dt));
-    } else {
+    }
+    else
+    {
         // Pressing toward wall: stick, zero horizontal velocity
         setVelocityX(0.0);
     }
@@ -264,7 +318,8 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
     setVelocityX(qBound(-kRunSpeed, velocityX(), kRunSpeed));
 
     // Wall jump
-    if (jumpPressed) {
+    if (jumpPressed)
+    {
         setVelocityY(-kWallJumpVertical);
         setVelocityX(-m_wallSide * kWallJumpHorizontal);
         m_jumpsUsed = 1;
@@ -294,7 +349,8 @@ void Player::resolveTileCollisionsX(TileMap &tileMap)
 {
     QRectF playerRect = sceneBoundingRect();
     const auto tiles = tileMap.solidTilesOverlapping(playerRect);
-    for (const QPoint &tile : tiles) {
+    for (const QPoint &tile : tiles)
+    {
         const QRectF tileRect(tileMap.tileToScene(tile.y(), tile.x()), tileMap.tileSize().toSizeF());
         if (!playerRect.intersects(tileRect))
             continue;
@@ -303,10 +359,13 @@ void Player::resolveTileCollisionsX(TileMap &tileMap)
             continue;
 
         const QRectF overlap = playerRect.intersected(tileRect);
-        if (velocityX() > 0.0) {
+        if (velocityX() > 0.0)
+        {
             setX(x() - overlap.width());
             setVelocityX(0.0);
-        } else if (velocityX() < 0.0) {
+        }
+        else if (velocityX() < 0.0)
+        {
             setX(x() + overlap.width());
             setVelocityX(0.0);
         }
@@ -318,7 +377,8 @@ void Player::resolveTileCollisionsY(TileMap &tileMap)
 {
     QRectF playerRect = sceneBoundingRect();
     const auto tiles = tileMap.solidTilesOverlapping(playerRect);
-    for (const QPoint &tile : tiles) {
+    for (const QPoint &tile : tiles)
+    {
         const QRectF tileRect(tileMap.tileToScene(tile.y(), tile.x()), tileMap.tileSize().toSizeF());
         if (!playerRect.intersects(tileRect))
             continue;
@@ -327,11 +387,14 @@ void Player::resolveTileCollisionsY(TileMap &tileMap)
             continue;
 
         const QRectF overlap = playerRect.intersected(tileRect);
-        if (velocityY() > 0.0) {
+        if (velocityY() > 0.0)
+        {
             setY(y() - overlap.height());
             setVelocityY(0.0);
             setOnGround(true);
-        } else if (velocityY() < 0.0) {
+        }
+        else if (velocityY() < 0.0)
+        {
             setY(y() + overlap.height());
             setVelocityY(0.0);
         }
@@ -349,17 +412,17 @@ int Player::detectWallSide(TileMap &tileMap) const
 
     // Check left side
     const int leftCol = static_cast<int>((r.left() - 1.0) / tileW);
-    for (int row = topRow; row <= botRow; ++row) {
-        if (tileMap.isSolidTile(row, leftCol)
-            && !TileMap::isOneWayWallType(tileMap.tileAt(row, leftCol)))
+    for (int row = topRow; row <= botRow; ++row)
+    {
+        if (tileMap.isSolidTile(row, leftCol) && !TileMap::isOneWayWallType(tileMap.tileAt(row, leftCol)))
             return -1;
     }
 
     // Check right side
     const int rightCol = static_cast<int>((r.right() + 1.0) / tileW);
-    for (int row = topRow; row <= botRow; ++row) {
-        if (tileMap.isSolidTile(row, rightCol)
-            && !TileMap::isOneWayWallType(tileMap.tileAt(row, rightCol)))
+    for (int row = topRow; row <= botRow; ++row)
+    {
+        if (tileMap.isSolidTile(row, rightCol) && !TileMap::isOneWayWallType(tileMap.tileAt(row, rightCol)))
             return 1;
     }
 
@@ -372,23 +435,28 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
         return;
 
     // Camera shake on attack
-    if (ctx.events) {
+    if (ctx.events)
+    {
         ctx.events->cameraShakes.append(CameraShakeEvent{5.0, 0.05, 28.0});
     }
 
     const QRectF playerRect = sceneBoundingRect();
     QRectF hitbox;
-    if (m_facing == 1) {
+    if (m_facing == 1)
+    {
         hitbox = QRectF(playerRect.right(),
                         playerRect.center().y() - kAttackHeight / 2.0,
                         kAttackRange, kAttackHeight);
-    } else {
+    }
+    else
+    {
         hitbox = QRectF(playerRect.left() - kAttackRange,
                         playerRect.center().y() - kAttackHeight / 2.0,
                         kAttackRange, kAttackHeight);
     }
 
-    for (auto *entity : ctx.world->entitiesOfKind(EntityKind::Enemy)) {
+    for (auto *entity : ctx.world->entitiesOfKind(EntityKind::Enemy))
+    {
         if (!entity->sceneBoundingRect().intersects(hitbox))
             continue;
 
@@ -397,7 +465,8 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
     }
 
     // Spawn ClawEffect at attack position
-    if (ctx.world) {
+    if (ctx.world)
+    {
         auto *rng = QRandomGenerator::global();
         QPointF attackPos = sceneBoundingRect().center();
         attackPos.setX(attackPos.x() + m_facing * 60.0);
@@ -416,25 +485,30 @@ void Player::takeDamage(const TickContext &ctx)
     m_lastDamageTime = age();
 
     // Camera shake on damage
-    if (ctx.events) {
+    if (ctx.events)
+    {
         ctx.events->cameraShakes.append(CameraShakeEvent{10.0, 0.1, 28.0});
     }
 
     // Damage particles
-    if (ctx.world) {
+    if (ctx.world)
+    {
         Particle::fireworks(ctx.world, sceneBoundingRect().center(), 10,
                             m_bodyRect.width() / 2.0,
                             m_bodyRect.height() / 2.0);
     }
 
-    if (--m_health <= 0) {
+    if (--m_health <= 0)
+    {
         // Death particles
-        if (ctx.world) {
+        if (ctx.world)
+        {
             Particle::fireworks(ctx.world, sceneBoundingRect().center(), 50,
                                 m_bodyRect.width() / 2.0,
                                 m_bodyRect.height() / 2.0);
         }
-        if (ctx.world) {
+        if (ctx.world)
+        {
             ctx.world->destroyLater(this);
         }
     }

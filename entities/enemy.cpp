@@ -39,6 +39,8 @@ constexpr qreal kEnemyGravity=400.0;
 } // namespace
 Enemy::Enemy()
 {
+    
+    m_seed=QRandomGenerator::global()->generateDouble();
 }
 QRectF Enemy::boundingRect() const
 {

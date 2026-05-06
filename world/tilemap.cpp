@@ -4,7 +4,9 @@
 #include <QTextStream>
 #include <QtGlobal>
 #include "tilemap.h"
-
+namespace{
+    qreal kWallOpenDuration = 1.0;
+}
 int TileMap::mapWidth() const
 {
     return m_tiles.isEmpty() ? 0 : m_tiles[0].size();
@@ -225,7 +227,7 @@ void TileMap::updateOneWayWalls(qreal dt, const QVector<QRectF> &entityRects)
 
         if (anyOverlap)
         {
-            remaining = 1.5;
+            remaining = kWallOpenDuration;
         }
         else
         {

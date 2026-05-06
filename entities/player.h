@@ -2,8 +2,11 @@
 #define PLAYER_H
 
 #include "entities/actoritem.h"
-
+#include <QPixmap>
 #include <QRectF>
+#include <QPropertyAnimation>
+#include<QGraphicsColorizeEffect>
+#include<QPointer>
 
 class TileMap;
 class Enemy;
@@ -52,8 +55,12 @@ private:
 
     // Attack
     void processAttack(bool attackPressed, const TickContext &ctx);
-
-    QRectF m_bodyRect{-12.0, -24.0, 24.0, 48.0};
+    QSizeF m_spriteSize{50.0,50.0};
+    QRectF m_bodyRect{-m_spriteSize.width()/2,-m_spriteSize.height()/2,m_spriteSize.width(),m_spriteSize.height()};//{-12.0, -24.0, 24.0, 48.0};
+    QPixmap m_idleSprite;
+    QPixmap m_attackSprite;
+    QPointer<QPropertyAnimation> m_damageAnimation;
+    QPointer<QGraphicsColorizeEffect> m_colorizeEffect;
     int m_health{3};
 
     // State

@@ -382,7 +382,7 @@ QPointF Enemy::eyePosition() const
 bool Enemy::hasGroundAhead(const TileMap &tileMap) const
 {
     const qreal checkX = x() + m_facing * (m_bodyRect.width() / 2 + 5);
-    const qreal checkY = boundingRect().bottom() + 5;
+    const qreal checkY = y()+boundingRect().bottom() + 5;
     return tileMap.isSolidTile(static_cast<int>(checkY / tileMap.tileHeight()), static_cast<int>(checkX / tileMap.tileWidth()));
 }
 bool Enemy::hasWallAhead(const TileMap &tileMap) const

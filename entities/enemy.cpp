@@ -5,6 +5,7 @@
 #include "world/tilemap.h"
 #include"entities/bullet.h"
 #include <QPainter>
+#include<QString>
 #include <QRandomGenerator>
 #include<QtMath>
 #include<QtNumeric>
@@ -39,7 +40,17 @@ constexpr qreal kEnemyGravity=400.0;
 } // namespace
 Enemy::Enemy()
 {
-    
+    QPixmap originalStandSprite;
+    QPixmap originalPatrolSprites[2];
+    originalStandSprite.load("/home/grcc/dev/Quahag/rsc/sprites/enemy_stand.jpeg");
+    for (int i = 1; i <= 2; ++i) {
+        QString path = QString("/home/grcc/dev/Quahag/rsc/sprites/enemy_patrol%1.jpeg").arg(i);
+        originalPatrolSprites[i-1].load(path);
+    }
+    m_standSprite = originalStandSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    for(int i=0;i<2;i++){
+        m_patrolSprites[i] = originalPatrolSprites[i].scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
     m_seed=QRandomGenerator::global()->generateDouble();
 }
 QRectF Enemy::boundingRect() const
@@ -55,6 +66,21 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
         painter->setBrush(QColor(75, 207, 89));
     }
     painter->drawRect(m_bodyRect);
+
+
+    //     if (m_attackTimer > 0.0)
+    // {
+    //     painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_attackSprite);
+    // }
+    // else
+    // {
+    //     painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_idleSprite);
+    // }
+    // if (age() - m_lastDamageTime < 0.1 && m_damageAnimation->state() != QAbstractAnimation::Running)
+    // {
+    //     m_damageAnimation->start();
+    //     qDebug() << "damage animation running\n";
+    // }
 }
 void Enemy::tick(const TickContext &ctx)
 {

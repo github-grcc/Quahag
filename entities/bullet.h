@@ -3,6 +3,8 @@
 #include"core/tickcontext.h"
 #include <QPointer>
 #include <QRectF>
+#include <QPixmap>
+#include<QSizeF>
 class TileMap;
 class QPainter;
 class QStyleOptionGraphicsItem;
@@ -25,5 +27,5 @@ private:
     qreal m_shootAngle{0.0};
     qreal m_speed{150.0};
     QPointF m_spawnPosition{0.0, 0.0};
-    QRectF m_bodyRect{-2.0,-2.0,4.0,4.0};
+    QRectF m_bodyRect{-4.0,-2.0,8.0,4.0};
 };

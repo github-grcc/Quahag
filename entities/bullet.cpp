@@ -21,6 +21,8 @@ Bullet::Bullet(ActorItem *owner, QPointF spawnPosition, qreal shootAngle)
     setVelocityX(m_speed * cos(m_shootAngle));
     setVelocityY(m_speed * sin(m_shootAngle));
     setZValue(ZLayer::Bullets);
+
+
 }
 void Bullet::tick(const TickContext &ctx)
 {

@@ -79,8 +79,8 @@ private:
     int m_health{3};
     qreal m_lastDamageTime{-9.0};
     qreal m_seed{0.6};
-    QRectF m_bodyRect{-12.0, -24.0, 24.0, 48.0};
-    QSizeF m_spriteSize{54.6,60};
-    QPixmap m_standSprite;
-    QPixmap m_patrolSprites[2];
-};
+    QSizeF m_spriteSize{50.0,77.0};
+    QRectF m_bodyRect{-m_spriteSize.width()/2,-m_spriteSize.height()*2/5,m_spriteSize.width(),m_spriteSize.height()};
+    QPixmap m_sprites[6];
+    bool m_walking{0};
+};                                                                                                                                                                                                                  

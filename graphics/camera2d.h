@@ -31,12 +31,12 @@ public:
 
     QTransform transform() const;
     QPointF currentCenter() const { return m_currentCenter; }
+    QPointF effectiveCenter() const;
+    qreal effectiveZoom() const;
     qreal currentZoom() const { return m_currentZoom; }
 
 private:
     QPointF clampedBaseCenter() const;
-    QPointF effectiveCenter() const;
-    qreal effectiveZoom() const;
     static qreal expSmoothingAlpha(qreal responsiveness, qreal dt);
 
     QRectF m_sceneBounds;

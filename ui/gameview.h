@@ -2,6 +2,7 @@
 #define GAMEVIEW_H
 #include "core/gameloop.h"
 #include "graphics/camera2d.h"
+#include "graphics/parallaxbackground.h"
 #include "world/gamescene.h"
 #include"core/tickcontext.h"
 #include <QGraphicsView>
@@ -27,6 +28,7 @@ protected:
     void keyReleaseEvent(QKeyEvent* event)override;
     void resizeEvent(QResizeEvent *event)override;
     void wheelEvent(QWheelEvent *event) override;
+    void drawBackground(QPainter *painter, const QRectF &rect) override;
     void drawForeground(QPainter *painter, const QRectF &rect) override;
 private:
     void applyCameraTransform();
@@ -41,6 +43,7 @@ private:
 
     GameLoop m_loop;
     Camera2D m_camera;
+    ParallaxBackground m_parallaxBackground;
 
     enum class GameState { Title, Playing, GameOver };
     GameState m_gameState{GameState::Title};

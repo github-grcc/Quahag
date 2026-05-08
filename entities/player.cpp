@@ -437,7 +437,7 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
     // Camera shake on attack
     if (ctx.events)
     {
-        ctx.events->cameraShakes.append(CameraShakeEvent{5.0, 0.05, 28.0});
+        ctx.events->cameraShakes.append(CameraShakeEvent{10.0, 0.05, 28.0});
     }
 
     const QRectF playerRect = sceneBoundingRect();

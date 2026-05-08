@@ -33,6 +33,8 @@ set(PROJECT_SOURCES
         entities/enemy.cpp
         graphics/camera2d.cpp
         graphics/camera2d.h
+        graphics/parallaxbackground.cpp
+        graphics/parallaxbackground.h
         graphics/tilelayeritem.cpp
         graphics/tilelayeritem.h
         ui/gameview.cpp

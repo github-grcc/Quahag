@@ -34,7 +34,6 @@ GameView::GameView(QWidget *parent)
 
     setFrameShape(QFrame::NoFrame);
     setCacheMode(QGraphicsView::CacheNone);
-    setBackgroundBrush(QColor(25,28,35));
     setMinimumSize(800,480);
 
     connect(&m_loop, &GameLoop::stepped, this, &GameView::updateCamera);
@@ -221,6 +220,17 @@ void GameView::resizeEvent(QResizeEvent *event){
 void GameView::wheelEvent(QWheelEvent *event)
 {
     event->ignore();
+}
+
+void GameView::drawBackground(QPainter *painter, const QRectF &)
+{
+    painter->save();
+    painter->resetTransform();
+    m_parallaxBackground.paint(painter,
+                                static_cast<QSizeF>(viewport()->size()),
+                                m_camera.effectiveCenter(),
+                                m_camera.effectiveZoom());
+    painter->restore();
 }
 
 void GameView::drawForeground(QPainter *painter, const QRectF &)

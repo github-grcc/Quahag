@@ -176,7 +176,7 @@ void Player::tick(const TickContext &ctx)
     moveVertically(dt, tileMap);
 
     // ---- Hachimi trail ----
-    if (m_hachimiRemaining > 0.0 && !qFuzzyIsNull(velocityX()) && ctx.world) {
+    if (m_hachimiRemaining > 0.0 && (!qFuzzyIsNull(velocityX()) || !qFuzzyIsNull(velocityY())) && ctx.world) {
         m_hachimiTrailTimer += dt;
         constexpr qreal kTrailInterval = 0.04;
         if (m_hachimiTrailTimer >= kTrailInterval) {
@@ -244,7 +244,7 @@ void Player::behaveGrounded(const TickContext &ctx, bool jumpPressed)
     // Coyote jump: allow jump just after leaving ground
     if (jumpPressed && (onGround() || m_coyoteTimer < kCoyoteTime))
     {
-        setVelocityY(-kJumpImpulse);
+        setVelocityY(-kJumpImpulse * m_hachimiMultiplier);
         m_jumpsUsed = 1;
         m_state = PlayerState::Airborne;
     }
@@ -277,7 +277,7 @@ void Player::behaveAirborne(const TickContext &ctx, bool jumpPressed)
     // Double jump
     if (jumpPressed && m_jumpsUsed < kMaxJumps)
     {
-        setVelocityY(-kDoubleJumpImpulse);
+        setVelocityY(-kDoubleJumpImpulse * m_hachimiMultiplier);
         m_jumpsUsed++;
     }
 
@@ -345,8 +345,8 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
     // Wall jump
     if (jumpPressed)
     {
-        setVelocityY(-kWallJumpVertical);
-        setVelocityX(-m_wallSide * kWallJumpHorizontal);
+        setVelocityY(-kWallJumpVertical * m_hachimiMultiplier);
+        setVelocityX(-m_wallSide * kWallJumpHorizontal * m_hachimiMultiplier);
         m_jumpsUsed = 1;
         m_wallJumpLockTimer = kWallJumpLockTime;
         m_state = PlayerState::Airborne;
@@ -507,7 +507,7 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
 
 void Player::applyHachimiBoost()
 {
-    m_hachimiMultiplier *= 1.5;
+    m_hachimiMultiplier *= 1.2;
     m_hachimiRemaining += 6.0;
 }
 

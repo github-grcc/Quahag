@@ -4,7 +4,8 @@
 #include <QTextStream>
 #include <QtGlobal>
 #include "tilemap.h"
-namespace{
+namespace
+{
     qreal kWallOpenDuration = 1.0;
 }
 int TileMap::mapWidth() const
@@ -132,7 +133,11 @@ void TileMap::initTiles()
                 tileValue = 6;
             else if (ch == 'l')
                 tileValue = 7;
-            else if (ch == 't')
+            else if (ch == 'w') // throne
+                tileValue = 8;
+            else if (ch == 's') // hachimi
+                tileValue = 9;
+            else if (ch == 't') // chutty
                 tileValue = 10;
             else
                 tileValue = ch.digitValue();

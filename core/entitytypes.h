@@ -13,7 +13,8 @@ enum class EntityKind{
     Player,
     Enemy,
     Bullet,
-    Effect
+    Effect,
+    Throne
 };
 enum class Faction{
     Player,

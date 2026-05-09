@@ -17,7 +17,8 @@ public:
         OneWayUp=4,
         OneWayDown=5,
         OneWayRight=6,
-        OneWayLeft=7
+        OneWayLeft=7,
+        ThroneSpawn=8
     };
 
     static bool isOneWayWallType(TileType type);

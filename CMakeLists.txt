@@ -29,6 +29,8 @@ set(PROJECT_SOURCES
         entities/claweffect.h
         entities/bullet.h
         entities/bullet.cpp
+        entities/throne.h
+        entities/throne.cpp
         entities/enemy.h
         entities/enemy.cpp
         graphics/camera2d.cpp
@@ -47,8 +49,8 @@ set(PROJECT_SOURCES
         world/levelbuilder.h
         world/tilemap.cpp
         world/tilemap.h
+        resources.qrc
 )
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Quahag
         MANUAL_FINALIZATION

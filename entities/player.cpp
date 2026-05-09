@@ -47,8 +47,8 @@ Player::Player()
     QPixmap originalIdleSprite;
     QPixmap originalAttackSprite;
 
-    originalIdleSprite.load("/home/grcc/dev/Quahag/rsc/sprites/player_idle.jpg");
-    originalAttackSprite.load("/home/grcc/dev/Quahag/rsc/sprites/player_attack.jpg");
+    originalIdleSprite.load(":/rsc/sprites/player_idle.jpg");
+    originalAttackSprite.load(":/rsc/sprites/player_attack.jpg");
 
     m_idleSprite = originalIdleSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_attackSprite = originalAttackSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);

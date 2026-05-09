@@ -45,7 +45,7 @@ private:
     Camera2D m_camera;
     ParallaxBackground m_parallaxBackground;
 
-    enum class GameState { Title, Playing, GameOver };
+    enum class GameState { Title, Playing, GameOver, Victory };
     GameState m_gameState{GameState::Title};
 };
 #endif // GAMEVIEW_H

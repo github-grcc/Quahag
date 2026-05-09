@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>rsc/map3.txt</file>
+        <file>rsc/sprites/enemy_0.png</file>
+        <file>rsc/sprites/enemy_1.png</file>
+        <file>rsc/sprites/enemy_2.png</file>
+        <file>rsc/sprites/enemy_3.png</file>
+        <file>rsc/sprites/enemy_4.png</file>
+        <file>rsc/sprites/enemy_5.png</file>
+        <file>rsc/sprites/player_attack.jpg</file>
+        <file>rsc/sprites/player_idle.jpg</file>
+        <file>rsc/sprites/throne.png</file>
+        <file>rsc/background/coco.png</file>
+        <file>rsc/background/beach.png</file>
+        <file>rsc/background/mangrove.png</file>
+        <file>rsc/background/sea.png</file>
+        <file>rsc/background/sky.png</file>
+    </qresource>
+</RCC>

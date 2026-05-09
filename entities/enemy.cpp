@@ -44,7 +44,7 @@ Enemy::Enemy()
     QPixmap originalSprites[6];
     for (int i = 0; i < 6; ++i)
     {
-        QString path = QString("/home/grcc/dev/Quahag/rsc/sprites/enemy_%1.png").arg(i);
+        QString path = QString(":/rsc/sprites/enemy_%1.png").arg(i);
         originalSprites[i].load(path);
     }
     for (int i = 0; i < 6; ++i)

@@ -92,6 +92,13 @@ void GameView::keyPressEvent(QKeyEvent *event){
         event->accept();
         return;
     }
+    if (m_gameState == GameState::Victory) {
+        if (event->key() == Qt::Key_R && !event->isAutoRepeat()) {
+            resetGame();
+        }
+        event->accept();
+        return;
+    }
 
     if (event->isAutoRepeat()) {
         switch (event->key()) {
@@ -274,6 +281,19 @@ void GameView::drawForeground(QPainter *painter, const QRectF &)
         painter->drawText(promptRect.translated(shadow), Qt::AlignHCenter | Qt::AlignTop, "r to play again");
         painter->setPen(Qt::white);
         painter->drawText(promptRect, Qt::AlignHCenter | Qt::AlignTop, "r to play again");
+    } else if (m_gameState == GameState::Victory) {
+        painter->setFont(titleFont);
+        painter->setPen(QColor(0, 0, 0, 180));
+        painter->drawText(r.translated(shadow), Qt::AlignCenter, "你赢了");
+        painter->setPen(Qt::white);
+        painter->drawText(r, Qt::AlignCenter, "你赢了");
+
+        painter->setFont(promptFont);
+        QRect promptRect(r.left(), r.center().y() + 50, r.width(), 40);
+        painter->setPen(QColor(0, 0, 0, 180));
+        painter->drawText(promptRect.translated(shadow), Qt::AlignHCenter | Qt::AlignTop, "r to play again");
+        painter->setPen(Qt::white);
+        painter->drawText(promptRect, Qt::AlignHCenter | Qt::AlignTop, "r to play again");
     }
 
     painter->restore();
@@ -315,6 +335,7 @@ void GameView::resetGame()
     m_camera.snapToTarget();
 
     m_input = InputState{};
+    m_loop.setWorldPaused(false);
     m_gameState = GameState::Playing;
 }
 
@@ -329,7 +350,13 @@ void GameView::updateCamera(qreal dt)
         m_gameState = GameState::GameOver;
     }
 
-    if (playerAlive) {
+    if (m_gameState == GameState::Playing && m_scene->world() && m_scene->world()->isVictory()) {
+        m_gameState = GameState::Victory;
+        m_loop.setWorldPaused(true);
+        m_input = InputState{};
+    }
+
+    if (m_gameState != GameState::Victory && playerAlive) {
         m_camera.setSceneBounds(m_scene->sceneRect());
         m_camera.setViewportSize(viewport()->size());
         m_camera.setTargetCenter(m_scene->player()->sceneBoundingRect().center());

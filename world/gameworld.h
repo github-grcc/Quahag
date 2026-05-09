@@ -43,6 +43,9 @@ public:
     QVector<ActorItem *> entitiesOfFaction(Faction faction) const;
     Player *player() const;
 
+    bool isVictory() const { return m_victory; }
+    void setVictory(bool v) { m_victory = v; }
+
     void clearAllEntities();
     void flushSpawns();
 
@@ -67,4 +70,5 @@ private:
     QHash<Faction, QVector<ActorItem *>> m_entitiesByFaction;
 
     QPointer<Player> m_player;
+    bool m_victory{false};
 };

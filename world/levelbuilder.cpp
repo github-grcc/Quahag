@@ -1,7 +1,8 @@
 #include "world/levelbuilder.h"
 
 #include "entities/player.h"
-#include"entities/enemy.h"
+#include "entities/enemy.h"
+#include "entities/throne.h"
 #include "world/gameworld.h"
 #include "world/tilemap.h"
 
@@ -21,6 +22,11 @@ LevelBuilder::BuildResult LevelBuilder::build(GameWorld &world) const
                 auto *enemy = world.createEntity<Enemy>();
                 enemy->setPos(tileMap.tileCenterToScene(j,i));
                 enemy->setZValue(ZLayer::Enemies);
+            }
+            if(tileMap.tileAt(j,i)==TileMap::TileType::ThroneSpawn){
+                auto *throne = world.createEntity<Throne>();
+                throne->setPos(tileMap.tileCenterToScene(j,i));
+                throne->setZValue(ZLayer::Enemies);
             }
         }
     }

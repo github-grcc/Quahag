@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <QtMath>
 
-static const QString kBackgroundDir = QStringLiteral("/home/grcc/dev/Quahag/rsc/background/");
+static const QString kBackgroundDir = QStringLiteral(":/rsc/background/");
 
 ParallaxBackground::ParallaxBackground()
 {

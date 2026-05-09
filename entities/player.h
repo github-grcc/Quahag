@@ -4,9 +4,6 @@
 #include "entities/actoritem.h"
 #include <QPixmap>
 #include <QRectF>
-#include <QPropertyAnimation>
-#include<QGraphicsColorizeEffect>
-#include<QPointer>
 
 class TileMap;
 class Enemy;

@@ -80,15 +80,6 @@ TileLayerItem::TileLayerItem(const TileMap *tileMap, QGraphicsItem *parent)
     initWoodTextures();
 }
 
-TileLayerItem::~TileLayerItem()
-{
-    if (scene()) {
-        qCritical() << "BUG: TileLayerItem deleted while still in scene!"
-                     << "addr:" << (void*)this
-                     << "scene:" << scene();
-    }
-}
-
 QRectF TileLayerItem::boundingRect() const
 {
     if (!m_tileMap)

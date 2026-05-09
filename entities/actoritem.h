@@ -14,7 +14,7 @@ class ActorItem : public QGraphicsObject
     Q_OBJECT
 public:
     explicit ActorItem(QGraphicsItem *parent = nullptr);
-    ~ActorItem() override;
+    ~ActorItem() override = default;
     virtual void tick(const TickContext &ctx) = 0;
 
     virtual EntityKind kind() const = 0;
@@ -22,9 +22,6 @@ public:
 
     bool pendingDestroy() const { return m_pendingDestroy; }
     void markPendingDestroy() { m_pendingDestroy = true; }
-
-protected:
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
     QPointF velocity() const { return m_velocity; }
     qreal velocityX() const { return m_velocity.x(); }

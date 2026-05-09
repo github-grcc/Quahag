@@ -7,8 +7,6 @@
 
 #include <QPainter>
 #include <QPixmap>
-#include <QGraphicsColorizeEffect>
-#include <QPropertyAnimation>
 #include <QRandomGenerator>
 #include <QtGlobal>
 #include <QDebug>
@@ -55,16 +53,6 @@ Player::Player()
     m_attackSprite = originalAttackSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_idleWhiteSprite = m_idleWhiteSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_attackWhiteSprite = m_attackWhiteSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-    // FIXME: Temporarily disabled to test if QGraphicsEffect is causing crash
-    // m_colorizeEffect= new QGraphicsColorizeEffect(this);
-    // m_colorizeEffect->setColor(Qt::white);
-    // m_colorizeEffect->setStrength(0.0);
-    // setGraphicsEffect(m_colorizeEffect);
-    // m_damageAnimation = new QPropertyAnimation(m_colorizeEffect, "strength", this);
-    // m_damageAnimation->setDuration(150);
-    // m_damageAnimation->setStartValue(1.0);
-    // m_damageAnimation->setEndValue(0.0);
 }
 
 QRectF Player::boundingRect() const

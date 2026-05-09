@@ -13,7 +13,6 @@ class TileLayerItem : public QGraphicsItem
 {
 public:
     explicit TileLayerItem(const TileMap *tileMap, QGraphicsItem *parent = nullptr);
-    ~TileLayerItem() override;
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter,

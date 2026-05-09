@@ -2,6 +2,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Quahag",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Quahag",
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "preLaunchTask": "CMake: build",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "visualizerFile": "/home/grcc/.config/Code/User/workspaceStorage/c6fdae4870a9900ee18e964f57e133ac/tonka3000.qtvsctools/qt.natvis.xml"
+        },
+        {
             "name": "Quahag (ASAN)",
             "type": "cppdbg",
             "request": "launch",
@@ -12,7 +25,7 @@
             "environment": [
                 {
                     "name": "ASAN_OPTIONS",
-                    "value": "halt_on_error=1:abort_on_error=1:detect_stack_use_after_return=1:strict_string_checks=1:detect_invalid_pointer_pairs=2:alloc_dealloc_mismatch=1:quarantine_size_mb=256"
+                    "value": "halt_on_error=1:abort_on_error=1:detect_stack_use_after_return=1:strict_string_checks=1:detect_invalid_pointer_pairs=2:alloc_dealloc_mismatch=1"
                 },
                 {
                     "name": "UBSAN_OPTIONS",
@@ -21,7 +34,8 @@
             ],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "miDebuggerPath": "/usr/bin/gdb",
+            "visualizerFile": "/home/grcc/.config/Code/User/workspaceStorage/c6fdae4870a9900ee18e964f57e133ac/tonka3000.qtvsctools/qt.natvis.xml"
         }
     ]
 }

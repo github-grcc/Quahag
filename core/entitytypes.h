@@ -2,6 +2,7 @@
 
 namespace ZLayer {
     constexpr double Background = 0.0;
+    constexpr double Items      = 2.0;
     constexpr double Particles  = 3.0;
     constexpr double Bullets    = 4.0;
     constexpr double Player     = 5.0;
@@ -14,7 +15,8 @@ enum class EntityKind{
     Enemy,
     Bullet,
     Effect,
-    Throne
+    Throne,
+    Hachimi
 };
 enum class Faction{
     Player,

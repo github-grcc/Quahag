@@ -35,6 +35,9 @@ public:
     void takeDamage(const TickContext &ctx);
     int health() const { return m_health; }
 
+    void applyHachimiBoost();
+    qreal hachimiRemaining() const { return m_hachimiRemaining; }
+
 private:
     void moveHorizontally(qreal dt, TileMap &tileMap);
     void moveVertically(qreal dt, TileMap &tileMap);
@@ -86,6 +89,11 @@ private:
 
     // Damage flash
     qreal m_lastDamageTime{-9.0};
+
+    // Hachimi boost
+    qreal m_hachimiRemaining{0.0};
+    qreal m_hachimiMultiplier{1.0};
+    qreal m_hachimiTrailTimer{0.0};
 };
 
 #endif // PLAYER_H

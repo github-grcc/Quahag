@@ -2,6 +2,7 @@
 #include "entities/enemy.h"
 #include "entities/particle.h"
 #include "entities/claweffect.h"
+#include "entities/trailghost.h"
 #include "world/gameworld.h"
 #include "world/tilemap.h"
 
@@ -135,6 +136,15 @@ void Player::tick(const TickContext &ctx)
     m_attackTimer = qMax(0.0, m_attackTimer - dt);
     m_wallJumpLockTimer = qMax(0.0, m_wallJumpLockTimer - dt);
 
+    // Hachimi boost timer
+    if (m_hachimiRemaining > 0.0) {
+        m_hachimiRemaining -= dt;
+        if (m_hachimiRemaining <= 0.0) {
+            m_hachimiRemaining = 0.0;
+            m_hachimiMultiplier = 1.0;
+        }
+    }
+
     // Coyote timer
     if (onGround())
     {
@@ -164,6 +174,19 @@ void Player::tick(const TickContext &ctx)
     // ---- Physics ----
     moveHorizontally(dt, tileMap);
     moveVertically(dt, tileMap);
+
+    // ---- Hachimi trail ----
+    if (m_hachimiRemaining > 0.0 && !qFuzzyIsNull(velocityX()) && ctx.world) {
+        m_hachimiTrailTimer += dt;
+        constexpr qreal kTrailInterval = 0.04;
+        if (m_hachimiTrailTimer >= kTrailInterval) {
+            m_hachimiTrailTimer -= kTrailInterval;
+            const QPixmap &sprite = (m_attackTimer > 0.0) ? m_attackSprite : m_idleSprite;
+            ctx.world->createEntity<TrailGhost>(sceneBoundingRect().center(), sprite);
+        }
+    } else {
+        m_hachimiTrailTimer = 0.0;
+    }
 
     // ---- Post-collision fixup ----
     if (onGround())
@@ -207,16 +230,16 @@ void Player::behaveGrounded(const TickContext &ctx, bool jumpPressed)
 
     // Apply ground accel/drag
     if (movingLeft)
-        setVelocityX(velocityX() - kGroundAccel * dt);
+        setVelocityX(velocityX() - kGroundAccel * m_hachimiMultiplier * dt);
     else if (movingRight)
-        setVelocityX(velocityX() + kGroundAccel * dt);
+        setVelocityX(velocityX() + kGroundAccel * m_hachimiMultiplier * dt);
 
     if (velocityX() > 0.0)
         setVelocityX(qMax(0.0, velocityX() - kGroundDrag * dt));
     else if (velocityX() < 0.0)
         setVelocityX(qMin(0.0, velocityX() + kGroundDrag * dt));
 
-    setVelocityX(qBound(-kRunSpeed, velocityX(), kRunSpeed));
+    setVelocityX(qBound(-kRunSpeed * m_hachimiMultiplier, velocityX(), kRunSpeed * m_hachimiMultiplier));
 
     // Coyote jump: allow jump just after leaving ground
     if (jumpPressed && (onGround() || m_coyoteTimer < kCoyoteTime))
@@ -237,16 +260,16 @@ void Player::behaveAirborne(const TickContext &ctx, bool jumpPressed)
 
     // Apply air accel/drag
     if (movingLeft)
-        setVelocityX(velocityX() - kAirAccel * dt);
+        setVelocityX(velocityX() - kAirAccel * m_hachimiMultiplier * dt);
     else if (movingRight)
-        setVelocityX(velocityX() + kAirAccel * dt);
+        setVelocityX(velocityX() + kAirAccel * m_hachimiMultiplier * dt);
 
     if (velocityX() > 0.0)
         setVelocityX(qMax(0.0, velocityX() - kAirDrag * dt));
     else if (velocityX() < 0.0)
         setVelocityX(qMin(0.0, velocityX() + kAirDrag * dt));
 
-    setVelocityX(qBound(-kRunSpeed, velocityX(), kRunSpeed));
+    setVelocityX(qBound(-kRunSpeed * m_hachimiMultiplier, velocityX(), kRunSpeed * m_hachimiMultiplier));
 
     // Apply gravity
     setVelocityY(velocityY() + gravity * dt);
@@ -317,7 +340,7 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
         setVelocityX(0.0);
     }
 
-    setVelocityX(qBound(-kRunSpeed, velocityX(), kRunSpeed));
+    setVelocityX(qBound(-kRunSpeed * m_hachimiMultiplier, velocityX(), kRunSpeed * m_hachimiMultiplier));
 
     // Wall jump
     if (jumpPressed)
@@ -480,6 +503,12 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
 
     m_attackCooldown = kAttackCooldown;
     m_attackTimer = kAttackVisualDuration;
+}
+
+void Player::applyHachimiBoost()
+{
+    m_hachimiMultiplier *= 1.5;
+    m_hachimiRemaining += 6.0;
 }
 
 void Player::takeDamage(const TickContext &ctx)

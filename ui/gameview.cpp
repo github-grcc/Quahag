@@ -242,8 +242,26 @@ void GameView::drawBackground(QPainter *painter, const QRectF &)
 
 void GameView::drawForeground(QPainter *painter, const QRectF &)
 {
-    if (m_gameState == GameState::Playing)
+    if (m_gameState == GameState::Playing) {
+        Player *player = m_scene ? m_scene->player() : nullptr;
+        if (player && player->hachimiRemaining() > 0.0 && !player->pendingDestroy()) {
+            painter->save();
+            painter->resetTransform();
+            QFont font;
+            font.setPixelSize(20);
+            font.setBold(true);
+            painter->setFont(font);
+            const QString text = QString("哈基米：%1s")
+                .arg(player->hachimiRemaining(), 0, 'f', 1);
+            const QRect r = viewport()->rect();
+            painter->setPen(QColor(0, 0, 0, 180));
+            painter->drawText(r.adjusted(2, 2, 0, 0), Qt::AlignLeft | Qt::AlignTop, text);
+            painter->setPen(QColor(255, 200, 50));
+            painter->drawText(r, Qt::AlignLeft | Qt::AlignTop, text);
+            painter->restore();
+        }
         return;
+    }
 
     painter->save();
     painter->resetTransform();

@@ -53,6 +53,10 @@ set(PROJECT_SOURCES
     entities/bullet.cpp
     entities/throne.h
     entities/throne.cpp
+    entities/hachimi.h
+    entities/hachimi.cpp
+    entities/trailghost.h
+    entities/trailghost.cpp
     entities/enemy.h
     entities/enemy.cpp
     graphics/camera2d.cpp

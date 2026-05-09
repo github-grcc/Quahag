@@ -133,7 +133,12 @@ void GameWorld::flushDestroys()
                                    return ptr.get() == entity;
                                });
         if (it != m_entities.end()) {
+            // Release ownership and defer deletion so Qt can finish
+            // internal cleanup (scene indexing, effect proxies, etc.)
+            // before the QGraphicsItem memory is actually freed.
+            (void)it->release();
             m_entities.erase(it);
+            entity->deleteLater();
         }
     }
     m_inFlushDestroys = false;

@@ -1,0 +1,7 @@
+{
+    "cmake.configureArgs": [
+        "-DENABLE_ASAN=ON"
+    ],
+    "cmake.buildDirectory": "${workspaceFolder}/build-asan",
+    "cmake.generator": "Ninja"
+}

@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Quahag (ASAN)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build-asan/Quahag",
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "preLaunchTask": "CMake: build",
+            "environment": [
+                {
+                    "name": "ASAN_OPTIONS",
+                    "value": "halt_on_error=1:abort_on_error=1:detect_stack_use_after_return=1:detect_leaks=0"
+                },
+                {
+                    "name": "UBSAN_OPTIONS",
+                    "value": "halt_on_error=1:abort_on_error=1:print_stacktrace=1"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb"
+        }
+    ]
+}

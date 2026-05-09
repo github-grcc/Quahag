@@ -10,6 +10,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ------------------------------------------------------------------
+# ASAN option
+# ------------------------------------------------------------------
+option(ENABLE_ASAN "Build with AddressSanitizer" OFF)
+
+if(ENABLE_ASAN)
+    add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer -g -O1)
+    add_link_options(-fsanitize=address,undefined)
+    message(STATUS "AddressSanitizer + UBSan enabled")
+endif()
+
+# ------------------------------------------------------------------
 # Platform detection
 # ------------------------------------------------------------------
 if(NOT DEFINED CMAKE_PREFIX_PATH)

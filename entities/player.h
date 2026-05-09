@@ -59,8 +59,8 @@ private:
     QRectF m_bodyRect{-m_spriteSize.width()/2,-m_spriteSize.height()/2,m_spriteSize.width(),m_spriteSize.height()};//{-12.0, -24.0, 24.0, 48.0};
     QPixmap m_idleSprite;
     QPixmap m_attackSprite;
-    QPointer<QPropertyAnimation> m_damageAnimation;
-    QPointer<QGraphicsColorizeEffect> m_colorizeEffect;
+    QPixmap m_idleWhiteSprite;
+    QPixmap m_attackWhiteSprite;
     int m_health{3};
 
     // State

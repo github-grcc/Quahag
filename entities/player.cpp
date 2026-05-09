@@ -49,9 +49,13 @@ Player::Player()
 
     originalIdleSprite.load(":/rsc/sprites/player_idle.jpg");
     originalAttackSprite.load(":/rsc/sprites/player_attack.jpg");
-
+    m_idleWhiteSprite.load(":/rsc/sprites/player_idle_white.png");
+    m_attackWhiteSprite.load(":/rsc/sprites/player_attack_white.png");
     m_idleSprite = originalIdleSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_attackSprite = originalAttackSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_idleWhiteSprite = m_idleWhiteSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_attackWhiteSprite = m_attackWhiteSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
     // FIXME: Temporarily disabled to test if QGraphicsEffect is causing crash
     // m_colorizeEffect= new QGraphicsColorizeEffect(this);
     // m_colorizeEffect->setColor(Qt::white);
@@ -90,16 +94,25 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     // }
     if (m_attackTimer > 0.0)
     {
-        painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_attackSprite);
+        if (age() - m_lastDamageTime < 0.1)
+        {
+            painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_attackWhiteSprite);
+        }
+        else
+        {
+            painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_attackSprite);
+        }
     }
     else
     {
-        painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_idleSprite);
-    }
-    if (age() - m_lastDamageTime < 0.1 && m_damageAnimation && m_damageAnimation->state() != QAbstractAnimation::Running)
-    {
-        m_damageAnimation->start();
-        qDebug() << "damage animation running\n";
+        if (age() - m_lastDamageTime < 0.1)
+        {
+            painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_idleWhiteSprite);
+        }
+        else
+        {
+            painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_idleSprite);
+        }
     }
 
     // // Facing indicator

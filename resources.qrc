@@ -15,5 +15,7 @@
         <file>rsc/background/mangrove.png</file>
         <file>rsc/background/sea.png</file>
         <file>rsc/background/sky.png</file>
+        <file>rsc/sprites/player_idle_white.png</file>
+        <file>rsc/sprites/player_attack_white.png</file>
     </qresource>
 </RCC>

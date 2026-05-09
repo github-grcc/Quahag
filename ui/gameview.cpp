@@ -244,22 +244,38 @@ void GameView::drawForeground(QPainter *painter, const QRectF &)
 {
     if (m_gameState == GameState::Playing) {
         Player *player = m_scene ? m_scene->player() : nullptr;
-        if (player && player->hachimiRemaining() > 0.0 && !player->pendingDestroy()) {
-            painter->save();
-            painter->resetTransform();
-            QFont font;
-            font.setPixelSize(20);
-            font.setBold(true);
-            painter->setFont(font);
-            const QString text = QString("哈基米：%1s")
+        if (!player || player->pendingDestroy())
+            return;
+
+        painter->save();
+        painter->resetTransform();
+
+        QFont font;
+        font.setPixelSize(20);
+        font.setBold(true);
+        painter->setFont(font);
+        const QRect r = viewport()->rect();
+        int lineY = r.top() + 4;
+
+        // Health (always shown)
+        const QString healthText = QString("生命值：%1").arg(player->health());
+        painter->setPen(QColor(0, 0, 0, 180));
+        painter->drawText(r.adjusted(4, lineY + 2, 0, 0), Qt::AlignLeft | Qt::AlignTop, healthText);
+        painter->setPen(Qt::white);
+        painter->drawText(r.adjusted(4, lineY, 0, 0), Qt::AlignLeft | Qt::AlignTop, healthText);
+
+        // Hachimi timer (conditional)
+        if (player->hachimiRemaining() > 0.0) {
+            lineY += 24;
+            const QString hachimiText = QString("哈基米：%1s")
                 .arg(player->hachimiRemaining(), 0, 'f', 1);
-            const QRect r = viewport()->rect();
             painter->setPen(QColor(0, 0, 0, 180));
-            painter->drawText(r.adjusted(2, 2, 0, 0), Qt::AlignLeft | Qt::AlignTop, text);
+            painter->drawText(r.adjusted(4, lineY + 2, 0, 0), Qt::AlignLeft | Qt::AlignTop, hachimiText);
             painter->setPen(QColor(255, 200, 50));
-            painter->drawText(r, Qt::AlignLeft | Qt::AlignTop, text);
-            painter->restore();
+            painter->drawText(r.adjusted(4, lineY, 0, 0), Qt::AlignLeft | Qt::AlignTop, hachimiText);
         }
+
+        painter->restore();
         return;
     }
 

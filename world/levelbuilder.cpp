@@ -4,6 +4,7 @@
 #include "entities/enemy.h"
 #include "entities/throne.h"
 #include "entities/hachimi.h"
+#include "entities/chutty.h"
 #include "world/gameworld.h"
 #include "world/tilemap.h"
 
@@ -33,6 +34,11 @@ LevelBuilder::BuildResult LevelBuilder::build(GameWorld &world) const
                 auto *hachimi = world.createEntity<Hachimi>();
                 hachimi->setPos(tileMap.tileCenterToScene(j,i));
                 hachimi->setZValue(ZLayer::Items);
+            }
+            if(tileMap.tileAt(j,i)==TileMap::TileType::ChuttySpawn){
+                auto *chutty = world.createEntity<Chutty>();
+                chutty->setPos(tileMap.tileCenterToScene(j,i));
+                chutty->setZValue(ZLayer::Items);
             }
         }
     }

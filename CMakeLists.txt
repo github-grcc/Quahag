@@ -57,6 +57,10 @@ set(PROJECT_SOURCES
     entities/hachimi.cpp
     entities/trailghost.h
     entities/trailghost.cpp
+    entities/chutty.h
+    entities/chutty.cpp
+    entities/healcross.h
+    entities/healcross.cpp
     entities/enemy.h
     entities/enemy.cpp
     graphics/camera2d.cpp

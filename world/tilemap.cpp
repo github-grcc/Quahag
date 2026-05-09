@@ -132,6 +132,8 @@ void TileMap::initTiles()
                 tileValue = 6;
             else if (ch == 'l')
                 tileValue = 7;
+            else if (ch == 't')
+                tileValue = 10;
             else
                 tileValue = ch.digitValue();
             tileRow.append(tileValue);

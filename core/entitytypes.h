@@ -16,7 +16,8 @@ enum class EntityKind{
     Bullet,
     Effect,
     Throne,
-    Hachimi
+    Hachimi,
+    Chutty
 };
 enum class Faction{
     Player,

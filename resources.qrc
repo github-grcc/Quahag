@@ -18,5 +18,6 @@
         <file>rsc/sprites/player_idle_white.png</file>
         <file>rsc/sprites/player_attack_white.png</file>
         <file>rsc/sprites/hachimi.png</file>
+        <file>rsc/sprites/chutty.png</file>
     </qresource>
 </RCC>

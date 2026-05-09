@@ -33,6 +33,7 @@ public:
                QWidget *widget = nullptr) override;
 
     void takeDamage(const TickContext &ctx);
+    void addHealth(int amount) { m_health += amount; }
     int health() const { return m_health; }
 
     void applyHachimiBoost();

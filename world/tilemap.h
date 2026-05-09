@@ -19,7 +19,8 @@ public:
         OneWayRight=6,
         OneWayLeft=7,
         ThroneSpawn=8,
-        HachimiSpawn=9
+        HachimiSpawn=9,
+        ChuttySpawn=10
     };
 
     static bool isOneWayWallType(TileType type);

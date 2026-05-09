@@ -1,10 +1,10 @@
 #pragma once
 #include "entities/actoritem.h"
-#include"core/tickcontext.h"
+#include "core/tickcontext.h"
 #include <QPointer>
 #include <QRectF>
 #include <QPixmap>
-#include<QSizeF>
+#include <QSizeF>
 class TileMap;
 class QPainter;
 class QStyleOptionGraphicsItem;
@@ -21,11 +21,12 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget = nullptr) override;
+
 private:
     bool checkCollision(const TickContext &ctx);
     QPointer<ActorItem> m_owner;
     qreal m_shootAngle{0.0};
-    qreal m_speed{150.0};
+    qreal m_speed{200.0};
     QPointF m_spawnPosition{0.0, 0.0};
-    QRectF m_bodyRect{-4.0,-2.0,8.0,4.0};
+    QRectF m_bodyRect{-4.0, -2.0, 8.0, 4.0};
 };

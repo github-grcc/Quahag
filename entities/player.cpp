@@ -52,14 +52,15 @@ Player::Player()
 
     m_idleSprite = originalIdleSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_attackSprite = originalAttackSprite.scaled(m_spriteSize.width(), m_spriteSize.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    m_colorizeEffect= new QGraphicsColorizeEffect(this);
-    m_colorizeEffect->setColor(Qt::white);
-    m_colorizeEffect->setStrength(0.0);
-    setGraphicsEffect(m_colorizeEffect);
-    m_damageAnimation = new QPropertyAnimation(m_colorizeEffect, "strength", this);
-    m_damageAnimation->setDuration(150);
-    m_damageAnimation->setStartValue(1.0);
-    m_damageAnimation->setEndValue(0.0);
+    // FIXME: Temporarily disabled to test if QGraphicsEffect is causing crash
+    // m_colorizeEffect= new QGraphicsColorizeEffect(this);
+    // m_colorizeEffect->setColor(Qt::white);
+    // m_colorizeEffect->setStrength(0.0);
+    // setGraphicsEffect(m_colorizeEffect);
+    // m_damageAnimation = new QPropertyAnimation(m_colorizeEffect, "strength", this);
+    // m_damageAnimation->setDuration(150);
+    // m_damageAnimation->setStartValue(1.0);
+    // m_damageAnimation->setEndValue(0.0);
 }
 
 QRectF Player::boundingRect() const
@@ -95,7 +96,7 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     {
         painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_idleSprite);
     }
-    if (age() - m_lastDamageTime < 0.1 && m_damageAnimation->state() != QAbstractAnimation::Running)
+    if (age() - m_lastDamageTime < 0.1 && m_damageAnimation && m_damageAnimation->state() != QAbstractAnimation::Running)
     {
         m_damageAnimation->start();
         qDebug() << "damage animation running\n";

@@ -100,7 +100,7 @@ TileMap::TileMap()
 }
 void TileMap::initTiles()
 {
-    QFile file("/home/grcc/dev/Quahag/rsc/map3.txt");
+    QFile file(":/rsc/map3.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qWarning("TileMap: Failed to open rsc/map3.txt");

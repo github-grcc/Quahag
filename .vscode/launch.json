@@ -12,7 +12,7 @@
             "environment": [
                 {
                     "name": "ASAN_OPTIONS",
-                    "value": "halt_on_error=1:abort_on_error=1:detect_stack_use_after_return=1:detect_leaks=0"
+                    "value": "halt_on_error=1:abort_on_error=1:detect_stack_use_after_return=1:strict_string_checks=1:detect_invalid_pointer_pairs=2:alloc_dealloc_mismatch=1:quarantine_size_mb=256"
                 },
                 {
                     "name": "UBSAN_OPTIONS",

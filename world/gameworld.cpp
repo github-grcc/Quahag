@@ -187,13 +187,24 @@ void GameWorld::clearAllEntities()
     // Emit signal so GameScene removes entities from the scene before deletion.
     // (Skip unindexEntity — the indices are cleared wholesale below.)
     for (auto &ptr : m_entities) {
-        if (ptr)
+        if (ptr) {
             emit entityAboutToBeDestroyed(ptr.get());
+        }
     }
 
     m_entitiesByKind.clear();
     m_entitiesByFaction.clear();
     m_player.clear();
+
+    // Defer deletion via deleteLater() so Qt can finish any pending
+    // internal cleanup (scene indexing, rendering pipeline, etc.)
+    // before the QGraphicsItem memory is actually freed.
+    for (auto &ptr : m_entities) {
+        if (ptr) {
+            ActorItem *raw = ptr.release();
+            raw->deleteLater();
+        }
+    }
     m_entities.clear();
     m_victory = false;
 }

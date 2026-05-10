@@ -21,9 +21,12 @@ ActorItem::~ActorItem()
 QVariant ActorItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == ItemSceneHasChanged) {
+        // Use metaObject()->className() instead of kind() because
+        // itemChange can be called during ~QGraphicsItem after the
+        // derived class has been destroyed, making kind() pure virtual.
         qDebug() << "ActorItem scene change:"
                  << "addr:" << (void*)this
-                 << "kind:" << static_cast<int>(kind())
+                 << "type:" << metaObject()->className()
                  << "hasScene:" << (value.toBool());
     }
     return QGraphicsObject::itemChange(change, value);

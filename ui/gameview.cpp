@@ -293,9 +293,9 @@ void GameView::drawForeground(QPainter *painter, const QRectF &)
     if (m_gameState == GameState::Title) {
         painter->setFont(titleFont);
         painter->setPen(QColor(0, 0, 0, 180));
-        painter->drawText(r.translated(shadow), Qt::AlignHCenter | Qt::AlignTop, "Quahag圆哈镇");
+        painter->drawText(r.translated(shadow), Qt::AlignHCenter | Qt::AlignTop, "Quahag 圆哈镇3022");
         painter->setPen(Qt::white);
-        painter->drawText(r, Qt::AlignHCenter | Qt::AlignTop, "Quahag圆哈镇");
+        painter->drawText(r, Qt::AlignHCenter | Qt::AlignTop, "Quahag 圆哈镇3022");
 
         painter->setFont(promptFont);
         painter->setPen(QColor(0, 0, 0, 180));

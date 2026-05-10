@@ -4,4 +4,5 @@ ActorItem::ActorItem(QGraphicsItem *parent)
     : QGraphicsObject(parent)
 {
 }
+
  

@@ -2,7 +2,9 @@
 
 ## 概述
 
-Quahag 的资源管理涉及两层所有权：**GameWorld** 通过 `unique_ptr` 拥有所有实体，**QGraphicsScene** 通过 `addItem()` 持有实体的图形引用。两层之间通过 Qt 信号-槽机制保持同步，确保实体在删除前先从场景中移除，避免悬挂指针和双重释放。
+Quahag 的资源管理涉及两层所有权：**GameWorld** 通过 `unique_ptr` 拥有所有实体，**QGraphicsScene** 通过 `addItem()` 持有实体的图形引用。两层之间通过 Qt 信号-槽机制保持同步。
+
+关键设计决策：**不在删除实体前主动调用 `QGraphicsScene::removeItem()`**，而是将实体设为不可见，由 Qt 的 `~QGraphicsItem()` 析构链统一处理场景分离。这一策略基于 Qt 6.10 的一个实际问题——`removeItem()` 内部可能存在异步索引清理，导致立即删除实体时渲染管线仍持有悬挂引用，引发 SIGSEGV 或 "pure virtual method called"。
 
 ## 核心数据结构
 
@@ -32,8 +34,10 @@ GameScene : QGraphicsScene
 
 ```
 GameWorld::entitySpawned              →  GameScene::addEntityItem      (addItem)
-GameWorld::entityAboutToBeDestroyed   →  GameScene::removeEntityItem   (removeItem)
+GameWorld::entityAboutToBeDestroyed   →  GameScene::removeEntityItem   (hide, 不 removeItem)
 ```
+
+---
 
 ## 所有权模型
 
@@ -44,9 +48,30 @@ GameWorld::entityAboutToBeDestroyed   →  GameScene::removeEntityItem   (remove
 | 系统 | 注册方式 | 所有权 | 删除行为 |
 |------|---------|--------|---------|
 | GameWorld | `m_entities` 中的 `unique_ptr` | **唯一所有权** | `delete` 实体 |
-| QGraphicsScene | `addItem(entity)` | 引用（无所有权） | `removeItem(entity)` 仅移除，不删除 |
+| QGraphicsScene | `addItem(entity)` | 引用（无所有权） | 仅隐式引用，不在外部调用 `removeItem` |
 
-实体被删除时，必须先调用 `removeItem` 从场景中移除，再由 `unique_ptr` 销毁实体。`QGraphicsItem::~QGraphicsItem()` 会在析构时自动从场景移除自身——这是兜底安全网，但正常流程应当在析构前主动移除。
+### 为什么不在删除前主动 removeItem
+
+在 Qt 6.10 中，`removeItem()` 调用后 Qt 内部可能尚未完成索引清理（场景变换缓存、空间索引等异步更新）。如果在 `removeItem()` 后立即 `delete` 实体或在下个事件循环中 `delete`，Qt 的渲染管线（`drawSubtreeRecursive`）可能仍持有该实体的悬挂引用，导致：
+
+- **SIGSEGV**：访问已释放内存（ASAN 0xFD 填充 → 垃圾变换矩阵值）
+- **pure virtual method called**：虚表指针部分有效但指向基类，`paint()` / `boundingRect()` 成为纯虚调用
+
+**解决方案**：删除前将实体设为不可见（`setVisible(false)` + `setEnabled(false)`），让 `~QGraphicsItem()` 在析构时内部完成场景分离。Qt 的析构链保证了内部索引和场景引用的原子性清理。
+
+### removeEntityItem 实现
+
+```cpp
+void GameScene::removeEntityItem(ActorItem *entity)
+{
+    if (!entity)
+        return;
+    // 只隐藏，不 removeItem()。渲染遍历中 isVisible() 检查会跳过
+    // 隐藏项。真正的场景移除由 ~QGraphicsItem() 在 delete 时完成。
+    entity->setVisible(false);
+    entity->setEnabled(false);
+}
+```
 
 ### 瓦片图层：场景单一所有权
 
@@ -95,14 +120,24 @@ destroyLater(entity)
 flushDestroys()
   │
   ├─ for each entity in toDestroy:
-  │    ├─ emit entityAboutToBeDestroyed(entity)  // → GameScene::removeEntityItem → removeItem
+  │    ├─ emit entityAboutToBeDestroyed(entity)  // → setVisible(false), setEnabled(false)
   │    ├─ unindexEntity(entity)                  // 从 kind/faction 索引中移除
-  │    └─ m_entities.erase(it)                  // unique_ptr 出作用域 → delete entity
+  │    ├─ it->release()                          // 放弃 unique_ptr 所有权
+  │    ├─ m_entities.erase(it)                   // 从主容器移除
+  │    └─ QTimer::singleShot(0, [raw] { delete raw; })
+  │              // 延迟到下个事件循环迭代再 delete
+  │              // 确保本轮的 paint event 先处理完毕
+  │              // delete 时 ~QGraphicsItem() 完成 scene 分离
   │
-  └─ m_entitiesDirty = true (已移除缓存机制，此标记不再存在)
+  └─ m_pendingDestroy.clear()
 ```
 
-**注意**：`flushDestroys()` 会调用 `unindexEntity()`，逐个从 `m_entitiesByKind`/`m_entitiesByFaction` 中移除实体引用，并检查是否需要清除 `m_player`。这是运行时逐个销毁的必经路径。
+**设计要点**：
+
+- **不调用 removeItem()**：只将实体设为不可见。Qt 渲染遍历 (`drawSubtreeRecursive`) 检查 `isVisible()`，隐藏项被跳过。
+- **QTimer::singleShot(0)**：将 `delete` 延迟到下一个事件循环迭代。`deleteLater()` 的 `DeferredDelete` 事件在本轮 paint 之前处理，时机不满足要求；零定时器确保本轮的 paint event 先处理完毕。
+- **release + erase**：放弃 `unique_ptr` 所有权后从 `m_entities` 移除。实体在短暂窗口内存在于场景中（不可见）但不被任何系统拥有，直到定时器触发 delete。
+- **内存占用**：每帧处于"隐藏待删"窗口的实体最多几十个（几个敌人 + 几十个粒子），每个约几百字节，总内存占用 < 100KB，下一帧即被释放。
 
 ### 3. 批量清空（clearAllEntities）
 
@@ -115,18 +150,28 @@ clearAllEntities()
   ├─ m_pendingDestroy.clear()          // 清空待销毁列表（裸指针，无 delete）
   │
   ├─ for each ptr in m_entities:
-  │    └─ emit entityAboutToBeDestroyed(ptr.get())  // → GameScene::removeEntityItem → removeItem
+  │    └─ emit entityAboutToBeDestroyed(ptr.get())  // → setVisible(false), setEnabled(false)
   │
   ├─ m_entitiesByKind.clear()          // 索引全量清空
   ├─ m_entitiesByFaction.clear()
   ├─ m_player.clear()
-  └─ m_entities.clear()                // 所有 unique_ptr 销毁 → delete 所有实体
+  │
+  ├─ for each ptr in m_entities:
+  │    └─ ptr.release()                // 放弃所有权，不 delete
+  │
+  └─ m_entities.clear()
 ```
 
+实体在 `clearAllEntities()` 后变为不可见（`setVisible(false)`）但仍在场景中。所有权已通过 `release()` 放弃。
+
+随后 `resetGame()` 调用 `rebuildScene()` → `QGraphicsScene::clear()`，会删除场景中所有项（包括被隐藏的旧实体和瓦片图层），由 Qt 的析构链统一处理场景分离和内存释放。不会发生双重释放，因为实体已不在 `unique_ptr` 中。
+
 **设计要点**：
-- **不调用 `unindexEntity()`**：因为索引在循环后直接全量 `clear()`，逐个移除是浪费。
-- **保留信号发射**：每个实体通过 `entityAboutToBeDestroyed` 信号通知 `GameScene` 调用 `removeItem()`。这确保实体在被 `unique_ptr` 删除前先从场景中移除。
-- **与 `flushDestroys()` 的区别**：`flushDestroys()` 需要精确地从 `m_entities` 中查找并删除单个实体（`find_if + erase`），同时逐项维护索引；`clearAllEntities()` 直接全量清空所有容器。
+
+- **不调用 `unindexEntity()`**：索引在循环后直接全量 `clear()`，逐个移除是浪费。
+- **不调用 `removeItem()`**：与 `flushDestroys()` 一致，只隐藏实体。
+- **不独立 delete**：利用后续 `rebuildScene()` → `clear()` 统一删除，避免与 Qt 内部索引竞争。
+- **与 `flushDestroys()` 的区别**：`flushDestroys()` 使用 `QTimer::singleShot(0)` 逐个延迟删除；`clearAllEntities()` 依赖 `clear()` 的批量删除，不需要独立定时器。
 
 ### 4. 程序退出（~GameWorld → ~QGraphicsScene）
 
@@ -201,17 +246,17 @@ GameView 构造:
 
 ### rebuildScene — 重建场景
 
-用于 `resetGame()` 中清除旧瓦片图层并创建新的。
+用于 `resetGame()` 中清除旧瓦片图层并创建新的。同时负责删除 `clearAllEntities()` 中隐藏的旧实体。
 
 ```
 rebuildScene()
-  ├─ clear()                              // 删除场景中所有项（此时只有瓦片图层）
+  ├─ clear()                              // 删除场景中所有项（旧实体已隐藏 + 瓦片图层）
   ├─ new TileLayerItem + addItem          // 重建瓦片图层
   └─ for entity in world->entities()      // 重新添加实体（clearAllEntities 后为空）
        └─ addEntityItem(entity)
 ```
 
-**前置条件**：调用 `rebuildScene()` 前必须先调用 `clearAllEntities()`，确保实体已在场景外。`clearAllEntities()` 的信号已将实体从场景移除，`clear()` 只删除瓦片图层。
+**前置条件**：调用 `rebuildScene()` 前必须先调用 `clearAllEntities()`，将旧实体隐藏并放弃所有权。`clear()` 统一删除所有场景项，不会出现双重释放。
 
 ---
 
@@ -226,8 +271,8 @@ GameView::resetGame()
   ├─ m_shakeRequested = false
   ├─ m_zoomPulseRequested = false
   │
-  ├─ world->clearAllEntities()          // 步骤 1: 信号移除实体 → 批量删除
-  ├─ m_scene->rebuildScene()            // 步骤 2: clear() 删瓦片图层 → 重建瓦片图层
+  ├─ world->clearAllEntities()          // 步骤 1: 隐藏实体 → 批量释放所有权
+  ├─ m_scene->rebuildScene()            // 步骤 2: clear() 删旧项 → 重建瓦片图层
   ├─ LevelBuilder().build(*world)       // 步骤 3: 创建新实体 → m_pendingSpawn
   ├─ world->flushSpawns()               // 步骤 4: 刷新生成 → m_entities → emit → addItem
   │
@@ -274,12 +319,14 @@ Title 状态: m_loop.setWorldPaused(true)
 场景注册      emit entitySpawned            emit entityAboutToBe         emit entityAboutToBe           （不经过信号）
                   │    Destroyed                  │    Destroyed                  │
                   ▼                              ▼                            ▼                              ▼
-             addItem(entity)               removeItem(entity)           removeItem(entity)              ~QGraphicsScene
-                                                                                                       ::clear()
-                                                                                                         │
-                                                                                                         ▼
-                                                                                                    delete entity
-                                                                                                    delete tileLayer
+             addItem(entity)               setVisible(false)            setVisible(false)              ~QGraphicsScene
+                                           setEnabled(false)            setEnabled(false)              ::clear()
+                                                  │                            │                              │
+                                                  ▼                            ▼                              ▼
+                                           QTimer::singleShot(0)        rebuildScene()                 delete entity
+                                           → delete raw                 → clear()                      delete tileLayer
+                                           → ~QGraphicsItem()           → delete all items
+                                           → 自动 removeItem
 ```
 
 ---
@@ -287,8 +334,9 @@ Title 状态: m_loop.setWorldPaused(true)
 ## 设计原则
 
 1. **唯一所有权**：实体由 `unique_ptr` 唯一拥有，场景只是图形引用的注册表。
-2. **先移除再删除**：实体删除前必须从场景移除，防止 `QGraphicsScene` 持有悬挂指针。
-3. **延迟操作**：创建/销毁不立即生效，通过队列积累后统一刷新，避免迭代器失效。
-4. **信号驱动同步**：GameWorld 不直接访问 GameScene，通过 Qt 信号解耦两层。
-5. **批量优化**：`clearAllEntities()` 跳过逐项 unindex，直接全量清空索引。
-6. **退出安全**：`~GameWorld()` 释放所有权，让 `~QGraphicsScene::clear()` 统一删除，避免与 Qt 内部清理冲突。
+2. **隐含场景移除**：不在外部显式调用 `removeItem()`，通过 `setVisible(false)` 让渲染跳过实体，由 `~QGraphicsItem()` 在析构时统一处理场景分离。这一策略避免了 Qt 6.10 中 `removeItem()` 异步索引清理与立即 delete 之间的竞争条件。
+3. **延迟删除**：运行时销毁使用 `QTimer::singleShot(0)` 将 delete 推迟到下个事件循环迭代，确保 Qt 的渲染事件先处理完毕。重置时依赖 `rebuildScene()` 中的 `clear()` 批量删除。
+4. **延迟创建**：创建不立即生效，通过队列积累后统一刷新，避免迭代器失效。
+5. **信号驱动同步**：GameWorld 不直接访问 GameScene，通过 Qt 信号解耦两层。
+6. **批量优化**：`clearAllEntities()` 跳过逐项 unindex，直接全量清空索引。
+7. **退出安全**：`~GameWorld()` 释放所有权，让 `~QGraphicsScene::clear()` 统一删除，避免与 Qt 内部清理冲突。

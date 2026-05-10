@@ -198,13 +198,11 @@ void GameWorld::clearAllEntities()
     m_entitiesByFaction.clear();
     m_player.clear();
 
-    // Use zero-timer instead of deleteLater() so deletion happens
-    // in the next event loop iteration, after pending paint events.
+    // Entities are now hidden in the scene (setVisible(false) via
+    // entityAboutToBeDestroyed signal). Release ownership — they will
+    // be deleted by rebuildScene() -> QGraphicsScene::clear().
     for (auto &ptr : m_entities) {
-        if (ptr) {
-            ActorItem *raw = ptr.release();
-            QTimer::singleShot(0, raw, [raw]() { delete raw; });
-        }
+        (void)ptr.release();
     }
     m_entities.clear();
     m_victory = false;

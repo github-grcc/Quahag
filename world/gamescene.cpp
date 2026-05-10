@@ -73,6 +73,14 @@ void GameScene::removeEntityItem(ActorItem *entity)
     if (!entity)
         return;
 
-    if (entity->scene() == this)
-        removeItem(entity);
+    // Don't call removeItem() — in Qt 6.10 it may defer internal
+    // cleanup asynchronously, and the rendering pipeline can still
+    // find the item in pending index updates.
+    //
+    // Instead, just hide the item. Qt will skip hidden items during
+    // rendering (drawSubtreeRecursive checks isVisible()). The actual
+    // scene removal happens in ~QGraphicsItem() when the zero-timer
+    // deletes the entity.
+    entity->setVisible(false);
+    entity->setEnabled(false);
 }

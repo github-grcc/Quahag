@@ -2,6 +2,8 @@
 
 #include "entities/player.h"
 
+#include <QTimer>
+
 GameWorld::GameWorld(QObject *parent)
     : QObject(parent)
 {
@@ -133,12 +135,12 @@ void GameWorld::flushDestroys()
                                    return ptr.get() == entity;
                                });
         if (it != m_entities.end()) {
-            // Release ownership and defer deletion so Qt can finish
-            // internal cleanup (scene indexing, effect proxies, etc.)
-            // before the QGraphicsItem memory is actually freed.
-            (void)it->release();
+            // Use zero-timer instead of deleteLater() so the deletion
+            // happens in the NEXT event loop iteration, after all
+            // pending paint events have been processed.
+            ActorItem *raw = it->release();
             m_entities.erase(it);
-            entity->deleteLater();
+            QTimer::singleShot(0, raw, [raw]() { delete raw; });
         }
     }
     m_inFlushDestroys = false;
@@ -196,13 +198,12 @@ void GameWorld::clearAllEntities()
     m_entitiesByFaction.clear();
     m_player.clear();
 
-    // Defer deletion via deleteLater() so Qt can finish any pending
-    // internal cleanup (scene indexing, rendering pipeline, etc.)
-    // before the QGraphicsItem memory is actually freed.
+    // Use zero-timer instead of deleteLater() so deletion happens
+    // in the next event loop iteration, after pending paint events.
     for (auto &ptr : m_entities) {
         if (ptr) {
             ActorItem *raw = ptr.release();
-            raw->deleteLater();
+            QTimer::singleShot(0, raw, [raw]() { delete raw; });
         }
     }
     m_entities.clear();

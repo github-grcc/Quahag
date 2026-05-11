@@ -23,7 +23,7 @@ public:
                QWidget *widget = nullptr) override;
 
 private:
-    QSizeF m_spriteSize{30.0, 50.0};
+    QSizeF m_spriteSize{35.0, 55.0};
     QRectF m_bodyRect{-m_spriteSize.width() / 2, -m_spriteSize.height() / 2,
                       m_spriteSize.width(), m_spriteSize.height()};
     QPixmap m_sprite;

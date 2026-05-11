@@ -463,7 +463,7 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
     // Camera shake on attack
     if (ctx.events)
     {
-        ctx.events->cameraShakes.append(CameraShakeEvent{10.0, 0.05, 28.0});
+        ctx.events->cameraShakes.append(CameraShakeEvent{20.0, 0.15, 28.0});
     }
     playQrcSound(":/rsc/sounds/ha.wav");
 
@@ -520,7 +520,7 @@ void Player::takeDamage(const TickContext &ctx)
     // Camera shake on damage
     if (ctx.events)
     {
-        ctx.events->cameraShakes.append(CameraShakeEvent{10.0, 0.1, 28.0});
+        ctx.events->cameraShakes.append(CameraShakeEvent{20.0, 0.15, 28.0});
     }
 
     // Damage particles

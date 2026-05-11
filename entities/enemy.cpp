@@ -80,6 +80,26 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     }
     painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() *2/5, m_sprites[index]);
 
+    if (m_state == EnemyState::Alert || m_state == EnemyState::Chase) {
+        QFont font = painter->font();
+        font.setPointSize(20);
+        font.setBold(true);
+        painter->setFont(font);
+        painter->setPen(Qt::black);
+        painter->drawText(QRectF(-m_spriteSize.width() / 2, -m_spriteSize.height() * 2 / 5 - 28,
+                                  m_spriteSize.width(), 24),
+                          Qt::AlignHCenter | Qt::AlignVCenter, QStringLiteral("!"));
+    } else if (m_state == EnemyState::Confused) {
+        QFont font = painter->font();
+        font.setPointSize(20);
+        font.setBold(true);
+        painter->setFont(font);
+        painter->setPen(Qt::black);
+        painter->drawText(QRectF(-m_spriteSize.width() / 2, -m_spriteSize.height() * 2 / 5 - 28,
+                                  m_spriteSize.width(), 24),
+                          Qt::AlignHCenter | Qt::AlignVCenter, QStringLiteral("?"));
+    }
+
     //     if (m_attackTimer > 0.0)
     // {
     //     painter->drawPixmap(-m_spriteSize.width() / 2, -m_spriteSize.height() / 2, m_attackSprite);

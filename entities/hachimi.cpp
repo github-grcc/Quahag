@@ -1,6 +1,7 @@
 #include "entities/hachimi.h"
 #include "entities/player.h"
 #include "core/tickcontext.h"
+#include "core/sound.h"
 #include "world/gameworld.h"
 
 #include <QPainter>
@@ -35,6 +36,7 @@ void Hachimi::tick(const TickContext &ctx)
         return;
 
     if (sceneBoundingRect().intersects(player->sceneBoundingRect())) {
+        playQrcSound(":/rsc/sounds/hachimi.wav");
         player->applyHachimiBoost();
         ctx.world->destroyLater(this);
     }

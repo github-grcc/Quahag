@@ -2,6 +2,7 @@
 #include "entities/player.h"
 #include "entities/healcross.h"
 #include "core/tickcontext.h"
+#include "core/sound.h"
 #include "world/gameworld.h"
 
 #include <QPainter>
@@ -37,6 +38,7 @@ void Chutty::tick(const TickContext &ctx)
         return;
 
     if (sceneBoundingRect().intersects(player->sceneBoundingRect())) {
+        playQrcSound(":/rsc/sounds/chutty.wav");
         player->addHealth(1);
 
         auto *rng = QRandomGenerator::global();

@@ -19,5 +19,9 @@
         <file>rsc/sprites/player_attack_white.png</file>
         <file>rsc/sprites/hachimi.png</file>
         <file>rsc/sprites/chutty.png</file>
+        <file>rsc/sounds/ding.wav</file>
+        <file>rsc/sounds/ha.wav</file>
+        <file>rsc/sounds/hachimi.wav</file>
+        <file>rsc/sounds/chutty.wav</file>
     </qresource>
 </RCC>

@@ -40,6 +40,7 @@ set(PROJECT_SOURCES
     core/gameloop.h
     core/inputstate.h
     core/tickcontext.h
+    core/sound.h
     core/entitytypes.h
     entities/actoritem.cpp
     entities/actoritem.h

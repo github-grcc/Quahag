@@ -11,9 +11,7 @@
 #include <QtNumeric>
 #include <cmath>
 #include <QtGlobal>
-#include <QProcess>
-#include <QCoreApplication>
-#include <QDir>
+#include "core/sound.h"
 
 namespace
 {
@@ -398,9 +396,7 @@ void Enemy::tryShoot(const TickContext &ctx)
 {
     if (m_shotCooldown > 0 || !m_seenPlayer)
         return;
-    const QString path = QDir::cleanPath(
-        QCoreApplication::applicationDirPath() + "/../rsc/sounds/ding.wav");
-    QProcess::startDetached("paplay", {path});
+    playQrcSound(":/rsc/sounds/ding.wav");
     ctx.world->createEntity<Bullet>(this, eyePosition(), m_aimAngle);
     m_shotCooldown = kShotInterval;
 }

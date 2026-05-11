@@ -8,6 +8,7 @@
 
 #include <QPainter>
 #include <QPixmap>
+#include "core/sound.h"
 #include <QRandomGenerator>
 #include <QtGlobal>
 #include <QDebug>
@@ -464,6 +465,7 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
     {
         ctx.events->cameraShakes.append(CameraShakeEvent{10.0, 0.05, 28.0});
     }
+    playQrcSound(":/rsc/sounds/ha.wav");
 
     const QRectF playerRect = sceneBoundingRect();
     QRectF hitbox;

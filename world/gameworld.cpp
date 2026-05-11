@@ -11,9 +11,7 @@ GameWorld::GameWorld(QObject *parent)
 
 GameWorld::~GameWorld()
 {
-    // Release ownership so ~QGraphicsScene::clear() can delete entities.
-    // (The base ~QGraphicsScene always calls clear(); if unique_ptrs still
-    // own the entities we get a double-free.)
+    //释放所有权让~QGraphicsScene::clear()删除实体(基类~QGraphicsScene总调用clear()；若unique_ptr仍拥有实体则造成双重释放)
     for (auto &ptr : m_entities)
         (void)ptr.release();
     for (auto &ptr : m_pendingSpawn)
@@ -75,7 +73,7 @@ void GameWorld::step(const TickContext &ctx)
         entity->tick(ctx);
     }
 
-    // Update one-way wall timers
+    //更新单向墙计时器
     {
         QVector<QRectF> entityRects;
         entityRects.reserve(currentEntities.size());
@@ -135,9 +133,7 @@ void GameWorld::flushDestroys()
                                    return ptr.get() == entity;
                                });
         if (it != m_entities.end()) {
-            // Use zero-timer instead of deleteLater() so the deletion
-            // happens in the NEXT event loop iteration, after all
-            // pending paint events have been processed.
+            //使用零计时器而非deleteLater()，使删除在下一事件循环迭代中发生
             ActorItem *raw = it->release();
             m_entities.erase(it);
             QTimer::singleShot(0, raw, [raw]() { delete raw; });
@@ -186,8 +182,7 @@ void GameWorld::clearAllEntities()
     m_pendingSpawn.clear();
     m_pendingDestroy.clear();
 
-    // Emit signal so GameScene removes entities from the scene before deletion.
-    // (Skip unindexEntity — the indices are cleared wholesale below.)
+    //发射信号让GameScene在删除前从场景移除实体(跳过unindexEntity，索引在下方批量清除)
     for (auto &ptr : m_entities) {
         if (ptr) {
             emit entityAboutToBeDestroyed(ptr.get());
@@ -198,9 +193,7 @@ void GameWorld::clearAllEntities()
     m_entitiesByFaction.clear();
     m_player.clear();
 
-    // Entities are now hidden in the scene (setVisible(false) via
-    // entityAboutToBeDestroyed signal). Release ownership — they will
-    // be deleted by rebuildScene() -> QGraphicsScene::clear().
+    //实体已在场景中隐藏(通过entityAboutToBeDestroyed信号setVisible(false))，释放所有权，由rebuildScene()->QGraphicsScene::clear()删除
     for (auto &ptr : m_entities) {
         (void)ptr.release();
     }

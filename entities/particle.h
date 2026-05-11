@@ -21,11 +21,11 @@ public:
         Physical
     };
 
-    // Physical: physics-based firework/bullet-spark
+    //物理：基于物理的烟花/子弹火花
     Particle(QPointF pos, QPointF velocity,
              qreal gravity, qreal lifetime);
 
-    // Simple: interpolating dust particle
+    //简单：插值尘埃粒子
     Particle(QPointF startPos, QPointF endPos,
              qreal startSize, qreal endSize,
              qreal duration);
@@ -46,18 +46,18 @@ public:
 private:
     Type m_type;
 
-    // Shared
+    //共享
     qreal m_alpha{1.0};
     qreal m_size{4.0};
 
-    // Simple
+    //简单
     QPointF m_startPos;
     QPointF m_endPos;
     qreal m_startSize{4.0};
     qreal m_endSize{0.0};
     qreal m_duration{0.0};
 
-    // Physical
+    //物理
     qreal m_gravity{0.0};
     qreal m_lifetime{0.0};
 };

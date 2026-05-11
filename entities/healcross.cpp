@@ -11,8 +11,8 @@ HealCross::HealCross(QPointF pos)
     setZValue(ZLayer::Particles);
 
     auto *rng = QRandomGenerator::global();
-    m_floatSpeed = 50.0 + rng->bounded(40.0);   // 50-90 px/s
-    m_crossSize = 4.0 + rng->bounded(5.0);       // 4-8 px arm half-length
+    m_floatSpeed = 50.0 + rng->bounded(40.0);   //50-90像素/秒
+    m_crossSize = 4.0 + rng->bounded(5.0);       //4-8像素臂半长
 }
 
 QRectF HealCross::boundingRect() const
@@ -30,10 +30,10 @@ void HealCross::paint(QPainter *painter,
 
     const qreal armW = qMax(1.0, m_crossSize * 0.4);
     painter->setPen(Qt::NoPen);
-    painter->setBrush(QColor(0, 255, 80)); // fluorescent green
-    // horizontal bar
+    painter->setBrush(QColor(0, 255, 80)); //荧光绿
+    //横条
     painter->drawRect(QRectF(-m_crossSize, -armW, m_crossSize * 2.0, armW * 2.0));
-    // vertical bar
+    //竖条
     painter->drawRect(QRectF(-armW, -m_crossSize, armW * 2.0, m_crossSize * 2.0));
 }
 

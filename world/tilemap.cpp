@@ -110,10 +110,10 @@ void TileMap::initTiles()
 
     QTextStream in(&file);
 
-    // Read first line: width and height
+    // 读取第一行：宽度和高度
     int width, height;
     in >> width >> height;
-    in.readLine(); // consume rest of first line
+    in.readLine(); // 消耗第一行剩余内容
 
     m_tiles.reserve(height);
     for (int row = 0; row < height; ++row)
@@ -133,17 +133,17 @@ void TileMap::initTiles()
                 tileValue = 6;
             else if (ch == 'l')
                 tileValue = 7;
-            else if (ch == 'w') // throne
+            else if (ch == 'w') // 王座
                 tileValue = 8;
-            else if (ch == 's') // hachimi
+            else if (ch == 's') // 哈基米
                 tileValue = 9;
-            else if (ch == 't') // chutty
+            else if (ch == 't') // 口香糖
                 tileValue = 10;
             else
                 tileValue = ch.digitValue();
             tileRow.append(tileValue);
         }
-        // Pad with Empty if line is shorter than expected width
+        // 如果行短于预期宽度，用空填充
         while (tileRow.size() < width)
             tileRow.append(0);
         m_tiles.append(tileRow);
@@ -151,7 +151,7 @@ void TileMap::initTiles()
 
     file.close();
 
-    // Find player spawn tile
+    // 查找玩家生成瓦片
     for (int row = 0; row < m_tiles.size(); ++row)
     {
         for (int col = 0; col < m_tiles[row].size(); ++col)

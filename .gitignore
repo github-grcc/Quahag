@@ -8,4 +8,3 @@ cmake/
 build-win/
 build-asan/
 resources.rc
-实验报告.md

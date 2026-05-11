@@ -22,25 +22,25 @@ namespace
     constexpr qreal kAirAccel = 2000.0;
     constexpr qreal kGroundAccel = 3000.0;
 
-    // Coyote time
+    //柯基时间
     constexpr qreal kCoyoteTime = 0.1;
 
-    // Jump system
+    //跳跃系统
     constexpr int kMaxJumps = 2;
     constexpr qreal kDoubleJumpImpulse = 800.0;
 
-    // Wall slide
+    //滑墙
     constexpr qreal kWallSlideSpeed = 100.0;
     constexpr qreal kWallJumpHorizontal = 400.0;
     constexpr qreal kWallJumpVertical = 700.0;
     constexpr qreal kWallJumpLockTime = 0.12;
 
-    // Attack
+    //攻击
     constexpr qreal kAttackRange = 50.0;
     constexpr qreal kAttackHeight = 50.0;
     constexpr qreal kAttackCooldown = 0.1;
     constexpr qreal kAttackVisualDuration = 0.2;
-} // namespace
+} //命名空间
 
 Player::Player()
 {
@@ -66,7 +66,7 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 {
     painter->setPen(Qt::NoPen);
 
-    // // Attack flash (underneath body)
+    // //攻击闪烁(身体下方)
     // if (age() - m_lastDamageTime < 0.1) {
     //     painter->setBrush(Qt::white);
     //     painter->drawRect(m_bodyRect);
@@ -76,7 +76,7 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     //     painter->drawPixmap(-m_spriteSize.width()/2, -m_spriteSize.height()/2, m_attackSprite);
 
     // } else {
-    //     // Main body
+    //     //主体
     //     // painter->setBrush(QColor(253, 184, 39));
     //     // painter->drawRect(m_bodyRect);
     //     painter->drawPixmap(-m_spriteSize.width()/2, -m_spriteSize.height()/2, m_idleSprite);
@@ -105,7 +105,7 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         }
     }
 
-    // // Facing indicator
+    // //朝向指示
     // painter->setBrush(QColor(200, 140, 20));
     // if (m_facing == 1) {
     //     const QPointF triangle[3] = {{12.0, -4.0}, {12.0, 4.0}, {18.0, 0.0}};
@@ -126,18 +126,18 @@ void Player::tick(const TickContext &ctx)
     const qreal dt = ctx.dt;
     const InputState input = ctx.input ? *ctx.input : InputState{};
 
-    // ---- Edge detection ----
+    //边缘检测
     const bool jumpPressed = input.jump && !m_prevJump;
     const bool attackPressed = input.attack && !m_prevAttack;
     m_prevJump = input.jump;
     m_prevAttack = input.attack;
 
-    // ---- Timers ----
+    //计时器
     m_attackCooldown = qMax(0.0, m_attackCooldown - dt);
     m_attackTimer = qMax(0.0, m_attackTimer - dt);
     m_wallJumpLockTimer = qMax(0.0, m_wallJumpLockTimer - dt);
 
-    // Hachimi boost timer
+    //哈基米增强计时
     if (m_hachimiRemaining > 0.0) {
         m_hachimiRemaining -= dt;
         if (m_hachimiRemaining <= 0.0) {
@@ -146,7 +146,7 @@ void Player::tick(const TickContext &ctx)
         }
     }
 
-    // Coyote timer
+    //柯基计时
     if (onGround())
     {
         m_coyoteTimer = 0.0;
@@ -156,7 +156,7 @@ void Player::tick(const TickContext &ctx)
         m_coyoteTimer += dt;
     }
 
-    // ---- Facing direction ----
+    //朝向
     if (input.moveLeft && !input.moveRight)
     {
         m_facing = -1;
@@ -166,17 +166,17 @@ void Player::tick(const TickContext &ctx)
         m_facing = 1;
     }
 
-    // ---- Wall detection ----
+    //墙壁检测
     m_wallSide = detectWallSide(tileMap);
 
-    // ---- State machine ----
+    //状态机
     updateState(ctx, jumpPressed);
 
-    // ---- Physics ----
+    //物理
     moveHorizontally(dt, tileMap);
     moveVertically(dt, tileMap);
 
-    // ---- Hachimi trail ----
+    //哈基米拖尾
     if (m_hachimiRemaining > 0.0 && (!qFuzzyIsNull(velocityX()) || !qFuzzyIsNull(velocityY())) && ctx.world) {
         m_hachimiTrailTimer += dt;
         constexpr qreal kTrailInterval = 0.04;
@@ -189,7 +189,7 @@ void Player::tick(const TickContext &ctx)
         m_hachimiTrailTimer = 0.0;
     }
 
-    // ---- Post-collision fixup ----
+    //碰撞后修正
     if (onGround())
     {
         m_jumpsUsed = 0;
@@ -202,7 +202,7 @@ void Player::tick(const TickContext &ctx)
         m_state = PlayerState::Airborne;
     }
 
-    // ---- Attack (parallel, independent of state) ----
+    //攻击(并行于状态机)
     processAttack(attackPressed, ctx);
 }
 
@@ -229,7 +229,7 @@ void Player::behaveGrounded(const TickContext &ctx, bool jumpPressed)
     const bool movingLeft = input.moveLeft && !input.moveRight;
     const bool movingRight = input.moveRight && !input.moveLeft;
 
-    // Apply ground accel/drag
+    //地面加速/减速
     if (movingLeft)
         setVelocityX(velocityX() - kGroundAccel * m_hachimiMultiplier * dt);
     else if (movingRight)
@@ -242,7 +242,7 @@ void Player::behaveGrounded(const TickContext &ctx, bool jumpPressed)
 
     setVelocityX(qBound(-kRunSpeed * m_hachimiMultiplier, velocityX(), kRunSpeed * m_hachimiMultiplier));
 
-    // Coyote jump: allow jump just after leaving ground
+    //柯基跳：离开地面后仍可跳跃
     if (jumpPressed && (onGround() || m_coyoteTimer < kCoyoteTime))
     {
         setVelocityY(-kJumpImpulse * m_hachimiMultiplier);
@@ -259,7 +259,7 @@ void Player::behaveAirborne(const TickContext &ctx, bool jumpPressed)
     const bool movingLeft = input.moveLeft && !input.moveRight;
     const bool movingRight = input.moveRight && !input.moveLeft;
 
-    // Apply air accel/drag
+    //空中加速/减速
     if (movingLeft)
         setVelocityX(velocityX() - kAirAccel * m_hachimiMultiplier * dt);
     else if (movingRight)
@@ -272,18 +272,17 @@ void Player::behaveAirborne(const TickContext &ctx, bool jumpPressed)
 
     setVelocityX(qBound(-kRunSpeed * m_hachimiMultiplier, velocityX(), kRunSpeed * m_hachimiMultiplier));
 
-    // Apply gravity
+    //施加重力
     setVelocityY(velocityY() + gravity * dt);
 
-    // Double jump
+    //二段跳
     if (jumpPressed && m_jumpsUsed < kMaxJumps)
     {
         setVelocityY(-kDoubleJumpImpulse * m_hachimiMultiplier);
         m_jumpsUsed++;
     }
 
-    // Wall slide transition: must be falling, against a wall, pressing into it,
-    // and not in wall-jump lockout
+    //滑墙过渡：必须下落、靠墙、向墙移动、且不在墙跳锁定中
     if (m_wallSide != 0 && velocityY() >= 0.0 && m_wallJumpLockTimer <= 0.0)
     {
         const bool pressingTowardWall = (m_wallSide == -1 && movingLeft) || (m_wallSide == 1 && movingRight);
@@ -300,22 +299,22 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
     const qreal dt = ctx.dt;
     const qreal gravity = ctx.gravity;
 
-    // Exit wall slide if no wall or on ground
+    //无墙或落地时退出滑墙
     if (m_wallSide == 0 || onGround())
     {
         m_state = onGround() ? PlayerState::Grounded : PlayerState::Airborne;
         return;
     }
 
-    // Face away from wall
+    //面朝墙外
     m_facing = -m_wallSide;
 
-    // Apply gravity with slide-speed cap
+    //施加重力并限制滑速
     setVelocityY(velocityY() + gravity * dt);
     if (velocityY() > kWallSlideSpeed)
         setVelocityY(kWallSlideSpeed);
 
-    // Allow movement away from wall using air accel
+    //使用空中加速离开墙壁
     const bool pressingAway = (m_wallSide == -1 && input.moveRight) || (m_wallSide == 1 && input.moveLeft);
     const bool pressingToward = (m_wallSide == -1 && input.moveLeft) || (m_wallSide == 1 && input.moveRight);
 
@@ -323,13 +322,13 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
     {
         const qreal dir = (m_wallSide == -1) ? 1.0 : -1.0;
         setVelocityX(velocityX() + dir * kAirAccel * dt);
-        // Apply air drag
+        //空中减速
         if (velocityX() * dir > 0.0)
             setVelocityX(qMax(0.0, qAbs(velocityX()) - kAirDrag * dt) * dir);
     }
     else if (!pressingToward)
     {
-        // Not pressing anything horizontally: apply drag toward zero
+        //无水平输入：减速至零
         if (velocityX() > 0.0)
             setVelocityX(qMax(0.0, velocityX() - kAirDrag * dt));
         else if (velocityX() < 0.0)
@@ -337,13 +336,13 @@ void Player::behaveWallSliding(const TickContext &ctx, bool jumpPressed)
     }
     else
     {
-        // Pressing toward wall: stick, zero horizontal velocity
+        //向墙按压：吸附，水平速度归零
         setVelocityX(0.0);
     }
 
     setVelocityX(qBound(-kRunSpeed * m_hachimiMultiplier, velocityX(), kRunSpeed * m_hachimiMultiplier));
 
-    // Wall jump
+    //墙跳
     if (jumpPressed)
     {
         setVelocityY(-kWallJumpVertical * m_hachimiMultiplier);
@@ -436,7 +435,7 @@ int Player::detectWallSide(TileMap &tileMap) const
     const int topRow = static_cast<int>(r.top() / tileH);
     const int botRow = static_cast<int>((r.bottom() - 1.0) / tileH);
 
-    // Check left side
+    //检测左侧
     const int leftCol = static_cast<int>((r.left() - 1.0) / tileW);
     for (int row = topRow; row <= botRow; ++row)
     {
@@ -444,7 +443,7 @@ int Player::detectWallSide(TileMap &tileMap) const
             return -1;
     }
 
-    // Check right side
+    //检测右侧
     const int rightCol = static_cast<int>((r.right() + 1.0) / tileW);
     for (int row = topRow; row <= botRow; ++row)
     {
@@ -460,7 +459,7 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
     if (!attackPressed || m_attackCooldown > 0.0)
         return;
 
-    // Camera shake on attack
+    //攻击时镜头震动
     if (ctx.events)
     {
         ctx.events->cameraShakes.append(CameraShakeEvent{20.0, 0.15, 28.0});
@@ -491,7 +490,7 @@ void Player::processAttack(bool attackPressed, const TickContext &ctx)
             enemy->takeDamage(ctx);
     }
 
-    // Spawn ClawEffect at attack position
+    //在攻击位置生成爪痕效果
     if (ctx.world)
     {
         auto *rng = QRandomGenerator::global();
@@ -517,13 +516,13 @@ void Player::takeDamage(const TickContext &ctx)
 {
     m_lastDamageTime = age();
 
-    // Camera shake on damage
+    //受伤时镜头震动
     if (ctx.events)
     {
         ctx.events->cameraShakes.append(CameraShakeEvent{20.0, 0.15, 28.0});
     }
 
-    // Damage particles
+    //受伤粒子
     if (ctx.world)
     {
         Particle::fireworks(ctx.world, sceneBoundingRect().center(), 10,
@@ -533,7 +532,7 @@ void Player::takeDamage(const TickContext &ctx)
 
     if (--m_health <= 0)
     {
-        // Death particles
+        //死亡粒子
         if (ctx.world)
         {
             Particle::fireworks(ctx.world, sceneBoundingRect().center(), 50,

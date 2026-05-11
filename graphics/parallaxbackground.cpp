@@ -18,7 +18,7 @@ void ParallaxBackground::loadImages()
         return p;
     };
 
-    // Back to front: sky → beach → sea → mangrove → coco
+    //从后到前：天空→沙滩→海→红树林→椰树
     m_layers = {
         { loadPix(kBackgroundDir + "sky.png"), {}, {}, 0.0 },
         { loadPix(kBackgroundDir + "beach.png"), {}, {}, 0.50 },
@@ -48,7 +48,7 @@ void ParallaxBackground::paint(QPainter *painter,
         if (layer.original.isNull())
             continue;
 
-        // Effective zoom: k=0 → 1x always; k=1 → full zoom
+        //有效缩放：k=0恒为1倍；k=1为完整缩放
         const qreal zk = 1.0 + layer.parallaxFactor * (zoom - 1.0);
         const QSize scaledSize = vs * zk;
 

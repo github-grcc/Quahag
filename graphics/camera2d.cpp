@@ -187,7 +187,7 @@ qreal Camera2D::effectiveZoom() const
     const qreal progress = m_zoomPulseElapsed / m_zoomPulseDuration;
     const qreal envelope = 1.0 - progress;
     const qreal angle = progress * m_zoomPulseCycles * 2.0 * M_PI + m_zoomPulseInitialPhase;
-    zoom = m_zoomPulseCenter + qSin(angle) * m_zoomPulseAmplitude;// * envelope;
+    zoom = m_zoomPulseCenter + qSin(angle) * m_zoomPulseAmplitude;//原始乘包络线
     return qMax(0.1, zoom);
 }
 

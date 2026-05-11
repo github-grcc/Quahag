@@ -43,7 +43,7 @@ void Chutty::tick(const TickContext &ctx)
 
         auto *rng = QRandomGenerator::global();
         const QPointF center = player->sceneBoundingRect().center();
-        const int count = 5 + rng->bounded(3); // 5-7 crosses
+        const int count = 5 + rng->bounded(3); //5-7个十字
         for (int i = 0; i < count; ++i) {
             const qreal ox = rng->bounded(60.0) - 30.0;
             const qreal oy = rng->bounded(60.0) - 30.0;

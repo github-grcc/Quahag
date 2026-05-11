@@ -15,8 +15,7 @@ GameScene::~GameScene()
     if (m_world) {
         disconnect(m_world, nullptr, this, nullptr);
     }
-    // Base ~QGraphicsScene() calls clear() which deletes all items
-    // (tile layer + any entities released by ~GameWorld).
+    //基类~QGraphicsScene()调用clear()删除所有项目(瓦片层+~GameWorld释放的实体)
 }
 
 void GameScene::attachWorld(GameWorld *world)
@@ -45,7 +44,7 @@ Player *GameScene::player() const
 
 void GameScene::rebuildScene()
 {
-    clear(); // Deletes all scene-owned items (tile layer)
+    clear(); //删除场景拥有的所有项目(瓦片层)
 
     if (!m_world)
         return;
@@ -73,14 +72,9 @@ void GameScene::removeEntityItem(ActorItem *entity)
     if (!entity)
         return;
 
-    // Don't call removeItem() — in Qt 6.10 it may defer internal
-    // cleanup asynchronously, and the rendering pipeline can still
-    // find the item in pending index updates.
-    //
-    // Instead, just hide the item. Qt will skip hidden items during
-    // rendering (drawSubtreeRecursive checks isVisible()). The actual
-    // scene removal happens in ~QGraphicsItem() when the zero-timer
-    // deletes the entity.
+    //不调用removeItem()——Qt 6.10可能异步延迟内部清理，渲染管线仍可在待处理索引更新中找到该项目。
+    //改为隐藏项目，Qt渲染时会跳过隐藏项目(drawSubtreeRecursive检查isVisible())。
+    //实际场景移除在零计时器删除实体时由~QGraphicsItem()完成。
     entity->setVisible(false);
     entity->setEnabled(false);
 }

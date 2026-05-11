@@ -39,7 +39,7 @@ namespace
 
     // Enemy-specific gravity (clawstrike: 400 vs cat's 2000)
     constexpr qreal kEnemyGravity = 400.0;
-} // namespace
+} //命名空间
 Enemy::Enemy()
 {
     QPixmap originalSprites[6];
@@ -425,7 +425,7 @@ void Enemy::takeDamage(const TickContext &ctx)
     m_lastDamageTime = age();
     m_shotCooldown = qMax(m_shotCooldown, kDamageShotInterval);
 
-    // Damage particles
+    //受伤粒子
     if (ctx.world)
     {
         Particle::fireworks(ctx.world, sceneBoundingRect().center(), 10,
@@ -435,7 +435,7 @@ void Enemy::takeDamage(const TickContext &ctx)
 
     if (--m_health <= 0)
     {
-        // Death particles
+        //死亡粒子
         if (ctx.world)
         {
             Particle::fireworks(ctx.world, sceneBoundingRect().center(), 50,

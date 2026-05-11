@@ -75,7 +75,7 @@ void GameView::addCameraShake(CameraShakeEvent shakeEvent)
 }
 
 void GameView::keyPressEvent(QKeyEvent *event){
-    // Game state routing
+    //游戏状态路由
     if (m_gameState == GameState::Title) {
         if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
             m_gameState = GameState::Playing;
@@ -257,14 +257,14 @@ void GameView::drawForeground(QPainter *painter, const QRectF &)
         const QRect r = viewport()->rect();
         int lineY = r.top() + 4;
 
-        // Health (always shown)
+        //生命值(始终显示)
         const QString healthText = QString("生命值：%1").arg(player->health());
         painter->setPen(QColor(0, 0, 0, 180));
         painter->drawText(r.adjusted(4, lineY + 2, 0, 0), Qt::AlignLeft | Qt::AlignTop, healthText);
         painter->setPen(Qt::white);
         painter->drawText(r.adjusted(4, lineY, 0, 0), Qt::AlignLeft | Qt::AlignTop, healthText);
 
-        // Hachimi timer (conditional)
+        //哈基米计时(条件显示)
         if (player->hachimiRemaining() > 0.0) {
             lineY += 24;
             const QString hachimiText = QString("哈基米：%1s")
@@ -404,7 +404,7 @@ void GameView::updateCamera(qreal dt)
         }
     }
 
-    // Always advance camera timers so zoom pulse / shake can decay naturally
+    //始终推进摄像头计时器使缩放脉冲/震动自然衰减
     m_camera.update(dt);
     applyCameraTransform();
 }

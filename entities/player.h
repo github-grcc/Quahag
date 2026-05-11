@@ -45,53 +45,53 @@ private:
     void resolveTileCollisionsX(TileMap &tileMap);
     void resolveTileCollisionsY(TileMap &tileMap);
 
-    // State machine
+    //状态机
     void updateState(const TickContext &ctx, bool jumpPressed);
     void behaveGrounded(const TickContext &ctx, bool jumpPressed);
     void behaveAirborne(const TickContext &ctx, bool jumpPressed);
     void behaveWallSliding(const TickContext &ctx, bool jumpPressed);
 
-    // Wall detection
+    //墙壁检测
     int detectWallSide(TileMap &tileMap) const;
 
-    // Attack
+    //攻击
     void processAttack(bool attackPressed, const TickContext &ctx);
     QSizeF m_spriteSize{50.0,50.0};
-    QRectF m_bodyRect{-m_spriteSize.width()/2,-m_spriteSize.height()/2,m_spriteSize.width(),m_spriteSize.height()};//{-12.0, -24.0, 24.0, 48.0};
+    QRectF m_bodyRect{-m_spriteSize.width()/2,-m_spriteSize.height()/2,m_spriteSize.width(),m_spriteSize.height()};//原固定值
     QPixmap m_idleSprite;
     QPixmap m_attackSprite;
     QPixmap m_idleWhiteSprite;
     QPixmap m_attackWhiteSprite;
     int m_health{3};
 
-    // State
+    //状态
     PlayerState m_state{PlayerState::Grounded};
 
-    // Facing
+    //朝向
     int m_facing{1};
 
-    // Coyote time
+    //柯基时间
     qreal m_coyoteTimer{0.0};
 
-    // Jump tracking
+    //跳跃追踪
     int m_jumpsUsed{0};
 
-    // Wall interaction
+    //墙壁交互
     int m_wallSide{0};
     qreal m_wallJumpLockTimer{0.0};
 
-    // Attack (parallel, not a state)
+    //攻击(并行，非状态)
     qreal m_attackTimer{0.0};
     qreal m_attackCooldown{0.0};
 
-    // Edge detection
+    //边缘检测
     bool m_prevJump{false};
     bool m_prevAttack{false};
 
-    // Damage flash
+    //受伤闪烁
     qreal m_lastDamageTime{-9.0};
 
-    // Hachimi boost
+    //哈基米增强
     qreal m_hachimiRemaining{0.0};
     qreal m_hachimiMultiplier{1.0};
     qreal m_hachimiTrailTimer{0.0};

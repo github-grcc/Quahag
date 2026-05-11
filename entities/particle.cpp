@@ -7,7 +7,7 @@
 #include <QtMath>
 #include <QtGlobal>
 
-// --- Physical constructor (fireworks) ---
+//物理构造函数(烟花)
 Particle::Particle(QPointF pos, QPointF velocity,
                    qreal gravity, qreal lifetime)
     : m_type(Type::Physical)
@@ -20,7 +20,7 @@ Particle::Particle(QPointF pos, QPointF velocity,
     setZValue(ZLayer::Particles);
 }
 
-// --- Simple constructor (dust) ---
+//简单构造函数(尘埃)
 Particle::Particle(QPointF startPos, QPointF endPos,
                    qreal startSize, qreal endSize,
                    qreal duration)
@@ -42,15 +42,15 @@ void Particle::tick(const TickContext &ctx)
 
     switch (m_type) {
     case Type::Physical: {
-        // Apply gravity
+        //施加重力
         setVelocityY(velocityY() + m_gravity * ctx.dt);
 
-        // Integrate position
+        //更新位置
         prepareGeometryChange();
         setPos(x() + velocityX() * ctx.dt,
                y() + velocityY() * ctx.dt);
 
-        // Check expiry
+        //检测过期
         const qreal speed = qSqrt(velocityX() * velocityX()
                                 + velocityY() * velocityY());
         if (age() >= m_lifetime || speed < 10.0 || y() > 5000.0) {
@@ -114,15 +114,15 @@ void Particle::paint(QPainter *painter,
     }
 }
 
-// --- Factory methods ---
+//工厂方法
 
 void Particle::fireworks(GameWorld *world, QPointF center,
                          int count, qreal radiusX, qreal radiusY)
 {
     auto *rng = QRandomGenerator::global();
     for (int i = 0; i < count; ++i) {
-        const qreal angle = -(qreal)M_PI + rng->bounded((qreal)M_PI); // [ -PI, 0 ]
-        const qreal speed = 200.0 + rng->bounded(200.0);               // [ 200, 400 ]
+        const qreal angle = -(qreal)M_PI + rng->bounded((qreal)M_PI); //范围[-PI,0]
+        const qreal speed = 200.0 + rng->bounded(200.0);               //范围[200,400]
         const qreal vx = qCos(angle) * speed;
         const qreal vy = qSin(angle) * speed;
 
@@ -134,8 +134,8 @@ void Particle::fireworks(GameWorld *world, QPointF center,
         auto *p = world->createEntity<Particle>(
             QPointF(center.x() + ox, center.y() + oy),
             QPointF(vx, vy),
-            800.0,  // gravity
-            4.0);   // lifetime
+            800.0,  //重力
+            4.0);   //生命周期
         p->setZValue(ZLayer::Particles);
     }
 }
@@ -144,10 +144,10 @@ void Particle::dust(GameWorld *world, QPointF pos, int count)
 {
     auto *rng = QRandomGenerator::global();
     for (int i = 0; i < count; ++i) {
-        const qreal startSize = 5.0 + rng->bounded(5.0);   // [ 5, 10 ]
-        const qreal dx = rng->bounded(80.0) - 40.0;        // [ -40, 40 ]
-        const qreal dy = -(20.0 + rng->bounded(30.0));     // [ -50, -20 ]
-        const qreal duration = 0.2 + rng->bounded(0.3);    // [ 0.2, 0.5 ]
+        const qreal startSize = 5.0 + rng->bounded(5.0);   //范围[5,10]
+        const qreal dx = rng->bounded(80.0) - 40.0;        //范围[-40,40]
+        const qreal dy = -(20.0 + rng->bounded(30.0));     //范围[-50,-20]
+        const qreal duration = 0.2 + rng->bounded(0.3);    //范围[0.2,0.5]
 
         auto *p = world->createEntity<Particle>(
             pos,

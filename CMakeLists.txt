@@ -85,6 +85,10 @@ set(PROJECT_SOURCES
 
 if(WIN32)
     set(PROJECT_SOURCES ${PROJECT_SOURCES} resources.rc)
+    find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS Multimedia)
+    if(Qt${QT_VERSION_MAJOR}Multimedia_FOUND)
+        target_compile_definitions(Quahag PRIVATE QUAHAG_HAS_MULTIMEDIA)
+    endif()
 endif()
 
 # ------------------------------------------------------------------
@@ -102,6 +106,9 @@ endif()
 target_link_libraries(Quahag PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 if(WIN32)
     target_link_libraries(Quahag PRIVATE winmm)
+    if(Qt${QT_VERSION_MAJOR}Multimedia_FOUND)
+        target_link_libraries(Quahag PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
+    endif()
 endif()
 target_include_directories(Quahag PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -100,6 +100,9 @@ else()
 endif()
 
 target_link_libraries(Quahag PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+if(WIN32)
+    target_link_libraries(Quahag PRIVATE winmm)
+endif()
 target_include_directories(Quahag PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ------------------------------------------------------------------

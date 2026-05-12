@@ -8,6 +8,11 @@
 #include <QTemporaryFile>
 #include <QString>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#include <mmsystem.h>
+#endif
+
 inline void playQrcSound(const QString &qrcPath)
 {
     static QHash<QString, QString> tempPaths;
@@ -31,8 +36,15 @@ inline void playQrcSound(const QString &qrcPath)
     }
 
     const auto it = tempPaths.constFind(qrcPath);
-    if (it != tempPaths.constEnd())
-        QProcess::startDetached("paplay", {it.value()});
+    if (it == tempPaths.constEnd())
+        return;
+
+#ifdef Q_OS_WIN
+    PlaySoundW(reinterpret_cast<const wchar_t *>(it.value().utf16()), nullptr,
+               SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+#else
+    QProcess::startDetached("paplay", {it.value()});
+#endif
 }
 
 #endif // SOUND_H
